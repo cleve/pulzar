@@ -10,10 +10,8 @@ class Dispatcher:
     def __init__(self, utils):
         self.utils = utils
         self.const = Constants()
-        self.skynet = Skynet()
-
+        
         # reg strings
-        self.re_regular = r''
         self.re_admin = r'/admin/\w'
         self.re_skynet = r'/skynet/\w'
 
@@ -23,15 +21,17 @@ class Dispatcher:
         url_path = env[self.const.PATH_INFO]
         # Skynet
         if self.utils.match_regex(url_path, self.re_skynet):
-            pass
+            skynet = Skynet()
+            skynet.process_request(url_path)    
+            return self.const.SKYNET
 
         # Admin
         elif self.utils.match_regex(url_path, self.re_skynet):
-            pass
+            return self.const.ADMIN
 
         # General requests
         else:
-            pass
+            return self.const.REGULAR
 
     
 

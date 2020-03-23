@@ -11,5 +11,6 @@ class Master:
     def process_request(self, env, start_response):
         # Get request type
         request_type = self.dispatcher.classify_request(env)
+        return request_type
 
 

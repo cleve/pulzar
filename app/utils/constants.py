@@ -8,6 +8,7 @@ class Constants:
 
         # Database
         self.DB_PATH = 'storage/master.db'
+        self.DB_VOLUME = 'storage/volume.db'
 
         # Env
         self.REQUEST_METHOD = 'REQUEST_METHOD'
@@ -21,6 +22,10 @@ class Constants:
         # REST admin paths
         self.SKYNET = '/skynet'
         self.REGISTER = self.SKYNET + '/register'
+
+        # REGEX
+        self.RE_URL_LAST = r'([^/]+$)'
+        self.RE_URL_OPTION_ORDER = r'([\w]+)*\/([\w]+)+$'
 
         # Type of requests
         self.REGULAR = 'regular'

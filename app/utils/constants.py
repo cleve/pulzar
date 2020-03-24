@@ -22,6 +22,7 @@ class Constants:
         # REST admin paths
         self.SKYNET = '/skynet'
         self.REGISTER = self.SKYNET + '/register'
+        self.SYNC = self.SKYNET + '/sync'
 
         # REGEX
         self.RE_URL_LAST = r'([^/]+$)'

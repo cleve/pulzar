@@ -1,4 +1,5 @@
 import re
+import shutil
 
 class Utils:
     def __init__(self):
@@ -11,8 +12,13 @@ class Utils:
     def decode_byte_to_str(self, b_string):
         return b_string.decode('ascii')
 
-    # URL parser section
-
+    # System info section
+    def giga_free_space(self):
+        """Used disk information in %
+        return: str
+        """ 
+        disk_usage = shutil.disk_usage("/")
+        return str(int((disk_usage.used / disk_usage.total) * 100))
 
     # REGEX section
     def make_regex(self, string):

@@ -9,6 +9,7 @@ class Constants:
         # Database
         self.DB_PATH = 'storage/master.db'
         self.DB_VOLUME = 'storage/volume.db'
+        self.DB_STATS = 'storage/volume_st.db'
 
         # Env
         self.REQUEST_METHOD = 'REQUEST_METHOD'

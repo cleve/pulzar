@@ -2,6 +2,7 @@ from utils.constants import Constants
 from utils.utils import Utils
 from core.core_request import CoreRequest
 from volume.dispatcher import Dispatcher
+from core.core_db import DB
 
 class Volume:
     def __init__(self):
@@ -12,25 +13,19 @@ class Volume:
         self.master_url = None
         self.master_port = None
 
-    def send_status(self):
-        """After the cycle, send stats to the server
+    def save_status(self):
+        """Save stats to synch
         """
-        # Gets disk usage
-        percent = self.utils.giga_free_space()
-        url_path = self.const.SYNC + '/' + self.volume_env[self.const.SERVER_NAME] + '/' + percent 
-        if self.master_url is not None and self.master_port is not None:
-            req = CoreRequest(
-                self.master_url,
-                self.master_port,
-                url_path
-            )
-
-            if req.make_request():
-                print('synchronized')
+        db = DB(self.const.DB_STATS)
+        db.update_or_insert_value(
+            self.utils.encode_str_to_byte(self.const.SERVER_NAME),
+            self.utils.encode_str_to_byte(self.volume_env[self.const.SERVER_NAME])
+        )
     
     def process_request(self, env, start_response):
         # Get request type
         self.volume_env = self.utils.extract_host_env(env)
+        self.save_status()
         request_type = self.dispatcher.classify_request(env)
         return request_type
 

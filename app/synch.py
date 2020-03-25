@@ -10,8 +10,7 @@ def synchronize():
     db = DB(const.DB_STATS)
     # Gets disk usage
     percent = utils.giga_free_space()
-    print('Percent: ', percent)
     host = db.get_value(utils.encode_str_to_byte(const.SERVER_NAME))
-    print('HOST ===> ', host)
+    port = db.get_value(utils.encode_str_to_byte(const.SERVER_PORT))
 
 synchronize()

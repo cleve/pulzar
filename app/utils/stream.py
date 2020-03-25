@@ -6,10 +6,12 @@ class Config:
         self.config.sections()
         self.config.read(config_path)
 
-    def get_configs(self, section):
-        """Get all configs from a section"""
-        pass
+    def get_sections(self):
+        """Get all sections"""
+        return self.config.sections()
 
     def get_config(self, section, config):
         """Get config from a section"""
-        pass
+        if config in self.config:
+            return self.config[section][config]
+        return None

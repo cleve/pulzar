@@ -3,9 +3,10 @@ from utils.constants import Constants
 from utils.utils import Utils
 
 class Skynet:
-    def __init__(self):
+    def __init__(self, env):
         self.const = Constants()
         self.utils = Utils()
+        self.env = env
         self.db_volume = DB(self.const.DB_VOLUME)
 
         # Skynet options

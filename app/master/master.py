@@ -7,12 +7,12 @@ class Master:
         self.const = Constants()
         self.utils = Utils()
         self.dispatcher = Dispatcher(self.utils)
-        self.volume_env = None
+        self.master_env = None
 
     def process_request(self, env, start_response):
         # Get request type
-        self.volume_env = self.utils.extract_host_env(env)
-        request_type = self.dispatcher.classify_request(env)
+        self.master_env = self.utils.extract_host_env(env)
+        request_type = self.dispatcher.classify_request(self.master_env)
         return request_type
 
 

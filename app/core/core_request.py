@@ -16,6 +16,7 @@ class CoreRequest:
         self.port = int(port)
         self.path = url_path
         self.request_type = ReqType.GET
+        self.payload = None
 
     def set_type(self, type_request='GET'):
         if type_request == 'GET':
@@ -30,6 +31,9 @@ class CoreRequest:
     def set_path(self, path_string):
         self.path = path_string
 
+    def set_payload(self, payload):
+        self.payload = payload
+
     def make_request(self):
         # Check
         req = None
@@ -41,6 +45,13 @@ class CoreRequest:
             req = requests.get(
                 complete_url,
                 port=self.port,
+                timeout=10
+            )
+        if self.request_type == ReqType.POST:
+            req = requests.post(
+                complete_url,
+                port=self.port,
+                data=self.payload,
                 timeout=10
             )
         

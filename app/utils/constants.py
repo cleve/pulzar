@@ -6,6 +6,11 @@ class Constants:
         self.PASS = 'admin'
         self.PASSPORT = 'passport'
 
+        # Config
+        self.CONF_HOST = 'host'
+        self.CONF_PORT = 'port'
+        self.CONF_PATH = 'config/server.conf'
+
         # Database
         self.DB_PATH = 'storage/master.db'
         self.DB_VOLUME = 'storage/volume.db'

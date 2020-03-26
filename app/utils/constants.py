@@ -25,6 +25,7 @@ class Constants:
         self.HTTP_USER_AGENT = 'HTTP_USER_AGENT'
         self.SERVER_PROTOCOL = 'SERVER_PROTOCOL'
         self.CONTENT_LENGTH = 'CONTENT_LENGTH'
+        self.WSGI_INPUT = 'wsgi.input'
 
         # REST admin paths
         self.SKYNET = '/skynet'

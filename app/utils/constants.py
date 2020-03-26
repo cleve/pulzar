@@ -24,6 +24,7 @@ class Constants:
         self.QUERY_STRING = 'QUERY_STRING'
         self.HTTP_USER_AGENT = 'HTTP_USER_AGENT'
         self.SERVER_PROTOCOL = 'SERVER_PROTOCOL'
+        self.CONTENT_LENGTH = 'CONTENT_LENGTH'
 
         # REST admin paths
         self.SKYNET = '/skynet'

@@ -1,5 +1,6 @@
 import re
 import shutil
+import json
 from urllib.parse import urlparse
 
 # Internal
@@ -8,6 +9,13 @@ from utils.constants import Constants
 class Utils:
     def __init__(self):
         self.const = Constants()
+
+    # JSON section
+    def py_to_json(self, py_object):
+        return json.dumps(py_object)
+    
+    def json_to_py(self, json_srt):
+        return json.loads(json_srt)
 
     # Encode/decode section
     def encode_str_to_byte(self, string):

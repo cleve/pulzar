@@ -27,6 +27,8 @@ class Constants:
         self.CONTENT_LENGTH = 'CONTENT_LENGTH'
         self.WSGI_INPUT = 'wsgi.input'
 
+        self.POST = 'POST'
+
         # REST admin paths
         self.SKYNET = '/skynet'
         self.REGISTER = self.SKYNET + '/register'

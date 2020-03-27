@@ -19,10 +19,11 @@ class Dispatcher:
         """Return the type
         """
         url_path = env[self.const.PATH_INFO]
+        method = env[self.const.REQUEST_METHOD]
         # Skynet
         if self.utils.match_regex(url_path, self.re_skynet):
-            skynet = Skynet()
-            skynet.process_request(url_path)    
+            skynet = Skynet(env)
+            skynet.process_request(url_path, method)    
             return self.const.SKYNET
 
         # Admin

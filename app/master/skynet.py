@@ -18,7 +18,7 @@ class Skynet:
         params = body.extract_params(self.env)
         self.db_volume.update_or_insert_value(
             self.utils.encode_str_to_byte(volume_name),
-            self.utils.encode_str_to_byte(space)
+            params['percent']
         )
 
     def process_request(self, url_path, method):

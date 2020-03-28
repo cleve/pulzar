@@ -12,7 +12,6 @@ def synchronize():
     db_stats = DB(const.DB_STATS)
     server_host = server_config.get_config('server', 'host')
     server_port = server_config.get_config('server', 'port')
-    print('=> ', server_host, server_port)
     # Gets disk usage
     percent = utils.giga_free_space()
     volume_host = db_stats.get_value(utils.encode_str_to_byte(const.SERVER_NAME))
@@ -26,7 +25,7 @@ def synchronize():
     req.set_payload({
         'percent': percent,
         'host': volume_host.decode(),
-        'port':'9001'
+        'port': volume_port.decode()
         })
     req.make_request()
 synchronize()

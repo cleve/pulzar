@@ -41,15 +41,12 @@ class CoreRequest:
         if self.request_type is None or self.path is None and self.utils.validate_url(complete_url):
             return False
         url_port = complete_url
-        print('url_port: ', url_port)
         if self.request_type == ReqType.GET:
             req = requests.get(
                 url_port,
                 timeout=10
             )
         if self.request_type == ReqType.POST:
-            print(':::::::::::::::::::::: calling POST ::::::::::::::::::::::')
-            print (self.payload)
             req = requests.post(
                 url_port,
                 data=self.payload,

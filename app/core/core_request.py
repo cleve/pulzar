@@ -13,7 +13,7 @@ class CoreRequest:
     def __init__(self, host, port, url_path):
         self.utils = Utils()
         self.host = host
-        self.port = int(port)
+        self.port = port
         self.path = url_path
         self.request_type = ReqType.GET
         self.payload = None
@@ -37,20 +37,21 @@ class CoreRequest:
     def make_request(self):
         # Check
         req = None
-        complete_url = self.host + self.path
+        complete_url = 'http://' + self.host + ':' + self.port + self.path
         if self.request_type is None or self.path is None and self.utils.validate_url(complete_url):
             return False
-
+        url_port = complete_url
+        print('url_port: ', url_port)
         if self.request_type == ReqType.GET:
             req = requests.get(
-                complete_url,
-                port=self.port,
+                url_port,
                 timeout=10
             )
         if self.request_type == ReqType.POST:
+            print(':::::::::::::::::::::: calling POST ::::::::::::::::::::::')
+            print (self.payload)
             req = requests.post(
-                complete_url,
-                port=self.port,
+                url_port,
                 data=self.payload,
                 timeout=10
             )

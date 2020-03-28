@@ -12,6 +12,7 @@ class Config:
 
     def get_config(self, section, config):
         """Get config from a section"""
-        if config in self.config:
-            return self.config[section][config]
+        dictionary = dict(self.config.items(section))
+        if config in dictionary:
+            return dictionary[config]
         return None

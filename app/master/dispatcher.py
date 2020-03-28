@@ -15,11 +15,11 @@ class Dispatcher:
         self.re_admin = r'/admin/\w'
         self.re_skynet = r'/skynet/\w'
 
-    def classify_request(self, env):
+    def classify_request(self, essential_env, env):
         """Return the type
         """
-        url_path = env[self.const.PATH_INFO]
-        method = env[self.const.REQUEST_METHOD]
+        url_path = essential_env[self.const.PATH_INFO]
+        method = essential_env[self.const.REQUEST_METHOD]
         # Skynet
         if self.utils.match_regex(url_path, self.re_skynet):
             skynet = Skynet(env)

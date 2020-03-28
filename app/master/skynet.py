@@ -10,15 +10,18 @@ class Skynet:
         self.env = env
         self.db_volume = DB(self.const.DB_VOLUME)
 
+        print(self.env)
+        
         # Skynet options
-        self.sync_status = self.const.SKYNET + '/sync/'
+        self.sync_status = self.const.SKYNET + '/sync'
 
-    def sync_volume(self, volume_name, space):
+    def sync_volume(self):
         body = Body()
         params = body.extract_params(self.env)
+        print('params', params)
         self.db_volume.update_or_insert_value(
-            self.utils.encode_str_to_byte(volume_name),
-            params['percent']
+            params[b'host'][0],
+            params[b'percent'][0]
         )
 
     def process_request(self, url_path, method):
@@ -33,6 +36,5 @@ class Skynet:
             if groups is None:
                 return None
             
-            volume, percent = groups.groups()
-            self.sync_volume(volume, percent)
+            self.sync_volume()
 

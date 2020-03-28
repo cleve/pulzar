@@ -1,13 +1,6 @@
 import requests
-from enum import Enum
-
+from utils.constants import ReqType
 from utils.utils import Utils
-
-class ReqType(Enum):
-    GET = 1
-    POST = 2
-    PUT = 3
-    DELETE = 4
 
 class CoreRequest:
     def __init__(self, host, port, url_path):
@@ -18,16 +11,9 @@ class CoreRequest:
         self.request_type = ReqType.GET
         self.payload = None
 
-    def set_type(self, type_request='GET'):
-        if type_request == 'GET':
-            self.request_type = ReqType.GET
-        elif type_request == 'POST':
-            self.request_type = ReqType.POST
-        elif type_request == 'PUT':
-            self.request_type = ReqType.PUT
-        elif type_request == 'DELETE':
-            self.request_type = ReqType.DELETE
-
+    def set_type(self, type_request=ReqType.GET):
+        self.request_type = type_request
+        
     def set_path(self, path_string):
         self.path = path_string
 

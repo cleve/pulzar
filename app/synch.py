@@ -1,6 +1,7 @@
 from core.core_request import CoreRequest
 from utils.utils import Utils
 from utils.constants import Constants
+from utils.constants import ReqType
 from core.core_db import DB
 from utils.stream import Config
 import shutil
@@ -21,7 +22,7 @@ def synchronize():
         server_port,
         const.SYNC
     )
-    req.set_type('POST')
+    req.set_type(ReqType.POST)
     req.set_payload({
         'percent': percent,
         'host': volume_host.decode(),

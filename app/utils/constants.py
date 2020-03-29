@@ -36,6 +36,7 @@ class Constants:
         self.WSGI_INPUT = 'wsgi.input'
 
         self.POST = 'POST'
+        self.GET = 'GET'
 
         # REST admin paths
         self.SKYNET = '/skynet'
@@ -47,7 +48,8 @@ class Constants:
         self.RE_URL_OPTION_ORDER = r'([\w]+)*\/([\w]+)+$'
 
         # Type of requests
-        self.REGULAR = 'regular'
+        self.REGULAR_GET = 'regular'
+        self.REGULAR_PUT = 'put'
         self.ADMIN = 'admin'
         self.SKYNET = 'skynet'
 

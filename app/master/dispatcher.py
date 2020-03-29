@@ -1,5 +1,6 @@
 from utils.constants import Constants
 from master.skynet import Skynet
+from master.get_process import GetProcess
 
 class Dispatcher:
     """Calssify the type of request:
@@ -15,7 +16,7 @@ class Dispatcher:
         self.re_admin = r'/admin/\w'
         self.re_skynet = r'/skynet/\w'
 
-    def classify_request(self, essential_env, env):
+    def classify_request(self, essential_env, env, start_response):
         """Return the type
         """
         url_path = essential_env[self.const.PATH_INFO]
@@ -32,7 +33,11 @@ class Dispatcher:
 
         # General requests
         else:
-            return self.const.REGULAR
+            # Get value or store values
+            if essential_env[self.const.REQUEST_METHOD] == self.const.GET:
+                get_request = GetProcess(self.const)
+                get_request.process_request(env, start_response, url_path)
+                return self.const.REGULAR_GET
 
     
 

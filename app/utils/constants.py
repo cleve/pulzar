@@ -1,10 +1,17 @@
 from enum import Enum
 
+
+class Response(Enum):
+    JSON = 0
+    TEXT = 1
+
+
 class ReqType(Enum):
     GET = 1
     POST = 2
     PUT = 3
     DELETE = 4
+
 
 class Constants:
     def __init__(self):
@@ -52,5 +59,3 @@ class Constants:
         self.REGULAR_PUT = 'put'
         self.ADMIN = 'admin'
         self.SKYNET = 'skynet'
-
-        

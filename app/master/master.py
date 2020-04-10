@@ -1,6 +1,7 @@
 from utils.constants import Constants
 from utils.utils import Utils
 from master.dispatcher import Dispatcher
+from core.core_response import ResponseClass
 
 
 class Master:
@@ -8,6 +9,7 @@ class Master:
         self.const = Constants()
         self.utils = Utils()
         self.dispatcher = Dispatcher(self.utils)
+        self.response = ResponseClass()
         self.master_env = None
 
     def process_request(self, env, start_response):
@@ -18,7 +20,11 @@ class Master:
         request_type = request['action']
         print(request)
         # If not Skynet or administrative tasks
+        if request_type == self.const.KEY_NOT_FOUND:
+            self.response.set_response('200 OK')
+            self.response.set_message(b'key not found')
+
         if request_type == self.const.REGULAR_GET:
             # Here redirection or negotiation
-            pass
-        return request_type
+            print('GET REGULAR')
+        return self.response.get_response(start_response)

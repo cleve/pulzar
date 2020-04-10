@@ -48,5 +48,8 @@ class Dispatcher:
                 get_request = GetProcess(self.const)
                 response = get_request.process_request(
                     env, start_response, url_path)
-                self.complex_response['action'] = self.const.REGULAR_GET
+
+                self.complex_response['action'] = response
                 return self.complex_response
+            self.complex_response['action'] = self.const.REGULAR_GET
+        return self.complex_response

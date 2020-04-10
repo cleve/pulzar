@@ -62,3 +62,4 @@ class Constants:
         self.REGULAR_PUT = 'put'
         self.ADMIN = 'admin'
         self.SKYNET = 'skynet'
+        self.KEY_NOT_FOUND = 'key_not_found'

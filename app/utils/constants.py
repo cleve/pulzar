@@ -54,6 +54,9 @@ class Constants:
         self.RE_URL_LAST = r'([^/]+$)'
         self.RE_URL_OPTION_ORDER = r'([\w]+)*\/([\w]+)+$'
 
+        # API calls
+        self.RE_GET_VALUE = r'/get_key/(\w+)$'
+
         # Type of requests
         self.REGULAR_GET = 'regular'
         self.REGULAR_PUT = 'put'

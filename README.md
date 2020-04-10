@@ -75,3 +75,9 @@ master:[port]/admin/network/{node_id}
 Used internally to sync
 
 master:[port]/skynet/{node_id}
+
+# Dev
+
+## Keys
+
+Keys will be encoded in base64, only ASCII chars are allowed.

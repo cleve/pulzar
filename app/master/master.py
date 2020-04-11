@@ -33,7 +33,7 @@ class Master:
             print('GET REGULAR')
 
         if request_type == self.const.REDIRECT_POST:
-            self.response.set_response('302 permanent redirect')
+            self.response.set_response('307 temporary redirect')
             self.response.set_redirection(
                 'http://' + self.utils.decode_byte_to_str(request['volume']) + ':9001' + env[self.const.PATH_INFO])
             self.response.set_message(b'ok')

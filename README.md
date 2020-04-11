@@ -78,6 +78,9 @@ master:[port]/skynet/{node_id}
 
 # Dev
 
+To run the DB locally, point your name machine properly to 127.0.0.1 in the 
+**/etc/hosts** file.
+
 ## Keys
 
 Keys will be encoded in base64, only ASCII chars are allowed.

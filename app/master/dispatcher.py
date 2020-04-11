@@ -53,10 +53,9 @@ class Dispatcher:
                 self.complex_response['action'] = response
                 return self.complex_response
 
-            self.complex_response['action'] = self.const.REGULAR_GET
             # Post key-value.
             if essential_env[self.const.REQUEST_METHOD] == self.const.POST:
                 post_request = PostProcess(self.const)
-                response = post_request.process_request(
+                self.complex_response = post_request.process_request(
                     env, start_response, url_path)
         return self.complex_response

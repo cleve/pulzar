@@ -61,6 +61,8 @@ class Constants:
         # Type of requests
         self.REGULAR_GET = 'regular'
         self.REGULAR_PUT = 'put'
+        self.REDIRECT_POST = 'redirect_post'
+        self.KEY_ALREADY_ADDED = 'duplicated'
         self.ADMIN = 'admin'
         self.SKYNET = 'skynet'
         self.KEY_NOT_FOUND = 'key_not_found'

@@ -32,4 +32,9 @@ class Master:
             # Here redirection or negotiation
             print('GET REGULAR')
 
+        if request_type == self.const.REDIRECT_POST:
+            self.response.set_response('302 permanent redirect')
+            self.response.set_redirection('http://google.com')
+            self.response.set_message(b'ok')
+
         return self.response.get_response(start_response)

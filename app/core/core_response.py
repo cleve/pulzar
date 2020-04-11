@@ -12,7 +12,7 @@ class ResponseClass:
         self.message = message
 
     def set_redirection(self, site):
-        self.header.append(('Location', site))
+        self.headers.append(('Location', site))
 
     def set_response(self, response):
         """string with code

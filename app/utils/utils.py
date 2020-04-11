@@ -1,10 +1,12 @@
 import re
 import shutil
 import json
+import base64
 from urllib.parse import urlparse
 
 # Internal
 from utils.constants import Constants
+
 
 class Utils:
     def __init__(self):
@@ -13,11 +15,15 @@ class Utils:
     # JSON section
     def py_to_json(self, py_object):
         return json.dumps(py_object)
-    
+
     def json_to_py(self, json_srt):
         return json.loads(json_srt)
 
     # Encode/decode section
+    def encode_base_64(self, string):
+        byte_string = self.encode_str_to_byte(string)
+        return base64.b64encode(byte_string)
+
     def encode_str_to_byte(self, string):
         return string.encode()
 
@@ -28,7 +34,7 @@ class Utils:
     def giga_free_space(self):
         """Used disk information in %
         return: str
-        """ 
+        """
         disk_usage = shutil.disk_usage("/")
         return str(int((disk_usage.used / disk_usage.total) * 100))
 

@@ -1,10 +1,17 @@
 from enum import Enum
 
+
+class Response(Enum):
+    JSON = 0
+    TEXT = 1
+
+
 class ReqType(Enum):
     GET = 1
     POST = 2
     PUT = 3
     DELETE = 4
+
 
 class Constants:
     def __init__(self):
@@ -36,6 +43,7 @@ class Constants:
         self.WSGI_INPUT = 'wsgi.input'
 
         self.POST = 'POST'
+        self.GET = 'GET'
 
         # REST admin paths
         self.SKYNET = '/skynet'
@@ -46,9 +54,15 @@ class Constants:
         self.RE_URL_LAST = r'([^/]+$)'
         self.RE_URL_OPTION_ORDER = r'([\w]+)*\/([\w]+)+$'
 
+        # API calls
+        self.RE_GET_VALUE = r'/get_key/(\w+)$'
+        self.RE_POST_VALUE = r'/add_key/(\w+)$'
+
         # Type of requests
-        self.REGULAR = 'regular'
+        self.REGULAR_GET = 'regular'
+        self.REGULAR_PUT = 'put'
+        self.REDIRECT_POST = 'redirect_post'
+        self.KEY_ALREADY_ADDED = 'duplicated'
         self.ADMIN = 'admin'
         self.SKYNET = 'skynet'
-
-        
+        self.KEY_NOT_FOUND = 'key_not_found'

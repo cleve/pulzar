@@ -1,11 +1,12 @@
 from utils.constants import Constants
 from master.skynet import Skynet
 from master.get_process import GetProcess
+from master.post_process import PostProcess
 
 
 class Dispatcher:
     """Calssify the type of request:
-     - regular
+     - regular[GET/POST]
      - admin
      - skynet
      """
@@ -43,7 +44,7 @@ class Dispatcher:
 
         # General requests
         else:
-            # Get value or store values
+            # Get key-value.
             if essential_env[self.const.REQUEST_METHOD] == self.const.GET:
                 get_request = GetProcess(self.const)
                 response = get_request.process_request(
@@ -51,5 +52,11 @@ class Dispatcher:
 
                 self.complex_response['action'] = response
                 return self.complex_response
+
             self.complex_response['action'] = self.const.REGULAR_GET
+            # Post key-value.
+            if essential_env[self.const.REQUEST_METHOD] == self.const.POST:
+                post_request = PostProcess(self.const)
+                response = post_request.process_request(
+                    env, start_response, url_path)
         return self.complex_response

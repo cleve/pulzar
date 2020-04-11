@@ -56,6 +56,7 @@ class Constants:
 
         # API calls
         self.RE_GET_VALUE = r'/get_key/(\w+)$'
+        self.RE_POST_VALUE = r'/add_key/(\w+)$'
 
         # Type of requests
         self.REGULAR_GET = 'regular'

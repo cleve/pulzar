@@ -19,6 +19,10 @@ class Master:
             self.essential_env, env, start_response)
         request_type = request['action']
         print(request)
+        if request_type == self.const.SKYNET:
+            self.response.set_response('200 OK')
+            self.response.set_message(b'synch ok')
+
         # If not Skynet or administrative tasks
         if request_type == self.const.KEY_NOT_FOUND:
             self.response.set_response('200 OK')
@@ -27,4 +31,5 @@ class Master:
         if request_type == self.const.REGULAR_GET:
             # Here redirection or negotiation
             print('GET REGULAR')
+
         return self.response.get_response(start_response)

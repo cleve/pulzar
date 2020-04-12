@@ -19,11 +19,13 @@ class PostProcess:
         if regex_result:
             try:
                 key_to_add = regex_result.groups()[0]
+                base64_str = self.utils.encode_base_64(key_to_add, True)
                 # Trying to create the key-value
                 key_to_binary = self.utils.encode_str_to_byte(key_to_add)
-                self.file_utils.set_key(key_to_binary)
-                self.file_utils.read_binary_file(env)
-                self.complex_response['action'] = self.const.KEY_ALREADY_ADDED
+                self.file_utils.set_key(key_to_binary, base64_str)
+                key_generated = self.file_utils.read_binary_file(env)
+                self.complex_response['action'] = self.const.NOTIFY_KEY_TO_MASTER
+                self.complex_response['parameters'] = key_generated
                 return self.complex_response
 
             except Exception as err:

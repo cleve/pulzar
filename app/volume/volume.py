@@ -33,6 +33,10 @@ class Volume:
         # Get request type
         self.volume_env = self.utils.extract_host_env(env)
         self.save_status()
-        request_type = self.dispatcher.classify_request(env, start_response)
+        request = self.dispatcher.classify_request(env, start_response)
+        request_type = request['action']
+        if request_type == self.const.NOTIFY_KEY_TO_MASTER:
+            # Report the register creation.
+            print('master notify', env['QUERY_STRING'])
+            pass
         return request_type
-

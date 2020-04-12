@@ -2,6 +2,7 @@ import re
 import shutil
 import json
 import base64
+import tempfile
 from urllib.parse import urlparse
 
 # Internal
@@ -76,3 +77,9 @@ class Utils:
         }
 
         return result
+
+    # Temporary section
+    def get_tmp_file(self):
+        """Dont forget to close the file
+        """
+        return tempfile.NamedTemporaryFile(delete=False)

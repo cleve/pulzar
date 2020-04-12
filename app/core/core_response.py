@@ -33,6 +33,7 @@ class ResponseClass:
     def get_response(self, start_response, type=Response.JSON):
         if type == Response.JSON:
             self.headers.append(self.JSON)
+            pass
         start_response(
             self.response_code, self.headers)
         return[self.message]

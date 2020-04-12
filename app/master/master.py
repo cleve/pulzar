@@ -14,9 +14,9 @@ class Master:
 
     def process_request(self, env, start_response):
         # Get request type
-        self.essential_env = self.utils.extract_host_env(env)
+        self.master_env = self.utils.extract_host_env(env)
         request = self.dispatcher.classify_request(
-            self.essential_env, env, start_response)
+            self.master_env, env, start_response)
         request_type = request['action']
         print(request)
         if request_type == self.const.SKYNET:
@@ -33,8 +33,10 @@ class Master:
             print('GET REGULAR')
 
         if request_type == self.const.REDIRECT_POST:
-            self.response.set_response('302 permanent redirect')
-            self.response.set_redirection('http://google.com')
+            redirect_url = 'http://' + self.utils.decode_byte_to_str(
+                request['volume']) + ':9001' + env[self.const.PATH_INFO] + '?url=' + self.master_env[self.const.HTTP_HOST]
+            self.response.set_response('307 temporary redirect')
+            self.response.set_redirection(redirect_url)
             self.response.set_message(b'ok')
 
         return self.response.get_response(start_response)

@@ -26,7 +26,11 @@ uwsgi --ini config/volume.ini
 ## String values
 
 ### Add key value
-master:[port]/add_key/{key}/{value}
+
+```sh
+master:[port]/add_key/{key}
+curl -X POST -L  -T /path/to/file http://master:[port]/add_key/{key}
+```
 
 ### Read key value
 master:[port]/get_key/{key}
@@ -77,6 +81,9 @@ Used internally to sync
 master:[port]/skynet/{node_id}
 
 # Dev
+
+To run the DB locally, point your name machine properly to 127.0.0.1 in the 
+**/etc/hosts** file.
 
 ## Keys
 

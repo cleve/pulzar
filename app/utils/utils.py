@@ -2,6 +2,8 @@ import re
 import shutil
 import json
 import base64
+import tempfile
+import shutil
 from urllib.parse import urlparse
 
 # Internal
@@ -20,9 +22,9 @@ class Utils:
         return json.loads(json_srt)
 
     # Encode/decode section
-    def encode_base_64(self, string):
+    def encode_base_64(self, string, to_str=False):
         byte_string = self.encode_str_to_byte(string)
-        return base64.b64encode(byte_string)
+        return base64.b64encode(byte_string) if not to_str else self.decode_byte_to_str(base64.b64encode(byte_string))
 
     def encode_str_to_byte(self, string):
         return string.encode()
@@ -72,7 +74,18 @@ class Utils:
             self.const.PATH_INFO: env[self.const.PATH_INFO],
             self.const.QUERY_STRING: env[self.const.QUERY_STRING],
             self.const.HTTP_USER_AGENT: env[self.const.HTTP_USER_AGENT],
-            self.const.SERVER_PROTOCOL: env[self.const.SERVER_PROTOCOL]
+            self.const.SERVER_PROTOCOL: env[self.const.SERVER_PROTOCOL],
+            self.const.HTTP_HOST: env[self.const.HTTP_HOST]
         }
 
         return result
+
+    # Temporary section
+    def get_tmp_file(self):
+        """Dont forget to close the file
+        """
+        return tempfile.NamedTemporaryFile(delete=False)
+
+    # File operations
+    def move_file(self, source, dest):
+        return shutil.copyfile(source, dest)

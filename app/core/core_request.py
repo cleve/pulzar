@@ -2,6 +2,7 @@ import requests
 from utils.constants import ReqType
 from utils.utils import Utils
 
+
 class CoreRequest:
     def __init__(self, host, port, url_path):
         self.utils = Utils()
@@ -13,7 +14,7 @@ class CoreRequest:
 
     def set_type(self, type_request=ReqType.GET):
         self.request_type = type_request
-        
+
     def set_path(self, path_string):
         self.path = path_string
 
@@ -38,8 +39,7 @@ class CoreRequest:
                 data=self.payload,
                 timeout=10
             )
-        
+
         if req.status_code == 200:
             return True
         return False
-

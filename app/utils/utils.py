@@ -89,3 +89,17 @@ class Utils:
     # File operations
     def move_file(self, source, dest):
         return shutil.copyfile(source, dest)
+
+    # Custom methods
+    def extract_url_data(self, complete_url):
+        data = {
+            'url': None,
+            'port': None
+        }
+        if complete_url.find(':') == -1:
+            return data
+        split_data = complete_url.split(':')
+        if len(split_data) = 2:
+            data['url'] = split_data[0]
+            data['port'] = split_data[1]
+        return data

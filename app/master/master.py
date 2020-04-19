@@ -33,6 +33,9 @@ class Master:
             print('GET REGULAR')
 
         if request_type == self.const.REDIRECT_POST:
+            if request['volume'] is None:
+                print('There is not volumes registered')
+                return
             redirect_url = 'http://' + self.utils.decode_byte_to_str(
                 request['volume']) + ':9001' + env[self.const.PATH_INFO] + '?url=' + self.master_env[self.const.HTTP_HOST]
             self.response.set_response('307 temporary redirect')

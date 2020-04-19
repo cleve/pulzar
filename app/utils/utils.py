@@ -93,13 +93,14 @@ class Utils:
     # Custom methods
     def extract_url_data(self, complete_url):
         data = {
-            'url': None,
+            'host': None,
             'port': None
         }
-        if complete_url.find(':') == -1:
+        if complete_url.find(':') == -1 or complete_url.find('=') == -1:
             return data
-        split_data = complete_url.split(':')
+        split_query = complete_url.split('=')[1]
+        split_data = split_query.split(':')
         if len(split_data) == 2:
-            data['url'] = split_data[0]
+            data['host'] = split_data[0]
             data['port'] = split_data[1]
         return data

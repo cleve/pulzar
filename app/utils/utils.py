@@ -3,7 +3,6 @@ import shutil
 import json
 import base64
 import tempfile
-import shutil
 from urllib.parse import urlparse
 
 # Internal

@@ -67,6 +67,8 @@ class Constants:
         self.REDIRECT_POST = 'redirect_post'
         self.NOTIFY_KEY_TO_MASTER = 'notify2master'
         self.KEY_ALREADY_ADDED = 'duplicated'
+        self.KEY_ERROR = 'key_error'
+        self.KEY_ADDED = 'key_added'
         self.ADMIN = 'admin'
         self.SKYNET = 'skynet'
         self.KEY_NOT_FOUND = 'key_not_found'

@@ -6,6 +6,7 @@ from core.core_db import DB
 from utils.stream import Config
 import shutil
 
+
 def synchronize():
     utils = Utils()
     const = Constants()
@@ -15,8 +16,13 @@ def synchronize():
     server_port = server_config.get_config('server', 'port')
     # Gets disk usage
     percent = utils.giga_free_space()
-    volume_host = db_stats.get_value(utils.encode_str_to_byte(const.SERVER_NAME))
-    volume_port = db_stats.get_value(utils.encode_str_to_byte(const.SERVER_PORT))
+    volume_host = db_stats.get_value(
+        utils.encode_str_to_byte(const.SERVER_NAME))
+    volume_port = db_stats.get_value(
+        utils.encode_str_to_byte(const.SERVER_PORT))
+    if volume_host is None or volume_port is None:
+        print('No records created')
+        return
     req = CoreRequest(
         server_host,
         server_port,
@@ -27,6 +33,8 @@ def synchronize():
         'percent': percent,
         'host': volume_host.decode(),
         'port': volume_port.decode()
-        })
+    })
     req.make_request()
+
+
 synchronize()

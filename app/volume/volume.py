@@ -37,6 +37,7 @@ class Volume:
         request_type = request['action']
         if request_type == self.const.NOTIFY_KEY_TO_MASTER:
             # Report the register creation.
-            master_url = volume_env['QUERY_STRING']
+            master_url = self.utils.extract_url_data(
+                self.volume_env['QUERY_STRING'])
 
         return request_type

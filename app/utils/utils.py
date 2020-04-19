@@ -99,7 +99,7 @@ class Utils:
         if complete_url.find(':') == -1:
             return data
         split_data = complete_url.split(':')
-        if len(split_data) = 2:
+        if len(split_data) == 2:
             data['url'] = split_data[0]
             data['port'] = split_data[1]
         return data

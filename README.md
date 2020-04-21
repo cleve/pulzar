@@ -41,20 +41,6 @@ master:[port]/delete_key/{key}
 ### Update key value
 master:[port]/update_key/{key}/{value}
 
-## Binary values
-
-### Add key binary
-master:[port]/add_file/{key}/{value}
-
-### Read key value
-master:[port]/get_file/{key}
-
-### Remove key value
-master:[port]/delete_file/{key}
-
-### Update key value
-master:[port]/update_file/{key}/{value}
-
 ## Integrations
 
 ### Custom app
@@ -78,7 +64,7 @@ master:[port]/admin/network/{node_id}
 
 Used internally to sync
 
-master:[port]/skynet/{node_id}
+master:[port]/skynet/
 
 # Dev
 

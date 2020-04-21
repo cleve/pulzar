@@ -3,6 +3,7 @@ from utils.constants import Constants
 from utils.utils import Utils
 from core.core_body import Body
 
+
 class Skynet:
     def __init__(self, env):
         self.const = Constants()
@@ -12,6 +13,11 @@ class Skynet:
 
         # Skynet options
         self.sync_status = self.const.SKYNET + '/sync'
+        self.sync_key_added = self.const.SKYNET + '/add_record'
+
+    def save_key_and_volume(self):
+        # Extract and save value into DB.
+        master_db = DB(self.const.DB_PATH)
 
     def sync_volume(self):
         body = Body()
@@ -24,6 +30,12 @@ class Skynet:
     def process_request(self, url_path, method):
         if method != self.const.POST:
             return None
+
+        # This is a confirmation from volume.
+        if url_path.find(self.sync_key_added) == 1:
+            self.save_key_and_volume()
+
+        # This is a meta-data received from volume
         if url_path.find(self.sync_status) == 1:
             # Extracting last section of the url
             groups = self.utils.get_search_regex(
@@ -32,6 +44,5 @@ class Skynet:
             )
             if groups is None:
                 return None
-            
-            self.sync_volume()
 
+            self.sync_volume()

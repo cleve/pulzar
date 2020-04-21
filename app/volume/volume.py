@@ -4,12 +4,14 @@ from utils.utils import Utils
 from core.core_request import CoreRequest
 from volume.dispatcher import Dispatcher
 from core.core_db import DB
+from core.core_response import ResponseClass
 
 
 class Volume:
     def __init__(self):
         self.const = Constants()
         self.utils = Utils()
+        self.response = ResponseClass()
         self.dispatcher = Dispatcher(self.utils)
         self.volume_env = None
         self.master_url = None
@@ -36,5 +38,7 @@ class Volume:
         self.save_status()
         request = self.dispatcher.classify_request(env, start_response)
         request_type = request['action']
-        print(request)
-        return request_type
+        if request_type == self.const.KEY_ADDED:
+            self.response.set_response('201 Created')
+            self.response.set_message(b'record added')
+        return self.response.get_response(start_response)

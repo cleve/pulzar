@@ -18,6 +18,13 @@ class Skynet:
     def save_key_and_volume(self):
         # Extract and save value into DB.
         master_db = DB(self.const.DB_PATH)
+        body = Body()
+        params = body.extract_params(self.env)
+        # Saving data
+        return master_db.put_value(
+            params[b'key'][0],
+            params[b'volume'][0]
+        )
 
     def sync_volume(self):
         body = Body()
@@ -33,7 +40,9 @@ class Skynet:
 
         # This is a confirmation from volume.
         if url_path.find(self.sync_key_added) == 1:
-            self.save_key_and_volume()
+            if self.save_key_and_volume():
+                return self.const.SKYNET_RECORD_ADDED
+            return self.const.SKYNET_RECORD_ALREADY_ADDED
 
         # This is a meta-data received from volume
         if url_path.find(self.sync_status) == 1:
@@ -46,3 +55,4 @@ class Skynet:
                 return None
 
             self.sync_volume()
+            return self.const.SKYNET

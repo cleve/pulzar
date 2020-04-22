@@ -24,8 +24,11 @@ class PostProcess:
             master_url['host'], master_url['port'], self.const.ADD_RECORD)
         req.set_type(ReqType.POST)
         req.set_path(self.const.ADD_RECORD)
-        # We have to send the key.
-        req.set_payload(self.file_utils.key)
+        # We have to send the key, volume and port.
+        req.set_payload({
+            'key': self.file_utils.key,
+            'volume': env[self.const.HTTP_HOST]
+        })
         if not req.make_request():
             # If an error ocurr in the server, we need to delete the file.
             self.file_utils.remove_file()

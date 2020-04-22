@@ -19,6 +19,14 @@ class Master:
             self.master_env, env, start_response)
         request_type = request['action']
         print(request)
+        if request_type == self.const.SKYNET_RECORD_ADDED:
+            self.response.set_response('200 OK')
+            self.response.set_message(b'ok')
+
+        if request_type == self.const.SKYNET_RECORD_ALREADY_ADDED:
+            self.response.set_response('406 Not acceptable')
+            self.response.set_message(b'already created')
+
         if request_type == self.const.SKYNET:
             self.response.set_response('200 OK')
             self.response.set_message(b'synch ok')

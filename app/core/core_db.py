@@ -17,6 +17,8 @@ class DB:
         with self.env.begin(write=True) as txn:
             if not txn.get(key_string):
                 txn.put(key_string, value)
+                return True
+            return False
 
     def get_value(self, key_string):
         with self.env.begin(write=False) as txn:

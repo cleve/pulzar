@@ -41,4 +41,7 @@ class Volume:
         if request_type == self.const.KEY_ADDED:
             self.response.set_response('201 Created')
             self.response.set_message(b'record added')
+        if request_type == self.const.KEY_ERROR:
+            self.response.set_response('406 Not acceptable')
+            self.response.set_message(b'record already added')
         return self.response.get_response(start_response)

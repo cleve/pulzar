@@ -29,11 +29,14 @@ uwsgi --ini config/volume.ini
 
 ```sh
 master:[port]/add_key/{key}
-curl -X POST -L  -T /path/to/file http://master:[port]/add_key/{key}
+curl -X POST -L -T /path/to/file http://master:[port]/add_key/{key}
 ```
 
 ### Read key value
+```sh
 master:[port]/get_key/{key}
+curl -X GET -L http://master:[port]/get_key/{key}
+```
 
 ### Remove key value
 master:[port]/delete_key/{key}

@@ -1,4 +1,5 @@
-from cgi import parse_qs, escape
+from urllib.parse import parse_qs
+from html import escape
 from utils.constants import Constants
 
 

@@ -17,10 +17,11 @@ class GetProcess:
             try:
                 key_to_search = regex_result.groups()[0]
                 # Searching in the database
-                key_to_binary = self.utils.encode_str_to_byte(key_to_search)
+                key_to_binary = self.utils.encode_base_64(key_to_search)
                 value = self.db_values.get_value(key_to_binary)
                 if value is None:
                     return self.const.KEY_NOT_FOUND
+                print('value: ', value)
 
             except Exception as err:
                 print('Error extracting key', err)

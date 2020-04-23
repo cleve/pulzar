@@ -21,7 +21,7 @@ class GetProcess:
                 value = self.db_values.get_value(key_to_binary)
                 if value is None:
                     return self.const.KEY_NOT_FOUND
-                print('value: ', value)
+                return self.const.KEY_FOUND
 
             except Exception as err:
                 print('Error extracting key', err)

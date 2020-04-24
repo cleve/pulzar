@@ -47,10 +47,9 @@ class Dispatcher:
             # Get key-value.
             if essential_env[self.const.REQUEST_METHOD] == self.const.GET:
                 get_request = GetProcess(self.const)
-                response = get_request.process_request(
+                self.complex_response = get_request.process_request(
                     env, start_response, url_path)
 
-                self.complex_response['action'] = response
                 return self.complex_response
 
             # Post key-value.

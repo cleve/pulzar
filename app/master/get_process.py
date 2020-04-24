@@ -8,6 +8,12 @@ class GetProcess:
         self.utils = Utils()
         # DB of values already loaded
         self.db_values = DB(self.const.DB_PATH)
+        # Complex response, store the info necessary.
+        self.complex_response = {
+            'action': None,
+            'parameters': None,
+            'volume': None
+        }
 
     def process_request(self, env, start_response, url_path):
         # Get request type, checking for key value.
@@ -20,8 +26,11 @@ class GetProcess:
                 key_to_binary = self.utils.encode_base_64(key_to_search)
                 value = self.db_values.get_value(key_to_binary)
                 if value is None:
-                    return self.const.KEY_NOT_FOUND
-                return self.const.KEY_FOUND
+                    self.complex_response['action'] = self.const.KEY_NOT_FOUND 
+                    return self.complex_response
+                self.complex_response['action'] = self.const.KEY_FOUND
+                self.complex_response['volume'] = value
+                return self.complex_response
 
             except Exception as err:
                 print('Error extracting key', err)

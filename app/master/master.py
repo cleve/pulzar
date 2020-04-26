@@ -38,14 +38,14 @@ class Master:
 
         if request_type == self.const.KEY_FOUND:
             # Here redirection or negotiation
+            url_path = env[self.const.PATH_INFO]
             if request['volume'] is None:
                 print('There is not volumes registered')
                 return
             redirect_url = 'http://' + self.utils.decode_byte_to_str(
-                request['volume'])
+                request['volume']) + url_path
             self.response.set_response('307 temporary redirect')
             self.response.set_redirection(redirect_url)
-            self.response.set_message(b'ok')
             
         if request_type == self.const.REDIRECT_POST:
             if request['volume'] is None:

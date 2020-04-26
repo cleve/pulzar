@@ -42,7 +42,7 @@ class Dispatcher:
                 response = get_request.process_request(
                     env, start_response, url_path)
 
-                self.complex_response['action'] = response
+                self.complex_response = response
                 return self.complex_response
 
             # Post key-value.

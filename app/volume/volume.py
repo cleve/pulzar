@@ -1,6 +1,7 @@
 from utils.constants import Constants
 from utils.constants import ReqType
 from utils.utils import Utils
+from utils.file_utils import FileUtils
 from core.core_request import CoreRequest
 from volume.dispatcher import Dispatcher
 from core.core_db import DB
@@ -11,6 +12,7 @@ class Volume:
     def __init__(self):
         self.const = Constants()
         self.utils = Utils()
+        self.file_utils = FileUtils(self.const)
         self.response = ResponseClass()
         self.dispatcher = Dispatcher(self.utils)
         self.volume_env = None
@@ -44,4 +46,6 @@ class Volume:
         if request_type == self.const.KEY_ERROR:
             self.response.set_response('406 Not acceptable')
             self.response.set_message(b'record already added')
+        if request_type == self.const.KEY_FOUND:
+            return self.file_utils.read_value(request['parameters'], start_response)
         return self.response.get_response(start_response)

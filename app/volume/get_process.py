@@ -29,7 +29,7 @@ class GetProcess:
                     self.complex_response['action'] = self.const.KEY_NOT_FOUND 
                     return self.complex_response
                 self.complex_response['action'] = self.const.KEY_FOUND
-                self.complex_response['volume'] = value
+                self.complex_response['parameters'] = self.utils.decode_byte_to_str(key_to_binary)
                 return self.complex_response
 
             except Exception as err:

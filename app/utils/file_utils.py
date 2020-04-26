@@ -38,6 +38,19 @@ class FileUtils():
             return True
         return False
 
+    def read_value(self, key_name, start_response):
+        value_path = self.volume_path + '/' + key_name
+        fh = open(value_path, 'rb')
+        start_response('200 OK', [('Content-Type','application/octet-stream')])
+        return self.fbuffer(fh,1024)
+    
+    def fbuffer(self, f, chunk_size):
+        '''Generator to buffer file chunks'''  
+        while True:
+            chunk = f.read(chunk_size)      
+            if not chunk: break
+            yield chunk
+    
     def read_binary_file(self, env):
         try:
             request_body_size = int(env[self.const.CONTENT_LENGTH])

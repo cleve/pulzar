@@ -21,6 +21,10 @@ class FileUtils():
         self.binary_key = binary_key
         self.key = base64_str_key
 
+    def is_value_present(self, key_name):
+        value_path = self.volume_path + '/' + key_name
+        return self.file_exists(value_path)
+
     def file_exists(self, file_path):
         return os.path.isfile(file_path)
 

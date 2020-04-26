@@ -1,6 +1,5 @@
 from utils.constants import Constants
-from master.skynet import Skynet
-from master.get_process import GetProcess
+from volume.get_process import GetProcess
 from volume.post_process import PostProcess
 
 
@@ -30,20 +29,15 @@ class Dispatcher:
         """
         url_path = env[self.const.PATH_INFO]
         method = env[self.const.REQUEST_METHOD]
-        # Skynet
-        if self.utils.match_regex(url_path, self.re_skynet):
-            skynet = Skynet()
-            skynet.process_request(url_path)
-            return self.const.SKYNET
-
+        
         # Admin
-        elif self.utils.match_regex(url_path, self.re_skynet):
+        if self.utils.match_regex(url_path, self.re_skynet):
             return self.const.ADMIN
 
         # General requests
         else:
             # Get key-value.
-            if env[self.const.REQUEST_METHOD] == self.const.GET:
+            if method == self.const.GET:
                 get_request = GetProcess(self.const)
                 response = get_request.process_request(
                     env, start_response, url_path)
@@ -52,7 +46,7 @@ class Dispatcher:
                 return self.complex_response
 
             # Post key-value.
-            if env[self.const.REQUEST_METHOD] == self.const.POST:
+            if method == self.const.POST:
                 post_request = PostProcess(self.const)
                 self.complex_response = post_request.process_request(
                     env, start_response, url_path)

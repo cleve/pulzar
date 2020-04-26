@@ -63,9 +63,10 @@ class FileUtils():
             f = env[self.const.WSGI_INPUT]
             for piece in self.read_in_chunks(f):
                 temp_file.write(piece)
+            
+            temp_file.close()  # Close the file to be copied.
             if destiny_path == self.utils.move_file(
                     temp_file.name, self.volume_path + '/' + self.key):
-                temp_file.close()
                 return self.key
 
     def read_in_chunks(self, file_object, chunk_size=1024):

@@ -87,7 +87,7 @@ class Utils:
 
     # File operations
     def move_file(self, source, dest):
-        return shutil.copyfile(source, dest)
+        return shutil.copy2(source, dest)
 
     # Custom methods
     def extract_url_data(self, complete_url):

@@ -12,6 +12,7 @@ VariDB is a distributed database system, with load balance, easy to recover and 
 ### Start system
 
 ```sh
+cd app
 uwsgi --ini config/master.ini
 uwsgi --ini config/volume.ini
 ```

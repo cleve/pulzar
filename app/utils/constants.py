@@ -45,6 +45,7 @@ class Constants:
 
         self.POST = 'POST'
         self.GET = 'GET'
+        self.DELETE = 'DELETE'
 
         # REST admin paths
         self.SKYNET = '/skynet'
@@ -59,6 +60,7 @@ class Constants:
 
         # API calls
         self.RE_GET_VALUE = r'/get_key/(\w+)$'
+        self.RE_DELETE_VALUE = r'/delete_key/(\w+)$'
         self.RE_POST_VALUE = r'/add_key/(\w+)$'
 
         # Type of requests

@@ -2,6 +2,7 @@ from utils.constants import Constants
 from master.skynet import Skynet
 from master.get_process import GetProcess
 from master.post_process import PostProcess
+from master.delete_process import DeleteProcess
 
 
 class Dispatcher:
@@ -44,8 +45,13 @@ class Dispatcher:
 
         # General requests
         else:
+            # Delete value.
+            if method == self.const.DELETE:
+                delete_request = DeleteProcess(self.const)
+                self.complex_response = delete_request.process_request(env, start_response, url_path)
+
             # Get key-value.
-            if essential_env[self.const.REQUEST_METHOD] == self.const.GET:
+            if method == self.const.GET:
                 get_request = GetProcess(self.const)
                 self.complex_response = get_request.process_request(
                     env, start_response, url_path)
@@ -53,7 +59,7 @@ class Dispatcher:
                 return self.complex_response
 
             # Post key-value.
-            if essential_env[self.const.REQUEST_METHOD] == self.const.POST:
+            if method == self.const.POST:
                 post_request = PostProcess(self.const)
                 self.complex_response = post_request.process_request(
                     env, start_response, url_path)

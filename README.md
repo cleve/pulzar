@@ -40,7 +40,10 @@ curl -X GET -L http://master:[port]/get_key/{key}
 ```
 
 ### Remove key value
+```sh
 master:[port]/delete_key/{key}
+curl -X DELETE -L http://master:[port]/delete_key/{key}
+```
 
 ### Update key value
 master:[port]/update_key/{key}/{value}

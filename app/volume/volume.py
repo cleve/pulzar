@@ -40,12 +40,18 @@ class Volume:
         self.save_status()
         request = self.dispatcher.classify_request(env, start_response)
         request_type = request['action']
+        if request_type == self.const.KEY_DELETED:
+            self.response.set_response('200 Deleted')
+            self.response.set_message(b'record deleted')
         if request_type == self.const.KEY_ADDED:
             self.response.set_response('201 Created')
             self.response.set_message(b'record added')
         if request_type == self.const.KEY_ERROR:
             self.response.set_response('406 Not acceptable')
             self.response.set_message(b'record already added')
+        if request_type == self.const.KEY_NOT_FOUND:
+            self.response.set_response('404 Not found')
+            self.response.set_message(b'key not found')
         if request_type == self.const.KEY_FOUND:
             return self.file_utils.read_value(request['parameters'], start_response)
         return self.response.get_response(start_response)

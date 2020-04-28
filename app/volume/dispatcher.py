@@ -1,6 +1,7 @@
 from utils.constants import Constants
 from volume.get_process import GetProcess
 from volume.post_process import PostProcess
+from volume.delete_process import DeleteProcess
 
 
 class Dispatcher:
@@ -36,6 +37,13 @@ class Dispatcher:
 
         # General requests
         else:
+            # Delete value.
+            if method == self.const.DELETE:
+                get_request = DeleteProcess(self.const)
+                response = get_request.process_request(
+                    env, start_response, url_path)
+
+                self.complex_response = response
             # Get key-value.
             if method == self.const.GET:
                 get_request = GetProcess(self.const)

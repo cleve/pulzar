@@ -31,6 +31,13 @@ class FileUtils():
     def dir_exists(self, dir_path):
         return os.path.isdir(dir_path)
 
+    def remove_file_with_key(self, key):
+        file_path = self.volume_path + '/' + key
+        if self.file_exists(file_path):
+            os.remove(file_path)
+            return True
+        return False
+
     def remove_file(self):
         file_path = self.volume_path + '/' + self.key
         if self.file_exists(file_path):

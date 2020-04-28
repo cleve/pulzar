@@ -28,6 +28,8 @@ class DB:
         with self.env.begin(write=True) as txn:
             if txn.get(key_string):
                 txn.delete(key_string)
+                return True
+        return False
 
     def update_value(self, key_string, value):
         with self.env.begin(write=True) as txn:

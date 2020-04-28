@@ -28,6 +28,9 @@ class DeleteProcess:
                 if value is None:
                     self.complex_response['action'] = self.const.KEY_NOT_FOUND 
                     return self.complex_response
+                # Delete register on master.
+                self.db_values.delete_value(key_to_binary)
+                # Redirect to volume does not matter if was not deleted on master.
                 self.complex_response['action'] = self.const.KEY_FOUND
                 self.complex_response['volume'] = value
                 return self.complex_response

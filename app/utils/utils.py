@@ -4,6 +4,7 @@ import json
 import base64
 import tempfile
 from urllib.parse import urlparse
+import glob
 
 # Internal
 from utils.constants import Constants
@@ -88,6 +89,12 @@ class Utils:
     # File operations
     def move_file(self, source, dest):
         return shutil.copy2(source, dest)
+
+    # Read files from dir
+    def read_file_name_from_dir(self, dir_path, file_type=None):
+        if type is None:
+            return glob.glob(dir_path + '/*.')
+        return glob.glob(dir_path + '/' + file_type)
 
     # Custom methods
     def extract_url_data(self, complete_url):

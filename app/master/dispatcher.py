@@ -3,6 +3,7 @@ from master.skynet import Skynet
 from master.get_process import GetProcess
 from master.post_process import PostProcess
 from master.delete_process import DeleteProcess
+from master.third_party import TPProcess
 
 
 class Dispatcher:
@@ -42,6 +43,12 @@ class Dispatcher:
         elif self.utils.match_regex(url_path, self.re_skynet):
             self.complex_response['action'] = self.const.ADMIN
             return self.complex_response
+        
+        # Third party
+        elif self.utils.match_regex(url_path, self.const.RE_THIRD_PARTY):
+            if method == self.const.GET:
+                third_party = TPProcess(self.const)
+                third_party.process_request(env, start_response, url_path)
 
         # General requests
         else:

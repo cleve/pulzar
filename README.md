@@ -45,13 +45,10 @@ master:[port]/delete_key/{key}
 curl -X DELETE -L http://master:[port]/delete_key/{key}
 ```
 
-### Update key value
-master:[port]/update_key/{key}/{value}
-
 ## Integrations
 
 ### Custom app
-master:[port]/third party/{app_id}/{value}
+master:[port]/third_party/{app_id}/{value}
 
 # Maintenance
 

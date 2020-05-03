@@ -48,7 +48,10 @@ curl -X DELETE -L http://master:[port]/delete_key/{key}
 ## Integrations
 
 ### Custom app
-master:[port]/third_party/{app_id}/{value}
+
+```sh
+master:[port]/third_party/{app_id}/{args}
+```
 
 # Maintenance
 

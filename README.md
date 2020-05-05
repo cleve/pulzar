@@ -51,7 +51,7 @@ curl -X DELETE -L http://master:[port]/delete_key/{key}
 
 Sometimes you would like to add your own code, like some analysis over the data
 or even a totally new kind of process. In order to do this, you can add a module into the
-*** app/third_party/ *** directory. There is only one mandatory function to be added:
+***app/third_party/*** directory. There is only one mandatory function to be added:
 
 ```py
 def execute(arguments):

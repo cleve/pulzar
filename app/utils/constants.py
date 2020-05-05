@@ -63,7 +63,7 @@ class Constants:
         self.RE_GET_VALUE = r'/get_key/(\w+)$'
         self.RE_DELETE_VALUE = r'/delete_key/(\w+)$'
         self.RE_POST_VALUE = r'/add_key/(\w+)$'
-        self.RE_THIRD_PARTY = r'/third_party/(\w+)$'
+        self.RE_THIRD_PARTY = r'/third_party((/\w+)+)'
 
         # Type of requests
         self.REGULAR_GET = 'regular'

@@ -51,6 +51,7 @@ curl -X DELETE -L http://master:[port]/delete_key/{key}
 
 ```sh
 master:[port]/third_party/{app_id}/{args}
+curl -X GET -L http://master:[port]/third_party/{app_id}/{args}
 ```
 
 # Maintenance

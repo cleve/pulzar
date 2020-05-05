@@ -3,7 +3,7 @@ from master.skynet import Skynet
 from master.get_process import GetProcess
 from master.post_process import PostProcess
 from master.delete_process import DeleteProcess
-from master.third_party import TPProcess
+from master.third_party_process import TPProcess
 
 
 class Dispatcher:

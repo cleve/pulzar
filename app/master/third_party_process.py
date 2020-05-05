@@ -1,5 +1,6 @@
 from utils.utils import Utils
 from core.core_db import DB
+import importlib
 
 
 class TPProcess:
@@ -18,18 +19,20 @@ class TPProcess:
     def process_request(self, env, start_response, url_path):
         # Get request type, checking for key value.
         regex_result = self.utils.get_search_regex(
-            url_path, self.const.RE_GET_VALUE)
+            url_path, self.const.RE_THIRD_PARTY)
         if regex_result:
             try:
-                key_to_search = regex_result.groups()[0]
-                # Searching in the database
-                key_to_binary = self.utils.encode_base_64(key_to_search)
-                value = self.db_values.get_value(key_to_binary)
-                if value is None:
-                    self.complex_response['action'] = self.const.KEY_NOT_FOUND 
-                    return self.complex_response
-                self.complex_response['action'] = self.const.KEY_FOUND
-                self.complex_response['volume'] = value
+                call_path_list = regex_result.groups()[0][1:].split('/')
+                file_name = call_path_list[0]
+                args = call_path_list[1:]
+                modules = self.utils.read_file_name_from_dir('/third_party/', 'py')
+                if file_name + '.py' in modules:
+                    print('Module exists, we can proceed')
+                    import_fly = importlib.import_module('third_party.'+file_name)
+                    import_fly.hello()
+
+                # Searching in the thirs party space
+                self.complex_response['action'] = self.const.KEY_NOT_FOUND
                 return self.complex_response
 
             except Exception as err:

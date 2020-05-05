@@ -5,6 +5,7 @@ import base64
 import tempfile
 from urllib.parse import urlparse
 import glob
+import os
 
 # Internal
 from utils.constants import Constants
@@ -92,9 +93,13 @@ class Utils:
 
     # Read files from dir
     def read_file_name_from_dir(self, dir_path, file_type=None):
-        if type is None:
-            return glob.glob(dir_path + '/*.')
-        return glob.glob(dir_path + '/' + file_type)
+        file_list = []
+        if file_type is None:
+            file_list_raw = glob.glob(os.getcwd() + dir_path + '*')
+        file_list_raw = glob.glob(os.getcwd() + dir_path + '*.' + file_type)
+        for raw_path in file_list_raw:
+            file_list.append(os.path.basename(raw_path))
+        return file_list
 
     # Custom methods
     def extract_url_data(self, complete_url):

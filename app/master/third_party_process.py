@@ -28,8 +28,8 @@ class TPProcess:
                 modules = self.utils.read_file_name_from_dir('/third_party/', 'py')
                 if file_name + '.py' in modules:
                     print('Module exists, we can proceed')
-                    import_fly = importlib.import_module('third_party.'+file_name)
-                    import_fly.hello()
+                    import_fly = importlib.import_module('third_party.' + file_name)
+                    import_fly.execute(args)
 
                 # Searching in the thirs party space
                 self.complex_response['action'] = self.const.KEY_NOT_FOUND

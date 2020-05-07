@@ -57,6 +57,7 @@ or even a totally new kind of process. In order to do this, you can add a module
 def execute(arguments):
     example = Example(arguments[0])
     example.hello()
+    return json.dumps([])
 ```
 
 where the *arguments* parameter is a string list provided in the URL.
@@ -83,16 +84,22 @@ You can find an example in the **third_party** directory:
 
 ```py
 # File: example.py
+import json
+
 class Example:
     def __init__(self, arg1):
         self.arg1 = arg1
     
     def hello(self):
         print('Hello example with arg ', self.arg1)
+    
+    def json_return(self):
+        return json.dumps({'my_arg': self.arg1})
 
 def execute(arguments):
     example = Example(arguments[0])
     example.hello()
+    return example.json_return()
 ```
 
 # Maintenance

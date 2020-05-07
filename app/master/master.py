@@ -57,4 +57,8 @@ class Master:
             self.response.set_redirection(redirect_url)
             self.response.set_message(b'ok')
 
+        if request_type == self.const.TP_RESPONSE:
+            self.response.set_response('200 OK')
+            self.response.set_message(request['parameters'])
+
         return self.response.get_response(start_response)

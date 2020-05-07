@@ -27,13 +27,12 @@ class TPProcess:
                 args = call_path_list[1:]
                 modules = self.utils.read_file_name_from_dir('/third_party/', 'py')
                 if file_name + '.py' in modules:
-                    print('Module exists, we can proceed')
                     import_fly = importlib.import_module('third_party.' + file_name)
-                    import_fly.execute(args)
-
-                # Searching in the thirs party space
-                self.complex_response['action'] = self.const.KEY_NOT_FOUND
+                    j_byte = import_fly.execute(args).encode()
+                    self.complex_response['action'] = self.const.TP_RESPONSE
+                    self.complex_response['parameters'] = j_byte
+                
                 return self.complex_response
 
             except Exception as err:
-                print('Error extracting key', err)
+                print('Error third party', err)

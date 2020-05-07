@@ -68,6 +68,7 @@ class Constants:
         # Type of requests
         self.REGULAR_GET = 'regular'
         self.REGULAR_PUT = 'put'
+        self.TP_RESPONSE = 'third_party_response'
         self.REDIRECT_POST = 'redirect_post'
         self.NOTIFY_KEY_TO_MASTER = 'notify2master'
         self.KEY_ALREADY_ADDED = 'duplicated'

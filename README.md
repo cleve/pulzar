@@ -110,12 +110,14 @@ def execute(arguments):
 
 ```sh
 master:[port]/admin/network
+curl -X GET -L http://master:[port]/admin/network
 ```
 
 ### Get node status
 
 ```sh
 master:[port]/admin/network/{node_id}
+curl -X GET -L http://master:[port]/admin/network/{node_id}
 ```
 
 ## Backup

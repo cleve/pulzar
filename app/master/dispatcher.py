@@ -4,7 +4,7 @@ from master.get_process import GetProcess
 from master.post_process import PostProcess
 from master.delete_process import DeleteProcess
 from master.third_party_process import TPProcess
-
+from master.admin_process import AdminProcess
 
 class Dispatcher:
     """Calssify the type of request:
@@ -40,9 +40,12 @@ class Dispatcher:
             return self.complex_response
 
         # Admin
-        elif self.utils.match_regex(url_path, self.re_skynet):
-            self.complex_response['action'] = self.const.ADMIN
-            return self.complex_response
+        elif self.utils.match_regex(url_path, self.re_admin):
+            if method == self.const.GET:
+                admin_process = AdminProcess(self.const)
+                admin_process.process_request(env, start_response, url_path)
+                self.complex_response['action'] = self.const.ADMIN
+                return self.complex_response
         
         # Third party
         elif self.utils.match_regex(url_path, self.const.RE_THIRD_PARTY):

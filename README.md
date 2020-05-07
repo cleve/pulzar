@@ -107,10 +107,16 @@ def execute(arguments):
 ## System information
 
 ### Get network status
+
+```sh
 master:[port]/admin/network
+```
 
 ### Get node status
+
+```sh
 master:[port]/admin/network/{node_id}
+```
 
 ## Backup
 

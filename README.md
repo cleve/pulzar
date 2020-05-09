@@ -19,8 +19,11 @@ uwsgi --ini config/volume.ini
 
 ## Dependences
 
+### Next Python modules are needed
+
 * lmdb
 * requests
+* psutils
 
 # Methods
 
@@ -148,7 +151,9 @@ A JSON will be sent, of type:
 
 Used internally to sync
 
+```json
 master:[port]/skynet/
+```
 
 # Dev
 

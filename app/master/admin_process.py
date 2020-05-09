@@ -21,16 +21,17 @@ class AdminProcess:
             url_path, self.const.RE_ADMIN)
         if regex_result:
             try:
+                self.complex_response['action'] = self.const.ADMIN
                 call_path_list = regex_result.groups()[0].split('/')
                 call_path_list = [x for x in call_path_list if x != '']
                 # All nodes
                 if len(call_path_list) == 1 and call_path_list[0] == 'network':
                     nodes = self.db_volumes.get_keys_values(to_str=True)
-                    self.complex_response['action'] = self.const.ADMIN
                     self.complex_response['parameters'] = self.utils.py_to_json(nodes, to_bin=True)
                     
                 elif len(call_path_list) == 2 and call_path_list[0] == 'network':
-                    pass
+                    node_to_search = self.utils.encode_str_to_byte(call_path_list[1])
+                    self.complex_response['parameters'] = self.db_volumes.get_value(node_to_search)
                 
                 else:
                     self.complex_response['action'] = self.const.KEY_NOT_FOUND

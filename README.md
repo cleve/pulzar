@@ -113,11 +113,31 @@ master:[port]/admin/network
 curl -X GET -L http://master:[port]/admin/network
 ```
 
+A JSON list will be sent, of type:
+
+```json
+[
+    [
+        "node_name",
+        "percent_used"
+    ]
+]
+```
+
 ### Get node status
 
 ```sh
 master:[port]/admin/network/{node_id}
 curl -X GET -L http://master:[port]/admin/network/{node_id}
+```
+
+A JSON will be sent, of type:
+
+```json
+[
+    "node_name",
+    "percent_used"
+]
 ```
 
 ## Backup

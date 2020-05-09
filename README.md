@@ -23,7 +23,7 @@ uwsgi --ini config/volume.ini
 
 * lmdb
 * requests
-* psutils
+* psutil
 
 # Methods
 

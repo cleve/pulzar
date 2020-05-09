@@ -20,9 +20,9 @@ class DB:
                 return True
             return False
 
-    def get_value(self, key_string):
+    def get_value(self, key_string, to_str=False):
         with self.env.begin(write=False) as txn:
-            return txn.get(key_string)
+            return txn.get(key_string) if not to_str else txn.get(key_string).decode()
 
     def delete_value(self, key_string):
         with self.env.begin(write=True) as txn:

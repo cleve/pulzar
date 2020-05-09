@@ -118,8 +118,8 @@ A JSON list will be sent, of type:
 ```json
 [
     {
-        'node': 'node_name',
-        'percent': number
+        "node": "node_name",
+        "percent": 13
     }
 ]
 ```
@@ -135,8 +135,8 @@ A JSON will be sent, of type:
 
 ```json
 {
-    'node': 'node_name',
-    'percent': number
+    "node": "node_name",
+    "percent": 13
 }
 ```
 

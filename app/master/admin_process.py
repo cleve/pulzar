@@ -7,7 +7,7 @@ class AdminProcess:
         self.const = constants
         self.utils = Utils()
         # DB of values already loaded
-        self.db_values = DB(self.const.DB_PATH)
+        self.db_volumes = DB(self.const.DB_VOLUME)
         # Complex response, store the info necessary.
         self.complex_response = {
             'action': None,
@@ -23,12 +23,17 @@ class AdminProcess:
             try:
                 call_path_list = regex_result.groups()[0].split('/')
                 call_path_list = [x for x in call_path_list if x != '']
-                if len(call_path_list) == 1:
-                    pass
-                elif len(call_path_list) == 2:
+                # All nodes
+                if len(call_path_list) == 1 and call_path_list[0] == 'network':
+                    nodes = self.db_volumes.get_keys_values(to_str=True)
+                    self.complex_response['action'] = self.const.ADMIN
+                    self.complex_response['parameters'] = self.utils.py_to_json(nodes, to_bin=True)
+                    
+                elif len(call_path_list) == 2 and call_path_list[0] == 'network':
                     pass
                 
-                self.complex_response['action'] = self.const.KEY_FOUND
+                else:
+                    self.complex_response['action'] = self.const.KEY_NOT_FOUND
                 return self.complex_response
 
             except Exception as err:

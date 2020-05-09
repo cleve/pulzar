@@ -32,8 +32,8 @@ class Master:
             self.response.set_message(b'synch ok')
 
         if request_type == self.const.ADMIN:
-            # TODO.
-            pass
+            self.response.set_response('200 OK')
+            self.response.set_message(request['parameters'])
 
         # If not Skynet or administrative tasks
         if request_type == self.const.KEY_NOT_FOUND:

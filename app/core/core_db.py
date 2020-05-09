@@ -48,6 +48,8 @@ class DB:
         with self.env.begin() as txn:
             return [key for key, _ in txn.cursor()]
 
-    def get_keys_values(self):
+    def get_keys_values(self, to_str=False):
         with self.env.begin() as txn:
+            if to_str:
+                return [[key.decode(), val.decode()] for key, val in txn.cursor()]
             return [[key, val] for key, val in txn.cursor()]

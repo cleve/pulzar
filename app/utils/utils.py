@@ -16,8 +16,8 @@ class Utils:
         self.const = Constants()
 
     # JSON section
-    def py_to_json(self, py_object):
-        return json.dumps(py_object)
+    def py_to_json(self, py_object, to_bin=False):
+        return json.dumps(py_object) if not to_bin else self.encode_str_to_byte(json.dumps(py_object))
 
     def json_to_py(self, json_srt):
         return json.loads(json_srt)

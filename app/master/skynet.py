@@ -29,9 +29,10 @@ class Skynet:
     def sync_volume(self):
         body = Body()
         params = body.extract_params(self.env)
+        meta_data = self.utils.decode_byte_to_str(params[b'percent'][0]) + ':' + self.utils.decode_byte_to_str(params[b'load'][0])
         self.db_volume.update_or_insert_value(
             params[b'host'][0],
-            params[b'percent'][0]
+            self.utils.encode_str_to_byte(meta_data)
         )
 
     def process_request(self, url_path, method):

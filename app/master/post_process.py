@@ -10,8 +10,6 @@ class PostProcess:
         self.db_values = DB(self.const.DB_PATH)
         # DB of volumes/keys.
         self.db_volumes = DB(self.const.DB_VOLUME)
-        # DB of volume stats reported.
-        self.db_volumes_st = DB(self.const.DB_STATS)
         # Complex response, store the info necessary.
         self.complex_response = {
             'action': None,
@@ -24,7 +22,9 @@ class PostProcess:
         min_value = 100
         server = None
         for elem in volumes:
-            percent = int(self.utils.decode_byte_to_str(elem[1]))
+            # meta_raw[0] = precent, meta_raw[1] = load
+            meta_raw = self.utils.decode_byte_to_str(elem[1]).split(':')
+            percent = int(meta_raw[0])
             if percent < min_value:
                 min_value = percent
                 server = elem[0]

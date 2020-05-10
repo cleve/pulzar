@@ -17,7 +17,7 @@ def synchronize():
     # Volume machine
     volume_port = server_config.get_config('volume', 'port')
     # Gets load usage
-    volume_load = str(utils.cpu_info()[3])
+    volume_load = str(utils.cpu_info()[2])
     # Gets disk usage
     percent = utils.giga_free_space()
     volume_host = db_stats.get_value(

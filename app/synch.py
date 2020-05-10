@@ -16,6 +16,8 @@ def synchronize():
     server_port = server_config.get_config('server', 'port')
     # Volume machine
     volume_port = server_config.get_config('volume', 'port')
+    # Gets load usage
+    volume_load = str(utils.cpu_info()[3])
     # Gets disk usage
     percent = utils.giga_free_space()
     volume_host = db_stats.get_value(
@@ -38,6 +40,7 @@ def synchronize():
     req.set_type(ReqType.POST)
     req.set_payload({
         'percent': percent,
+        'load': volume_load,
         'host': volume_host.decode(),
         'port': volume_port
     })

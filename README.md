@@ -9,6 +9,23 @@ VariDB is a distributed database system, with load balance, easy to recover and 
 * Configuration server.
 * Store big amount of data, scalable.
 
+## Configuration
+
+The system can be configured under **config/server.conf**
+
+The configuration is pretty simple:
+
+```ini
+[server]
+host=127.0.0.1
+port=9000
+
+[volume]
+# Where to store files
+dir=/tmp/volume
+port=9001
+```
+
 ### Start system
 
 ```sh

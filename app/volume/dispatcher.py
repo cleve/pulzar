@@ -18,6 +18,7 @@ class Dispatcher:
         # reg strings
         self.re_admin = r'/admin/\w'
         self.re_skynet = r'/skynet/\w'
+        self.re_autodiscovery = r'/autodiscovery$'
 
         # Response to master, can or not contains data as parameter
         self.complex_response = {
@@ -31,6 +32,11 @@ class Dispatcher:
         url_path = env[self.const.PATH_INFO]
         method = env[self.const.REQUEST_METHOD]
         
+        # Autodiscovery
+        if self.utils.match_regex(url_path, self.re_autodiscovery):
+            self.complex_response['action'] = self.const.AUTODISCOVERY
+            return self.complex_response
+
         # Admin
         if self.utils.match_regex(url_path, self.re_skynet):
             return self.const.ADMIN

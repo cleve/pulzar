@@ -40,6 +40,9 @@ class Volume:
         self.save_status()
         request = self.dispatcher.classify_request(env, start_response)
         request_type = request['action']
+        if request_type == self.const.AUTODISCOVERY:
+            self.response.set_response('200 OK')
+            self.response.set_message(b'discovered')
         if request_type == self.const.KEY_DELETED:
             self.response.set_response('200 Deleted')
             self.response.set_message(b'record deleted')

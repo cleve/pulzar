@@ -14,14 +14,21 @@ def synchronize():
     db_stats = DB(const.DB_STATS)
     server_host = server_config.get_config('server', 'host')
     server_port = server_config.get_config('server', 'port')
+    # Volume machine
+    volume_port = server_config.get_config('volume', 'port')
     # Gets disk usage
     percent = utils.giga_free_space()
     volume_host = db_stats.get_value(
         utils.encode_str_to_byte(const.SERVER_NAME))
-    volume_port = db_stats.get_value(
-        utils.encode_str_to_byte(const.SERVER_PORT))
+    
     if volume_host is None or volume_port is None:
-        print('No records created')
+        print('No records created, auto-discovering')
+        req = CoreRequest(
+            '127.0.0.1',
+            volume_port,
+            '/autodiscovery'
+        )
+        req.make_request()
         return
     req = CoreRequest(
         server_host,
@@ -32,7 +39,7 @@ def synchronize():
     req.set_payload({
         'percent': percent,
         'host': volume_host.decode(),
-        'port': volume_port.decode()
+        'port': volume_port
     })
     req.make_request()
 

@@ -67,6 +67,7 @@ class Constants:
         self.RE_ADMIN = r'/admin((/[\w-]+){1,2})'
 
         # Type of requests
+        self.AUTODISCOVERY = 'autodiscovery'
         self.REGULAR_GET = 'regular'
         self.REGULAR_PUT = 'put'
         self.TP_RESPONSE = 'third_party_response'

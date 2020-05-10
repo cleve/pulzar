@@ -42,6 +42,13 @@ class Utils:
         disk_usage = shutil.disk_usage("/")
         return str(int((disk_usage.used / disk_usage.total) * 100))
 
+    def cpu_info(self):
+        """Get list of load:
+            [last 1 minute avg, last 5 minutes avg, last 15 minutes avg]
+        """
+        cpus = psutil.cpu_count()
+        return [ x / cpus *100 for x in psutil.getloadavg()]
+
     # REGEX section
     def make_regex(self, string):
         return re.compile(string)
@@ -101,14 +108,6 @@ class Utils:
         for raw_path in file_list_raw:
             file_list.append(os.path.basename(raw_path))
         return file_list
-
-    # Hardware information section
-    def cpu_info(self):
-        """Get list of load:
-            [last 1 minute avg, last 5 minutes avg, last 15 minutes avg]
-        """
-        cpus = psutil.cpu_count()
-        return [ x / cpus *100 for x in psutil.getloadavg()]
 
     # Custom methods
     def extract_url_data(self, complete_url):

@@ -168,8 +168,9 @@ A JSON will be sent, of type:
 
 Used internally to sync
 
-```json
+```sh
 master:[port]/skynet/
+volume:[port]/autodiscovery
 ```
 
 # Dev

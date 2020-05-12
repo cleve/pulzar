@@ -170,7 +170,7 @@ place.
 
 Its pretty simple, just follow the next steps:
 
-## Volume restauration
+### Volume restauration
 
 1. If its a fresh installation, make sure to fill up the volume configuration under **app/config**
 directory. If not, go to step **2**.
@@ -180,7 +180,7 @@ previously backed into the directory configured.
 
 3. Start the volume server
 
-## Master restauration
+### Master restauration
 
 1. If its a fresh installation, make sure to fill up the master configuration under **app/config**
 directory.

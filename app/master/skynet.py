@@ -27,13 +27,18 @@ class Skynet:
         )
 
     def sync_volume(self):
+        response = self.const.SKYNET
         body = Body()
         params = body.extract_params(self.env)
+        # Check if volume exists.
+        if self.db_volume.get_value(params[b'host'][0]) is None:
+            response = self.const.SKYNET_RESTORE
         meta_data = self.utils.decode_byte_to_str(params[b'percent'][0]) + ':' + self.utils.decode_byte_to_str(params[b'load'][0])
         self.db_volume.update_or_insert_value(
             params[b'host'][0],
             self.utils.encode_str_to_byte(meta_data)
         )
+        return response
 
     def process_request(self, url_path, method):
         if method != self.const.POST:
@@ -55,5 +60,4 @@ class Skynet:
             if groups is None:
                 return None
 
-            self.sync_volume()
-            return self.const.SKYNET
+            return self.sync_volume()

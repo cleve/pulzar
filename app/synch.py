@@ -7,6 +7,9 @@ from utils.stream import Config
 import shutil
 
 
+def restore():
+    pass
+
 def synchronize():
     utils = Utils()
     const = Constants()

@@ -19,6 +19,11 @@ class Master:
             self.master_env, env, start_response)
         request_type = request['action']
         print(request)
+        
+        if request_type == self.const.SKYNET_RESTORE:
+            self.response.set_response('200 OK')
+            self.response.set_message(b'start backup')
+
         if request_type == self.const.SKYNET_RECORD_ADDED:
             self.response.set_response('200 OK')
             self.response.set_message(b'ok')

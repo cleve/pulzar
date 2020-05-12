@@ -162,7 +162,32 @@ A JSON will be sent, of type:
 
 ## Backup
 
+To backup the data, you only need to save the directory configured in the config file.
+The example shows **/tmp/volume**. So you can simply Tar or Zip the files and move it to another 
+place.
+
 ## Restore
+
+Its pretty simple, just follow the next steps:
+
+## Volume restauration
+
+1. If its a fresh installation, make sure to fill up the volume configuration under **app/config**
+directory. If not, go to step **2**.
+
+2. In order to restore the files, just untar the files
+previously backed into the directory configured.
+
+3. Start the volume server
+
+## Master restauration
+
+1. If its a fresh installation, make sure to fill up the master configuration under **app/config**
+directory.
+
+2. Start the Master server.
+
+3. Wait 10 mins, the volumes will synch automatically.
 
 # Internal methods
 

@@ -34,6 +34,7 @@ def synchronize():
             '/autodiscovery'
         )
         req.make_request()
+        print('response: ', req.response)
         return
     req = CoreRequest(
         server_host,
@@ -48,6 +49,9 @@ def synchronize():
         'port': volume_port
     })
     req.make_request()
+    py_object = utils.json_to_py(req.response)
+    if py_object['response'] == 'start_backup':
+        restore()
 
 
 synchronize()

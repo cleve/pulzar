@@ -11,6 +11,7 @@ class CoreRequest:
         self.path = url_path
         self.request_type = ReqType.GET
         self.payload = None
+        self.response = None
 
     def set_type(self, type_request=ReqType.GET):
         self.request_type = type_request
@@ -21,7 +22,7 @@ class CoreRequest:
     def set_payload(self, payload):
         self.payload = payload
 
-    def make_request(self):
+    def make_request(self, json_request=True):
         # Check
         req = None
         complete_url = 'http://' + self.host + ':' + self.port + self.path
@@ -41,5 +42,6 @@ class CoreRequest:
             )
 
         if req.status_code == 200:
+            self.response = req.json()
             return True
         return False

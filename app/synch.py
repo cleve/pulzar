@@ -14,6 +14,7 @@ def restore():
     volume_dir = server_config.get_config('volume', 'dir')
     directory = os.fsencode(volume_dir)
     # Iterate over files
+    # TODO: Find an efficient way!
     for file_item in os.listdir(directory):
         filename = os.fsdecode(file_item)
         print(os.path.join(directory, filename))

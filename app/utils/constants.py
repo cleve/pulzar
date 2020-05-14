@@ -21,6 +21,7 @@ class Constants:
         self.PASS = 'admin'
         self.PASSPORT = 'passport'
         self.THIRD_PARTY_DIR = 'master/third_party'
+        self.START_BK = 'start_backup'
 
         # Config
         self.CONF_HOST = 'host'

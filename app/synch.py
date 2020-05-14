@@ -5,14 +5,21 @@ from utils.constants import ReqType
 from core.core_db import DB
 from utils.stream import Config
 import shutil
-
+import os
+const = Constants()
 
 def restore():
-    pass
+    # Backup directory
+    server_config = Config(const.CONF_PATH)
+    volume_dir = server_config.get_config('volume', 'dir')
+    directory = os.fsencode(volume_dir)
+    # Iterate over files
+    for file_item in os.listdir(directory):
+        filename = os.fsdecode(file_item)
+        print(os.path.join(directory, filename))
 
 def synchronize():
     utils = Utils()
-    const = Constants()
     server_config = Config(const.CONF_PATH)
     db_stats = DB(const.DB_STATS)
     server_host = server_config.get_config('server', 'host')
@@ -50,7 +57,7 @@ def synchronize():
     })
     req.make_request()
     py_object = utils.json_to_py(req.response)
-    if py_object['response'] == 'start_backup':
+    if py_object['response'] == const.START_BK:
         restore()
 
 

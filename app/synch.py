@@ -6,21 +6,19 @@ from core.core_db import DB
 from utils.stream import Config
 import shutil
 import os
+
+# Helpers
 const = Constants()
+utils = Utils()
 
 def restore():
     # Backup directory
     server_config = Config(const.CONF_PATH)
     volume_dir = server_config.get_config('volume', 'dir')
-    directory = os.fsencode(volume_dir)
-    # Iterate over files
-    # TODO: Find an efficient way!
-    for file_item in os.listdir(directory):
-        filename = os.fsdecode(file_item)
-        print(os.path.join(directory, filename))
+    for file_item in utils.read_file_name_from_dir(volume_dir):
+        print(file_item)
 
 def synchronize():
-    utils = Utils()
     server_config = Config(const.CONF_PATH)
     db_stats = DB(const.DB_STATS)
     server_host = server_config.get_config('server', 'host')

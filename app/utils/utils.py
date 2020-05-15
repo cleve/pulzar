@@ -109,6 +109,10 @@ class Utils:
             file_list.append(os.path.basename(raw_path))
         return file_list
 
+    def get_all_files(self, directory, rec=True):
+        "Return an iterator"
+        return glob.iglob(directory, recursive=rec)
+
     # Custom methods
     def extract_url_data(self, complete_url):
         data = {

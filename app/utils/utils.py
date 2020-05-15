@@ -110,7 +110,9 @@ class Utils:
         return file_list
 
     def get_all_files(self, directory, rec=True):
-        "Return an iterator"
+        """Return an iterator
+            directory must have /.../** in order to get recursive results
+        """
         return glob.iglob(directory, recursive=rec)
 
     # Custom methods

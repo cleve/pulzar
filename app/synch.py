@@ -10,17 +10,31 @@ import os
 # Helpers
 const = Constants()
 utils = Utils()
+db_stats = DB(const.DB_STATS)
 
 def restore():
     # Backup directory
     server_config = Config(const.CONF_PATH)
     volume_dir = server_config.get_config('volume', 'dir')
+    volume_host = db_stats.get_value(
+        utils.encode_str_to_byte(const.SERVER_NAME))
+    # Master url
+    server_host = server_config.get_config('server', 'host')
+    server_port = server_config.get_config('server', 'port')
+    # Confirming with master.
+    req = CoreRequest(
+        server_host, server_port, const.START_BK)
+    req.set_type(ReqType.POST)
+    # We have to send the key, volume and port.
     for file_item in utils.read_file_name_from_dir(volume_dir):
         print(file_item)
+        req.set_payload({
+            'key': file_item,
+            'volume': volume_host
+        })
 
 def synchronize():
     server_config = Config(const.CONF_PATH)
-    db_stats = DB(const.DB_STATS)
     server_host = server_config.get_config('server', 'host')
     server_port = server_config.get_config('server', 'port')
     # Volume machine

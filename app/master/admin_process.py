@@ -26,12 +26,34 @@ class AdminProcess:
                 call_path_list = [x for x in call_path_list if x != '']
                 # All nodes
                 if len(call_path_list) == 1 and call_path_list[0] == 'network':
+                    nodes_info = []
                     nodes = self.db_volumes.get_keys_values(to_str=True)
-                    self.complex_response['parameters'] = self.utils.py_to_json([{'node': n[0], 'percent':int(n[1])} for n in nodes], to_bin=True)
-                    
+                    for node in nodes:
+                        node_name = node[0]
+                        raw_split_info = node[1].split(':')
+                        nodes_info.append(
+                            {
+                                'node': node_name,
+                                'percent': raw_split_info[0],
+                                'load': raw_split_info[1],
+                                'synch': True
+                            }
+                        )
+
+                    self.complex_response['parameters'] = self.utils.py_to_json(
+                        nodes_info,
+                        to_bin=True
+                    )
+
                 elif len(call_path_list) == 2 and call_path_list[0] == 'network':
                     node_to_search = self.utils.encode_str_to_byte(call_path_list[1])
-                    get_result = {'percent': self.db_volumes.get_value(node_to_search, to_str=True)}
+                    node = self.db_volumes.get_value(node_to_search, to_str=True)
+                    raw_split_info = node.split(':')
+                    get_result = {
+                        'percent': raw_split_info[0],
+                        'load': raw_split_info[1],
+                        'synch': True
+                    }
                     self.complex_response['parameters'] = self.utils.py_to_json(get_result, to_bin=True)
                 
                 else:

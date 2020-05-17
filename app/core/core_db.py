@@ -53,3 +53,12 @@ class DB:
             if to_str:
                 return [[key.decode(), val.decode()] for key, val in txn.cursor()]
             return [[key, val] for key, val in txn.cursor()]
+
+    def count_values(self, value, split=None):
+        value = value.decode()
+        counter = 0
+        with self.env.begin() as txn:
+            for _, val in txn.cursor():
+                if value == val.decode().split(split)[0]:
+                    counter += 1
+            return counter

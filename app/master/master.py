@@ -30,14 +30,20 @@ class Master:
             self.response.set_response('200 OK')
             self.response.set_message(b'ok')
 
+        if request_type == self.const.SKYNET_RECORD_RESTORED:
+            self.response.set_response('200 OK')
+            self.response.set_message(
+                self.utils.py_to_json({'response': {'msg': 'ok'}}, to_bin=True)
+            )
         if request_type == self.const.SKYNET_RECORD_ALREADY_ADDED:
             self.response.set_response('406 Not acceptable')
             self.response.set_message(b'already created')
 
         if request_type == self.const.SKYNET:
             self.response.set_response('200 OK')
-            self.response.set_message(b'synch ok')
-
+            self.response.set_message(
+                self.utils.py_to_json({'response': {'synch': request['parameters']}}, to_bin=True)
+            )
         if request_type == self.const.ADMIN:
             self.response.set_response('200 OK')
             self.response.set_message(request['parameters'])

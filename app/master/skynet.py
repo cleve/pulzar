@@ -10,18 +10,25 @@ class Skynet:
         self.utils = Utils()
         self.env = env
         self.db_volume = DB(self.const.DB_VOLUME)
+        self.master_db = DB(self.const.DB_PATH)
 
         # Skynet options
         self.sync_status = self.const.SKYNET + '/sync'
         self.sync_key_added = self.const.SKYNET + '/add_record'
+        self.start_backup = self.const.SKYNET + '/start_backup'
 
+    def restore_master(self):
+        body = Body()
+        params = body.extract_params(self.env)
+        print('params', params)
+    
     def save_key_and_volume(self):
         # Extract and save value into DB.
-        master_db = DB(self.const.DB_PATH)
+        self.master_db = DB(self.const.DB_PATH)
         body = Body()
         params = body.extract_params(self.env)
         # Saving data
-        return master_db.put_value(
+        return self.master_db.put_value(
             params[b'key'][0],
             params[b'volume'][0]
         )
@@ -30,25 +37,37 @@ class Skynet:
         response = self.const.SKYNET
         body = Body()
         params = body.extract_params(self.env)
+        volume_data = self.db_volume.get_value(params[b'host'][0])
         # Check if volume exists.
-        if self.db_volume.get_value(params[b'host'][0]) is None:
-            response = self.const.SKYNET_RESTORE
-        meta_data = self.utils.decode_byte_to_str(params[b'percent'][0]) + ':' + self.utils.decode_byte_to_str(params[b'load'][0])
+        if volume_data is None:
+            response = self.const.SKYNET, False
+        # Get records registered
+        records_in_master = self.master_db.count_values(params[b'host'][0],':')
+        # volume_registered
+        volume_records = self.utils.decode_byte_to_str(params[b'total'][0])
+        volume_records_int = int(volume_records)
+        meta_data = self.utils.decode_byte_to_str(
+            params[b'percent'][0]) + ':' + self.utils.decode_byte_to_str(params[b'load'][0]) + ':' + volume_records
         self.db_volume.update_or_insert_value(
             params[b'host'][0],
             self.utils.encode_str_to_byte(meta_data)
         )
-        return response
+        return response, volume_records_int == records_in_master
 
     def process_request(self, url_path, method):
         if method != self.const.POST:
             return None
 
+        # Restoring data.
+        if url_path.find(self.start_backup) == 1:
+            self.restore_master()
+            return self.const.SKYNET_RECORD_RESTORED, True
+            
         # This is a confirmation from volume.
         if url_path.find(self.sync_key_added) == 1:
             if self.save_key_and_volume():
-                return self.const.SKYNET_RECORD_ADDED
-            return self.const.SKYNET_RECORD_ALREADY_ADDED
+                return self.const.SKYNET_RECORD_ADDED, None
+            return self.const.SKYNET_RECORD_ALREADY_ADDED, None
 
         # This is a meta-data received from volume
         if url_path.find(self.sync_status) == 1:
@@ -58,6 +77,6 @@ class Skynet:
                 self.const.RE_URL_OPTION_ORDER
             )
             if groups is None:
-                return None
+                return None, None
 
             return self.sync_volume()

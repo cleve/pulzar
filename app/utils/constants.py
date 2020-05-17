@@ -81,6 +81,7 @@ class Constants:
         self.SKYNET = 'skynet'
         self.SKYNET_RESTORE = 'skynet_restore'
         self.SKYNET_RECORD_ADDED = 'skynet_record_added'
+        self.SKYNET_RECORD_RESTORED = 'skynet_record_restored'
         self.SKYNET_RECORD_ALREADY_ADDED = 'skynet_record_already'
         self.KEY_NOT_FOUND = 'key_not_found'
         self.KEY_FOUND = 'key_found'

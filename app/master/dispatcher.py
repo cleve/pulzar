@@ -35,8 +35,10 @@ class Dispatcher:
         # Skynet
         if self.utils.match_regex(url_path, self.re_skynet):
             skynet = Skynet(env)
-            self.complex_response['action'] = skynet.process_request(
+            action, synch_complete = skynet.process_request(
                 url_path, method)
+            self.complex_response['action'] = action 
+            self.complex_response['parameters'] = synch_complete
             return self.complex_response
 
         # Admin

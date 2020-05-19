@@ -28,10 +28,11 @@ class Constants:
         self.CONF_PORT = 'port'
         self.CONF_PATH = 'config/server.conf'
 
-        # Database
+        # Databases
         self.DB_PATH = 'storage/master.db'
         self.DB_VOLUME = 'storage/volume.db'
         self.DB_STATS = 'storage/volume_st.db'
+        self.DB_BACKUP = 'storage/volume_bk.db'
 
         # Env
         self.REQUEST_METHOD = 'REQUEST_METHOD'

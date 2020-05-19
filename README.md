@@ -28,6 +28,9 @@ port=9001
 
 ### Start system
 
+If you are in Ubuntu, remove the default **uwsgi** package installed, and use 
+**pip** to get the proper one.
+
 ```sh
 cd app
 uwsgi --ini config/master.ini

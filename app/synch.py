@@ -51,7 +51,7 @@ class Synchro:
             print(file_item)
             req.set_payload({
                 'key': self.utils.get_base_name_from_file(file_item),
-                'volume': self.volume_host,
+                'volume': self.volume_host.decode() + ':' + self.volume_port,
                 'total': total_files
             })
             req.make_request()

@@ -189,6 +189,10 @@ directory.
 
 3. Wait 10 mins, the volumes will synch automatically.
 
+## Replica/Mirror
+
+Pending
+
 # Internal methods
 
 Used internally to sync

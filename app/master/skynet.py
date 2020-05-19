@@ -20,11 +20,16 @@ class Skynet:
     def restore_master(self):
         body = Body()
         params = body.extract_params(self.env)
-        print('params', params)
+        key = params[b'key'][0]
+        volume = params[b'volume'][0]
+        # Saving data
+        return self.master_db.put_value(
+            key,
+            volume
+        )
     
     def save_key_and_volume(self):
         # Extract and save value into DB.
-        self.master_db = DB(self.const.DB_PATH)
         body = Body()
         params = body.extract_params(self.env)
         # Saving data
@@ -60,8 +65,7 @@ class Skynet:
 
         # Restoring data.
         if url_path.find(self.start_backup) == 1:
-            self.restore_master()
-            return self.const.SKYNET_RECORD_RESTORED, True
+            return self.const.SKYNET_RECORD_RESTORED, self.restore_master()
             
         # This is a confirmation from volume.
         if url_path.find(self.sync_key_added) == 1:

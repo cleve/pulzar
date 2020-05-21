@@ -23,6 +23,10 @@ class DB:
     def get_value(self, key_string, to_str=False):
         with self.env.begin(write=False) as txn:
             return txn.get(key_string) if not to_str else txn.get(key_string).decode()
+    
+    def get_equal_value(self, key_string, value):
+        with self.env.begin(write=False) as txn:
+            return txn.get(key_string) == value
 
     def delete_value(self, key_string):
         with self.env.begin(write=True) as txn:

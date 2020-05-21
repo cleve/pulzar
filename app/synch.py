@@ -47,7 +47,7 @@ class Synchro:
             if file_item == self.volume_dir + '/':
                 continue
             file_item_byte = self.utils.encode_str_to_byte(self.utils.get_base_name_from_file(file_item))
-            if backup_db.get_equal_value(file_item_byte, b'0'):
+            if backup_db.get_equal_value(file_item_byte, b'1'):
                 counter += 1
         return counter
     

@@ -210,6 +210,10 @@ volume:[port]/autodiscovery
 To run the DB locally, point your name machine properly to 127.0.0.1 in the 
 **/etc/hosts** file.
 
+In order to debug faster, I created an app to view values from LMDB:
+
+https://github.com/cleve/lmdb-viewer
+
 ## Keys
 
 Keys will be encoded in base64, only ASCII chars are allowed.

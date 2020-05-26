@@ -33,6 +33,10 @@ class Volume:
             self.utils.encode_str_to_byte(
                 self.volume_env[self.const.SERVER_PORT])
         )
+        db.update_or_insert_value(
+            self.utils.encode_str_to_byte('restored'),
+            self.utils.encode_str_to_byte('ready')
+        )
 
     def process_request(self, env, start_response):
         # Get request type

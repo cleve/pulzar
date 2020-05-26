@@ -28,6 +28,13 @@ class Utils:
         byte_string = self.encode_str_to_byte(string)
         return base64.b64encode(byte_string) if not to_str else self.decode_byte_to_str(base64.b64encode(byte_string))
 
+    def encode_byte_base_64(self, bstring, to_str=False):
+        byte_string = bstring
+        return base64.b64encode(byte_string) if not to_str else self.decode_byte_to_str(base64.b64encode(byte_string))
+
+    def decode_base_64(self, string64, to_str=False):
+        return base64.b64decode(string64) if not to_str else self.decode_byte_to_str(base64.b64decode(string64))
+
     def encode_str_to_byte(self, string):
         return string.encode()
 

@@ -22,6 +22,7 @@ class Skynet:
         params = body.extract_params(self.env)
         key = params[b'key'][0]
         volume = params[b'volume'][0]
+        print('key: ', key)
         # Saving data
         return self.master_db.put_value(
             key,
@@ -42,12 +43,14 @@ class Skynet:
         response = self.const.SKYNET
         body = Body()
         params = body.extract_params(self.env)
+        print("params", params)
         volume_data = self.db_volume.get_value(params[b'host'][0])
         # Check if volume exists.
         if volume_data is None:
             response = self.const.SKYNET, False
         # Get records registered
         records_in_master = self.master_db.count_values(params[b'host'][0],':')
+        print("records_in_master", records_in_master)
         # volume_registered
         volume_records = self.utils.decode_byte_to_str(params[b'total'][0])
         volume_records_int = int(volume_records)

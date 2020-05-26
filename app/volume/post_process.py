@@ -2,12 +2,14 @@ from utils.utils import Utils
 from utils.constants import ReqType
 from utils.file_utils import FileUtils
 from core.core_request import CoreRequest
+from core.core_db import DB
 
 
 class PostProcess:
     def __init__(self, constants):
         self.const = constants
         self.utils = Utils()
+        self.db_backup = DB(self.const.DB_BACKUP)
         self.file_utils = FileUtils(self.const)
         self.complex_response = {
             'action': None,
@@ -33,6 +35,13 @@ class PostProcess:
             # If an error ocurr in the server, we need to delete the file.
             self.file_utils.remove_file()
             return False
+        try:
+            self.db_backup.put_value(
+                self.file_utils.binary_key,
+                b'1'
+            )
+        except Exception as err:
+            print('notify_record_to_master', err)
         return True
 
     def process_request(self, env, start_response, url_path):

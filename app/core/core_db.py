@@ -9,7 +9,7 @@ class DB:
 
     def init_db(self):
         try:
-            self.env = lmdb.open(self.db_path)
+            self.env = lmdb.open(self.db_path, max_dbs=1)
         except Exception as err:
             raise Exception("DB Class", err)
 
@@ -27,6 +27,14 @@ class DB:
     def get_equal_value(self, key_string, value):
         with self.env.begin(write=False) as txn:
             return txn.get(key_string) == value
+
+    def get_key_equal_to_value(self, value):
+        """Return first match"""
+        with self.env.begin(write=False) as txn:
+            for key, val in txn.cursor():
+                if value == val:
+                    return key
+            return None
 
     def delete_value(self, key_string):
         with self.env.begin(write=True) as txn:
@@ -58,6 +66,13 @@ class DB:
                 return [[key.decode(), val.decode()] for key, val in txn.cursor()]
             return [[key, val] for key, val in txn.cursor()]
 
+    def get_first_occ_with_value(self, value):
+        with self.env.begin(write=False) as txn:
+            for key, val in txn.cursor():
+                if value == val:
+                    return key
+            return None
+    
     def count_values(self, value, split=None):
         value = value.decode()
         counter = 0

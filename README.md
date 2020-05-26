@@ -210,7 +210,7 @@ volume:[port]/autodiscovery
 To run the DB locally, point your name machine properly to 127.0.0.1 in the 
 **/etc/hosts** file.
 
-In order to debug faster, I created an app to view values from LMDB:
+In order to debug faster, I created an app to view values from LMDB. This app runs over Java 11.
 
 https://github.com/cleve/lmdb-viewer
 

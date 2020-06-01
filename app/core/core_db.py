@@ -13,6 +13,9 @@ class DB:
         except Exception as err:
             raise Exception("DB Class", err)
 
+    def get_cursor_iterator(self):
+        return self.env.begin(write=False)
+
     def put_value(self, key_string, value):
         with self.env.begin(write=True) as txn:
             if not txn.get(key_string):

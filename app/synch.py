@@ -21,7 +21,7 @@ class Synchro:
         self.restored_ready = None
         # Init main variables
         self.get_config()
-        self.local_verificator()
+        self.local_verificator2()
 
     def get_config(self):
         server_config = Config(self.const.CONF_PATH)
@@ -31,7 +31,7 @@ class Synchro:
         self.restored_ready = self.db_stats.get_value(
             self.utils.encode_str_to_byte('restored'))
         self.volume_port = server_config.get_config('volume', 'port')
-        self.backup_chunk = server_config.get_config('volume', 'backup_chunk')
+        self.backup_chunk = int(server_config.get_config('volume', 'backup_chunk'))
         # Master url
         self.server_host = server_config.get_config('server', 'host')
         self.server_port = server_config.get_config('server', 'port')
@@ -46,7 +46,7 @@ class Synchro:
                 b'0'
             )
     
-    def count_files_bk(self):
+    def count_files_synchronized(self):
         counter = 0
         for file_item in self.utils.get_all_files(self.volume_dir + '/**'):
             if file_item == self.volume_dir + '/':
@@ -56,12 +56,20 @@ class Synchro:
                 counter += 1
         return counter
 
+    def local_verificator2(self):
+        for file_item in self.utils.get_all_files(self.volume_dir + '/**'):
+            if file_item == self.volume_dir + '/':
+                continue
+            file_item_byte = self.utils.encode_str_to_byte(self.utils.get_base_name_from_file(file_item))
+            # If not present, create it to future synch.
+            if not self.db_backup.get_equal_value(file_item_byte, b'1'):
+                self.db_backup.update_or_insert_value(file_item_byte, b'0')
+    
     def local_verificator(self):
         base_path = self.volume_dir + '/'
         bkey = self.db_backup.get_first_occ_with_value(b'1')
         if bkey is not None and not self.utils.file_exists(base_path + self.utils.encode_byte_base_64(bkey, True)):
             # Inform a lake
-            print('local_verificator', bkey)
             self.db_backup.update_value(bkey, b'0')
     
     def count_files(self):
@@ -76,33 +84,38 @@ class Synchro:
         if not self.utils.dir_exists(self.volume_dir):
             print('Dir {} does not exist'.format(self.volume_dir))
             return
-        total_files = self.count_files_bk()
+        total_files = self.count_files_synchronized()
         # Restoring chunk configured
-        key_to_restore = self.db_backup.get_key_equal_to_value(b'0')
-        print("keytorestore", key_to_restore)
-        return
-        req = CoreRequest(
-            self.server_host, self.server_port, '/' + self.const.SKYNET + '/' + self.const.START_BK)
-        req.set_type(ReqType.POST)
-        # We have to send the key, volume and port.
-        for file_item in self.utils.get_all_files(self.volume_dir + '/**'):
-            if file_item == self.volume_dir + '/':
-                continue
-            print(file_item)
-            req.set_payload({
-                'key': self.utils.get_base_name_from_file(file_item),
-                'volume': self.volume_host.decode() + ':' + self.volume_port,
-                'total': total_files
-            })
-            req.make_request()
-            py_object = self.utils.json_to_py(req.response)
-            if 'msg' in py_object['response'] and py_object['response']['msg'] == 'ok':
-                # Mark as restored
-                self.db_backup.update_or_insert_value(
-                    file_item.encode(),
-                    b'1'
-                )
-                print('Record added')
+        
+        restored = 0
+        with self.db_backup.get_cursor_iterator() as txn:
+            for _, data in enumerate(txn.cursor().iternext(keys=True,values=True)):
+                bkey = data[0]
+                bval = data[1]
+                if bval == b'1':
+                    continue
+                req = CoreRequest(
+                    self.server_host, self.server_port, '/' + self.const.SKYNET + '/' + self.const.START_BK)
+                req.set_type(ReqType.POST)
+                # We have to send the key, volume and port.
+                
+                req.set_payload({
+                    'key': bkey,
+                    'volume': self.volume_host.decode() + ':' + self.volume_port,
+                    'total': total_files
+                })
+                req.make_request()
+                py_object = self.utils.json_to_py(req.response)
+                if 'msg' in py_object['response'] and py_object['response']['msg'] == 'ok':
+                    # Mark as restored
+                    self.db_backup.update_or_insert_value(
+                        bkey,
+                        b'1'
+                    )
+                    print('Record restored')
+                    restored += 1
+                if restored >= self.backup_chunk:
+                    break
 
     def synchronize(self):
         # Gets disk usage
@@ -132,7 +145,7 @@ class Synchro:
             'load': volume_load,
             'host': self.volume_host.decode(),
             'port': self.volume_port,
-            'total': self.count_files()
+            'total': self.count_files_synchronized()
         })
         req.make_request()
         if req.response is None:

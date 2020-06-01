@@ -19,6 +19,7 @@ class Synchro:
         self.volume_port = None
         self.backup_chunk = None
         self.restored_ready = None
+        self.mark_of_local_verification = b'varidb_execute_file_verification'
         # Init main variables
         self.get_config()
         self.local_verificator2()
@@ -57,6 +58,11 @@ class Synchro:
         return counter
 
     def local_verificator2(self):
+        # Executed only once
+        verification = self.db_backup.get_value(self.mark_of_local_verification)
+        if verification is not None:
+            return
+        start_time = self.utils.get_time_it()
         for file_item in self.utils.get_all_files(self.volume_dir + '/**'):
             if file_item == self.volume_dir + '/':
                 continue
@@ -64,13 +70,9 @@ class Synchro:
             # If not present, create it to future synch.
             if not self.db_backup.get_equal_value(file_item_byte, b'1'):
                 self.db_backup.update_or_insert_value(file_item_byte, b'0')
-    
-    def local_verificator(self):
-        base_path = self.volume_dir + '/'
-        bkey = self.db_backup.get_first_occ_with_value(b'1')
-        if bkey is not None and not self.utils.file_exists(base_path + self.utils.encode_byte_base_64(bkey, True)):
-            # Inform a lake
-            self.db_backup.update_value(bkey, b'0')
+        self.db_backup.update_or_insert_value(self.mark_of_local_verification, b'1')
+        end_time = self.utils.get_time_it()
+        print('Local verification completed in ', end_time - start_time, '(s)')
     
     def count_files(self):
         counter = 0
@@ -85,8 +87,7 @@ class Synchro:
             print('Dir {} does not exist'.format(self.volume_dir))
             return
         total_files = self.count_files_synchronized()
-        # Restoring chunk configured
-        
+        # Restoring chunk configure
         restored = 0
         with self.db_backup.get_cursor_iterator() as txn:
             for _, data in enumerate(txn.cursor().iternext(keys=True,values=True)):

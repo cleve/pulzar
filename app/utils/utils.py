@@ -8,6 +8,7 @@ import glob
 import os
 import psutil
 import datetime
+from timeit import default_timer as timer
 
 # Internal
 from utils.constants import Constants
@@ -21,6 +22,9 @@ class Utils:
     def get_current_datetime_str(self):
         return datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     
+    def get_time_it(self):
+        return timer()
+
     # JSON section
     def py_to_json(self, py_object, to_bin=False):
         return json.dumps(py_object) if not to_bin else self.encode_str_to_byte(json.dumps(py_object))

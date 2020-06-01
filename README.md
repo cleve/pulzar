@@ -24,7 +24,10 @@ port=9000
 # Where to store files
 dir=/tmp/volume
 port=9001
+backup_chunk=200
 ```
+
+Where *backup_chunk* is the amount of register to be synchronized in the backup mode.
 
 ### Start system
 
@@ -202,7 +205,7 @@ Used internally to sync
 
 ```sh
 master:[port]/skynet/
-volume:[port]/autodiscovery
+volume:[port]/autodiscovery/
 ```
 
 # Dev

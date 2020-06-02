@@ -28,15 +28,18 @@ class AdminProcess:
                 if len(call_path_list) == 1 and call_path_list[0] == 'network':
                     nodes_info = []
                     nodes = self.db_volumes.get_keys_values(to_str=True)
+                    current_datetime = self.utils.get_current_datetime()
                     for node in nodes:
                         node_name = node[0]
                         raw_split_info = node[1].split(':')
+                        node_datetime = self.utils.get_datetime_from_string(raw_split_info[3])
+                        delta_t = current_datetime - node_datetime 
                         nodes_info.append(
                             {
                                 'node': node_name,
                                 'percent': raw_split_info[0],
                                 'load': raw_split_info[1],
-                                'synch': True
+                                'synch': True if delta_t.total_seconds() < 1200 else False
                             }
                         )
 
@@ -48,11 +51,14 @@ class AdminProcess:
                 elif len(call_path_list) == 2 and call_path_list[0] == 'network':
                     node_to_search = self.utils.encode_str_to_byte(call_path_list[1])
                     node = self.db_volumes.get_value(node_to_search, to_str=True)
+                    current_datetime = self.utils.get_current_datetime()
                     raw_split_info = node.split(':')
+                    node_datetime = self.utils.get_datetime_from_string(raw_split_info[3])
+                    delta_t = current_datetime - node_datetime 
                     get_result = {
                         'percent': raw_split_info[0],
                         'load': raw_split_info[1],
-                        'synch': True
+                        'synch': True if delta_t.total_seconds() < 1200 else False
                     }
                     self.complex_response['parameters'] = self.utils.py_to_json(get_result, to_bin=True)
                 

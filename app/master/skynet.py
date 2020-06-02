@@ -52,10 +52,11 @@ class Skynet:
         records_in_master = self.master_db.count_values(params[b'host'][0],':')
         print("records_in_master", records_in_master)
         # volume_registered
+        current_datetime = self.utils.get_current_datetime_str()
         volume_records = self.utils.decode_byte_to_str(params[b'total'][0])
         volume_records_int = int(volume_records)
         meta_data = self.utils.decode_byte_to_str(
-            params[b'percent'][0]) + ':' + self.utils.decode_byte_to_str(params[b'load'][0]) + ':' + volume_records
+            params[b'percent'][0]) + ':' + self.utils.decode_byte_to_str(params[b'load'][0]) + ':' + volume_records + ':' + current_datetime
         self.db_volume.update_or_insert_value(
             params[b'host'][0],
             self.utils.encode_str_to_byte(meta_data)

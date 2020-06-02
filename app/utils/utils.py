@@ -22,6 +22,12 @@ class Utils:
     def get_current_datetime_str(self):
         return datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     
+    def get_current_datetime(self):
+        return datetime.datetime.now()
+    
+    def get_datetime_from_string(self, datetime_str):
+        return datetime.datetime.strptime(datetime_str, "%Y-%m-%d-%H-%M-%S")
+
     def get_time_it(self):
         return timer()
 

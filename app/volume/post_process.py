@@ -37,7 +37,7 @@ class PostProcess:
             return False
         try:
             self.db_backup.put_value(
-                self.file_utils.binary_key,
+                self.file_utils.key.encode(),
                 b'1'
             )
         except Exception as err:

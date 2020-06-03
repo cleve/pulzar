@@ -145,7 +145,8 @@ A JSON list will be sent, of type:
 [
     {
         "node": "node_name",
-        "percent": 13
+        "percent": 13,
+        "synch": true
     }
 ]
 ```
@@ -162,7 +163,8 @@ A JSON will be sent, of type:
 ```json
 {
     "node": "node_name",
-    "percent": 13
+    "percent": 13,
+    "synch": true
 }
 ```
 

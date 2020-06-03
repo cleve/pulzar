@@ -57,22 +57,24 @@ class Master:
             # Here redirection or negotiation
             url_path = env[self.const.PATH_INFO]
             if request['volume'] is None:
-                print('There is not volumes registered')
-                return
-            redirect_url = 'http://' + self.utils.decode_byte_to_str(
-                request['volume']) + url_path
-            self.response.set_response('307 temporary redirect')
-            self.response.set_redirection(redirect_url)
-            
+                self.response.set_response('203 No Content')
+                self.response.set_message(b'There is not volumes registered or online')
+            else:
+                redirect_url = 'http://' + self.utils.decode_byte_to_str(
+                    request['volume']) + url_path
+                self.response.set_response('307 temporary redirect')
+                self.response.set_redirection(redirect_url)
+                
         if request_type == self.const.REDIRECT_POST:
             if request['volume'] is None:
-                print('There is not volumes registered')
-                return
-            redirect_url = 'http://' + self.utils.decode_byte_to_str(
-                request['volume']) + ':9001' + env[self.const.PATH_INFO] + '?url=' + self.master_env[self.const.HTTP_HOST]
-            self.response.set_response('307 temporary redirect')
-            self.response.set_redirection(redirect_url)
-            self.response.set_message(b'ok')
+                self.response.set_response('203 No Content')
+                self.response.set_message(b'There is not volumes registered or online')
+            else:
+                redirect_url = 'http://' + self.utils.decode_byte_to_str(
+                    request['volume']) + ':9001' + env[self.const.PATH_INFO] + '?url=' + self.master_env[self.const.HTTP_HOST]
+                self.response.set_response('307 temporary redirect')
+                self.response.set_redirection(redirect_url)
+                self.response.set_message(b'ok')
 
         if request_type == self.const.TP_RESPONSE:
             self.response.set_response('200 OK')

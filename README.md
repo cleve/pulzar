@@ -218,3 +218,26 @@ https://github.com/cleve/lmdb-viewer
 ## Keys
 
 Keys will be encoded in base64, only ASCII chars are allowed.
+
+# Test
+For test purposes files of 1kb were used.
+
+## Write tests
+
+### Synchronical executions
+
+For a set of 10000 instances
+
+Request time: 0.24316366999999997(s)
+Total time: 0.2599792804300023(s)
+
+## Read tests
+
+### Synchronical executions
+
+Request time: 0.16126144000000003(s)
+Total time: 0.17557080925000265(s)
+
+## Restore testlm
+
+Preparing 600 files: 23.977071480000177(s)

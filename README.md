@@ -132,6 +132,13 @@ def execute(arguments):
 
 ## System information
 
+### Get master status
+
+```sh
+master:[port]/admin/status
+curl -X GET -L http://master:[port]/admin/status
+```
+
 ### Get network status
 
 ```sh

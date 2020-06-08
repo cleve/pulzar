@@ -16,6 +16,9 @@ class DB:
     def get_cursor_iterator(self):
         return self.env.begin(write=False)
 
+    def get_stats(self):
+        return self.env.stat()
+
     def put_value(self, key_string, value):
         with self.env.begin(write=True) as txn:
             if not txn.get(key_string):

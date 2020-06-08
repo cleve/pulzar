@@ -62,6 +62,9 @@ class AdminProcess:
                     }
                     self.complex_response['parameters'] = self.utils.py_to_json(get_result, to_bin=True)
                 
+                if len(call_path_list) == 1 and call_path_list[0] == 'status':
+                    db_master = DB(self.const.DB_PATH)
+                    self.complex_response['parameters'] = self.utils.py_to_json(db_master.get_stats(), to_bin=True)
                 else:
                     self.complex_response['action'] = self.const.KEY_NOT_FOUND
                 return self.complex_response

@@ -139,6 +139,19 @@ master:[port]/admin/status
 curl -X GET -L http://master:[port]/admin/status
 ```
 
+The response is a binding from LMDB info.
+
+```json
+{
+    "psize": 4096,
+    "depth": 2,
+    "branch_pages": 1,
+    "leaf_pages": 7,
+    "overflow_pages": 0,
+    "entries": 600
+}
+```
+
 ### Get network status
 
 ```sh

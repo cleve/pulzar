@@ -259,6 +259,11 @@ For a set of 10000 instances
 * Request time: 0.16126144000000003(s)
 * Total time: 0.17557080925000265(s)
 
+## Delete tests
+
+* Request time: 0.17187763999999994
+* Total time: 0.26895125860000463
+
 ## Restore test
 
 Preparing 600 files: 23.977071480000177(s)

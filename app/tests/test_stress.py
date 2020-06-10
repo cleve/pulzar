@@ -70,7 +70,32 @@ def start_read_test():
         print('Bad cases {} total time with average of {}'.format(len(time_errors), sum(time_errors)/len(time_errors)))
 
 
+def start_delete_test():
+    print('====== Delete tests ======')
+    time_request = []
+    time_register = []
+    time_errors = []
+    for key in keys:
+        start = timer()
+        req = requests.delete(
+            url=MASTER_URL + 'delete_key/' + key
+        )
+        if req.status_code >= 200 and req.status_code < 300:
+            time_register.append(timer() - start)
+            time_request.append(req.elapsed.total_seconds())
+        else:
+            time_errors.append(timer() - start)
+
+    if len(time_request) > 0:
+        print('Good cases {} request time with average of {}'.format(len(time_request), sum(time_request)/len(time_request)))
+        print('Good cases {} total time with average of {}'.format(len(time_register), sum(time_register)/len(time_register)))
+    
+    if len(time_errors) > 0:
+        print('Bad cases {} total time with average of {}'.format(len(time_errors), sum(time_errors)/len(time_errors)))
+
+
 start_write_test()
 start_read_test()
+start_delete_test()
 
 

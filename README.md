@@ -188,6 +188,10 @@ A JSON will be sent, of type:
 }
 ```
 
+## Auto-backup
+
+An auto-backup can be configured using the configuration file, unser the *backup* section.
+
 ## Backup
 
 To backup the data, you only need to save the directory configured in the config file.

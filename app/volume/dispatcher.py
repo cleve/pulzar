@@ -1,6 +1,7 @@
 from utils.constants import Constants
 from volume.get_process import GetProcess
 from volume.post_process import PostProcess
+from volume.put_process import PutProcess
 from volume.delete_process import DeleteProcess
 
 
@@ -59,9 +60,16 @@ class Dispatcher:
                 self.complex_response = response
                 return self.complex_response
 
-            # Post key-value.
+            # POST key-value.
             if method == self.const.POST:
                 post_request = PostProcess(self.const)
                 self.complex_response = post_request.process_request(
                     env, start_response, url_path)
+
+            # PUT key-value.
+            if method == self.const.PUT:
+                put_request = PutProcess(self.const)
+                self.complex_response = put_request.process_request(
+                    env, start_response, url_path)
+
         return self.complex_response

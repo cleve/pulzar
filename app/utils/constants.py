@@ -47,6 +47,7 @@ class Constants:
         self.WSGI_INPUT = 'wsgi.input'
 
         self.POST = 'POST'
+        self.PUT = 'PUT'
         self.GET = 'GET'
         self.DELETE = 'DELETE'
 

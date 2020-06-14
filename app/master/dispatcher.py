@@ -2,6 +2,7 @@ from utils.constants import Constants
 from master.skynet import Skynet
 from master.get_process import GetProcess
 from master.post_process import PostProcess
+from master.put_process import PutProcess
 from master.delete_process import DeleteProcess
 from master.third_party_process import TPProcess
 from master.admin_process import AdminProcess
@@ -73,5 +74,11 @@ class Dispatcher:
             if method == self.const.POST:
                 post_request = PostProcess(self.const)
                 self.complex_response = post_request.process_request(
+                    env, start_response, url_path)
+
+            # Put key-value.
+            if method == self.const.PUT:
+                put_request = PutProcess(self.const)
+                self.complex_response = put_request.process_request(
                     env, start_response, url_path)
         return self.complex_response

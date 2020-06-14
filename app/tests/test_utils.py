@@ -1,4 +1,5 @@
 import unittest
+from utils.utils import Utils
 
 class TestUtilsMethods(unittest.TestCase):
 

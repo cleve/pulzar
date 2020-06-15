@@ -56,7 +56,7 @@ uwsgi --ini config/volume.ini
 
 ```sh
 master:[port]/add_key/{key}
-curl -X POST -L -T /path/to/file http://master:[port]/add_key/{key}
+curl -X PUT -L -T /path/to/file http://master:[port]/add_key/{key}
 ```
 
 ### Read key value

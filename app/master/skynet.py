@@ -28,15 +28,18 @@ class Skynet:
             key,
             volume
         )
-    
+
     def save_key_and_volume(self):
         # Extract and save value into DB.
         body = Body()
         params = body.extract_params(self.env)
-        # Saving data
+        current_datetime = self.utils.get_current_datetime_str()
+        volume = params[b'volume'][0]
+        composed_value = volume.decode() + ',' + current_datetime
+        # Saving data with date.
         return self.master_db.put_value(
             params[b'key'][0],
-            params[b'volume'][0]
+            composed_value.encode()
         )
 
     def sync_volume(self):
@@ -49,7 +52,8 @@ class Skynet:
         if volume_data is None:
             response = self.const.SKYNET, False
         # Get records registered
-        records_in_master = self.master_db.count_values(params[b'host'][0],':')
+        records_in_master = self.master_db.count_values(
+            params[b'host'][0], ':')
         print("records_in_master", records_in_master)
         # volume_registered
         current_datetime = self.utils.get_current_datetime_str()
@@ -70,7 +74,7 @@ class Skynet:
         # Restoring data.
         if url_path.find(self.start_backup) == 1:
             return self.const.SKYNET_RECORD_RESTORED, self.restore_master()
-            
+
         # This is a confirmation from volume.
         if url_path.find(self.sync_key_added) == 1:
             if self.save_key_and_volume():

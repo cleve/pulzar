@@ -4,11 +4,13 @@ from utils.constants import Constants
 from utils.constants import ReqType
 from core.core_db import DB
 from utils.stream import Config
-import shutil
-import os
+
 
 class Synchro:
-    def __init__(self, *args, **kwargs):
+    """Check synchro between volume and master
+    """
+
+    def __init__(self):
         self.const = Constants()
         self.utils = Utils()
         self.db_stats = DB(self.const.DB_STATS)
@@ -25,6 +27,8 @@ class Synchro:
         self.local_verificator2()
 
     def get_config(self):
+        """Configuration from ini file
+        """
         server_config = Config(self.const.CONF_PATH)
         self.volume_dir = server_config.get_config('volume', 'dir')
         self.volume_host = self.db_stats.get_value(
@@ -32,48 +36,54 @@ class Synchro:
         self.restored_ready = self.db_stats.get_value(
             self.utils.encode_str_to_byte('restored'))
         self.volume_port = server_config.get_config('volume', 'port')
-        self.backup_chunk = int(server_config.get_config('volume', 'backup_chunk'))
+        self.backup_chunk = int(
+            server_config.get_config('volume', 'backup_chunk'))
         # Master url
         self.server_host = server_config.get_config('server', 'host')
         self.server_port = server_config.get_config('server', 'port')
-    
+
     def create_restore_DB(self):
         for file_item in self.utils.get_all_files(self.volume_dir + '/**'):
             if file_item == self.volume_dir + '/':
                 continue
-            file_item_byte = self.utils.encode_str_to_byte(self.utils.get_base_name_from_file(file_item))
+            file_item_byte = self.utils.encode_str_to_byte(
+                self.utils.get_base_name_from_file(file_item))
             self.db_backup.update_or_insert_value(
                 file_item_byte,
                 b'0'
             )
-    
+
     def count_files_synchronized(self):
         counter = 0
         for file_item in self.utils.get_all_files(self.volume_dir + '/**'):
             if file_item == self.volume_dir + '/':
                 continue
-            file_item_byte = self.utils.encode_str_to_byte(self.utils.get_base_name_from_file(file_item))
+            file_item_byte = self.utils.encode_str_to_byte(
+                self.utils.get_base_name_from_file(file_item))
             if self.db_backup.get_equal_value(file_item_byte, b'1'):
                 counter += 1
         return counter
 
     def local_verificator2(self):
         # Executed only once
-        verification = self.db_backup.get_value(self.mark_of_local_verification)
+        verification = self.db_backup.get_value(
+            self.mark_of_local_verification)
         if verification is not None:
             return
         start_time = self.utils.get_time_it()
         for file_item in self.utils.get_all_files(self.volume_dir + '/**'):
             if file_item == self.volume_dir + '/':
                 continue
-            file_item_byte = self.utils.encode_str_to_byte(self.utils.get_base_name_from_file(file_item))
+            file_item_byte = self.utils.encode_str_to_byte(
+                self.utils.get_base_name_from_file(file_item))
             # If not present, create it to future synch.
             if not self.db_backup.get_equal_value(file_item_byte, b'1'):
                 self.db_backup.update_or_insert_value(file_item_byte, b'0')
-        self.db_backup.update_or_insert_value(self.mark_of_local_verification, b'1')
+        self.db_backup.update_or_insert_value(
+            self.mark_of_local_verification, b'1')
         end_time = self.utils.get_time_it()
         print('Local verification completed in ', end_time - start_time, '(s)')
-    
+
     def count_files(self):
         counter = 0
         for file_item in self.utils.get_all_files(self.volume_dir + '/**'):
@@ -81,7 +91,7 @@ class Synchro:
                 continue
             counter += 1
         return counter
-    
+
     def restore(self):
         if not self.utils.dir_exists(self.volume_dir):
             print('Dir {} does not exist'.format(self.volume_dir))
@@ -90,7 +100,7 @@ class Synchro:
         # Restoring chunk configure
         restored = 0
         with self.db_backup.get_cursor_iterator() as txn:
-            for _, data in enumerate(txn.cursor().iternext(keys=True,values=True)):
+            for _, data in enumerate(txn.cursor().iternext(keys=True, values=True)):
                 bkey = data[0]
                 bval = data[1]
                 if bval == b'1':
@@ -99,7 +109,7 @@ class Synchro:
                     self.server_host, self.server_port, '/' + self.const.SKYNET + '/' + self.const.START_BK)
                 req.set_type(ReqType.POST)
                 # We have to send the key, volume and port.
-                
+
                 req.set_payload({
                     'key': bkey,
                     'volume': self.volume_host.decode() + ':' + self.volume_port,
@@ -157,5 +167,6 @@ class Synchro:
         if ('synch' in response and not response['synch'] or key_to_restore is not None):
             self.restore()
 
-synchro = Synchro()
-synchro.synchronize()
+
+SYNCHRO = Synchro()
+SYNCHRO.synchronize()

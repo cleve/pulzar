@@ -7,6 +7,8 @@ from utils.stream import Config
 
 
 def restore(url):
+    """Start restauration given an url
+    """
     const = Constants()
     config = Config(const.CONF_PATH)
     volume_port = config.get_config('volume', 'port')

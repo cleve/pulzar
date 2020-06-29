@@ -219,7 +219,11 @@ directory.
 
 2. Start the Master server.
 
-3. Wait 10 mins, the volumes will synch automatically.
+3. Use *manage.py* utility to synch the volumes with the master.
+
+```sh
+python3 manage.py --restore [volume_url]
+```
 
 # Internal methods
 

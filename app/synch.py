@@ -24,7 +24,6 @@ class Synchro:
         self.mark_of_local_verification = b'varidb_execute_file_verification'
         # Init main variables
         self.get_config()
-        self.local_verificator2()
 
     def get_config(self):
         """Configuration from ini file
@@ -42,7 +41,9 @@ class Synchro:
         self.server_host = server_config.get_config('server', 'host')
         self.server_port = server_config.get_config('server', 'port')
 
-    def create_restore_DB(self):
+    def create_restore_db(self):
+        """Create backup DB with the filesystem
+        """
         for file_item in self.utils.get_all_files(self.volume_dir + '/**'):
             if file_item == self.volume_dir + '/':
                 continue
@@ -54,6 +55,8 @@ class Synchro:
             )
 
     def count_files_synchronized(self):
+        """Counting files using backup DB
+        """
         counter = 0
         for file_item in self.utils.get_all_files(self.volume_dir + '/**'):
             if file_item == self.volume_dir + '/':
@@ -64,12 +67,9 @@ class Synchro:
                 counter += 1
         return counter
 
-    def local_verificator2(self):
-        # Executed only once
-        verification = self.db_backup.get_value(
-            self.mark_of_local_verification)
-        if verification is not None:
-            return
+    def local_verificator(self):
+        """Compare the filesystem with the data restored
+        """
         start_time = self.utils.get_time_it()
         for file_item in self.utils.get_all_files(self.volume_dir + '/**'):
             if file_item == self.volume_dir + '/':
@@ -79,27 +79,24 @@ class Synchro:
             # If not present, create it to future synch.
             if not self.db_backup.get_equal_value(file_item_byte, b'1'):
                 self.db_backup.update_or_insert_value(file_item_byte, b'0')
-        self.db_backup.update_or_insert_value(
-            self.mark_of_local_verification, b'1')
         end_time = self.utils.get_time_it()
         print('Local verification completed in ', end_time - start_time, '(s)')
 
-    def count_files(self):
-        counter = 0
-        for file_item in self.utils.get_all_files(self.volume_dir + '/**'):
-            if file_item == self.volume_dir + '/':
-                continue
-            counter += 1
-        return counter
-
     def restore(self):
+        """Start backup process
+        """
         if not self.utils.dir_exists(self.volume_dir):
             print('Dir {} does not exist'.format(self.volume_dir))
             return
+        self.local_verificator()
         total_files = self.count_files_synchronized()
-        # Restoring chunk configure
-        restored = 0
+        # Restoring
         with self.db_backup.get_cursor_iterator() as txn:
+            # Prevent other instance of backup process.
+            self.db_backup.update_or_insert_value(
+                self.mark_of_local_verification,
+                b'0'
+            )
             for _, data in enumerate(txn.cursor().iternext(keys=True, values=True)):
                 bkey = data[0]
                 bval = data[1]
@@ -123,12 +120,11 @@ class Synchro:
                         bkey,
                         b'1'
                     )
-                    print('Record restored')
-                    restored += 1
-                if restored >= self.backup_chunk:
-                    break
+            print('Restauration completed')
 
     def synchronize(self):
+        """Check status and send data to master
+        """
         # Gets disk usage
         percent = self.utils.giga_free_space()
         # Gets load usage
@@ -136,7 +132,7 @@ class Synchro:
         if self.volume_host is None or self.volume_port is None or self.restored_ready is None:
             print('No records created, auto-discovering')
             # Create backup DB once
-            self.create_restore_DB()
+            self.create_restore_db()
             req = CoreRequest(
                 '127.0.0.1',
                 self.volume_port,
@@ -163,8 +159,10 @@ class Synchro:
             return
         py_object = self.utils.json_to_py(req.response)
         response = py_object['response']
-        key_to_restore = self.db_backup.get_key_equal_to_value(b'0')
-        if ('synch' in response and not response['synch'] or key_to_restore is not None):
+        # Check restore process.
+        verification = self.db_backup.get_value(
+            self.mark_of_local_verification)
+        if verification is not None and verification == b'1':
             self.restore()
 
 

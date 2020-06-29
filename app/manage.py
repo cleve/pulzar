@@ -16,6 +16,7 @@ def restore(url):
         return
 
     print('Starting retauration...')
+    print(core_request.response)
 
 
 def main():

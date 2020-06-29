@@ -88,3 +88,4 @@ class Constants:
         self.KEY_NOT_FOUND = 'key_not_found'
         self.KEY_FOUND = 'key_found'
         self.KEY_DELETED = 'key_deleted'
+        self.BACKUP_SCHEDULED = 'backup_scheduled'

@@ -3,6 +3,7 @@ from volume.get_process import GetProcess
 from volume.post_process import PostProcess
 from volume.put_process import PutProcess
 from volume.delete_process import DeleteProcess
+from volume.admin_process import AdminProcess
 
 
 class Dispatcher:
@@ -32,17 +33,20 @@ class Dispatcher:
         """
         url_path = env[self.const.PATH_INFO]
         method = env[self.const.REQUEST_METHOD]
-        
+
         # Autodiscovery
         if self.utils.match_regex(url_path, self.re_autodiscovery):
             self.complex_response['action'] = self.const.AUTODISCOVERY
             return self.complex_response
 
         # Admin
-        if self.utils.match_regex(url_path, self.re_skynet):
-            return self.const.ADMIN
+        if self.utils.match_regex(url_path, self.re_admin):
+            admin_process = AdminProcess(self.const)
+            if method == self.const.GET:
+                response = admin_process.process_request(url_path)
+                self.complex_response = response
+                return self.complex_response
 
-        # General requests
         else:
             # Delete value.
             if method == self.const.DELETE:

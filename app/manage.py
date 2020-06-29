@@ -12,7 +12,7 @@ def restore(url):
     const = Constants()
     config = Config(const.CONF_PATH)
     volume_port = config.get_config('volume', 'port')
-    core_request = CoreRequest(url, volume_port, '/admin/start_backup')
+    core_request = CoreRequest(url, volume_port, '/admin/' + const.START_BK)
     if core_request.make_request() is not True:
         print('Error processing the task')
         return

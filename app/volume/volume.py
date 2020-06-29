@@ -44,6 +44,9 @@ class Volume:
         self.save_status()
         request = self.dispatcher.classify_request(env, start_response)
         request_type = request['action']
+        if request_type == self.const.BACKUP_SCHEDULED:
+            self.response.set_response('200 OK')
+            self.response.set_message(b'restauration scheduled')
         if request_type == self.const.AUTODISCOVERY:
             self.response.set_response('200 OK')
             self.response.set_message(b'discovered')

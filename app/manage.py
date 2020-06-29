@@ -34,6 +34,14 @@ def main():
         required=True
     )
 
+    arg_parse.add_argument(
+        '--backup',
+        metavar='volume URL',
+        action='store',
+        type=str,
+        required=True
+    )
+
     args = arg_parse.parse_args()
 
     if args.restore:

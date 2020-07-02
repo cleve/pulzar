@@ -5,6 +5,9 @@ from core.core_body import Body
 
 
 class Skynet:
+    """Internal communication
+    """
+
     def __init__(self, env):
         self.const = Constants()
         self.utils = Utils()

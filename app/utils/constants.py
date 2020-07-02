@@ -33,6 +33,7 @@ class Constants:
         self.DB_VOLUME = 'storage/volume.db'
         self.DB_STATS = 'storage/volume_st.db'
         self.DB_BACKUP = 'storage/volume_bk.db'
+        self.DB_NOT_PERMANENT = 'storage/temporal_data.db'
 
         # Env
         self.REQUEST_METHOD = 'REQUEST_METHOD'
@@ -89,3 +90,4 @@ class Constants:
         self.KEY_FOUND = 'key_found'
         self.KEY_DELETED = 'key_deleted'
         self.BACKUP_SCHEDULED = 'backup_scheduled'
+        self.SET_TEMPORAL = 'temporal'

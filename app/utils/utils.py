@@ -9,6 +9,8 @@ import os
 import psutil
 import datetime
 from timeit import default_timer as timer
+from urllib.parse import urlsplit
+from urllib.parse import parse_qs
 
 # Internal
 from utils.constants import Constants
@@ -21,10 +23,10 @@ class Utils:
     # Datetime options
     def get_current_datetime_str(self):
         return datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    
+
     def get_current_datetime(self):
         return datetime.datetime.now()
-    
+
     def get_datetime_from_string(self, datetime_str):
         return datetime.datetime.strptime(datetime_str, "%Y-%m-%d-%H-%M-%S")
 
@@ -69,7 +71,7 @@ class Utils:
             [last 1 minute avg, last 5 minutes avg, last 15 minutes avg]
         """
         cpus = psutil.cpu_count()
-        return [ x / cpus *100 for x in psutil.getloadavg()]
+        return [x / cpus * 100 for x in psutil.getloadavg()]
 
     # REGEX section
     def make_regex(self, string):
@@ -126,7 +128,8 @@ class Utils:
         file_list = []
         if file_type is None:
             file_list_raw = glob.glob(os.path.join(os.getcwd(), dir_path, '*'))
-        file_list_raw = glob.glob(os.path.join(os.getcwd(), dir_path, '*.' + file_type))
+        file_list_raw = glob.glob(os.path.join(
+            os.getcwd(), dir_path, '*.' + file_type))
         print(file_list_raw)
         for raw_path in file_list_raw:
             file_list.append(os.path.basename(raw_path))
@@ -134,7 +137,7 @@ class Utils:
 
     def get_base_name_from_file(self, path_name):
         return os.path.basename(path_name)
-    
+
     def get_all_files(self, directory, rec=True):
         """Return an iterator
             directory must have /.../** in order to get recursive results
@@ -148,15 +151,17 @@ class Utils:
         return os.path.isdir(dir_path)
 
     # Custom methods
+    def extract_query_params(self, complete_url):
+        query = urlsplit(complete_url).query
+        params = parse_qs(query)
+        return params
+
     def extract_url_data(self, complete_url):
         data = {
             'host': None,
-            'port': None
+            'port': None,
         }
-        if complete_url.find(':') == -1 or complete_url.find('=') == -1:
-            return data
-        split_query = complete_url.split('=')[1]
-        split_data = split_query.split(':')
+        split_data = complete_url.split(':')
         if len(split_data) == 2:
             data['host'] = split_data[0]
             data['port'] = split_data[1]

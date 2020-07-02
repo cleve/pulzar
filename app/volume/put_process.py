@@ -18,9 +18,15 @@ class PutProcess:
         }
 
     def notify_record_to_master(self, env):
-        # Report the register creation.
+        """Report the register creation.
+        """
+        temporal = '-1'
+        query_params = self.utils.extract_query_params(
+            'http://fakeurl.com?'+env['QUERY_STRING'])
+        if self.const.SET_TEMPORAL in query_params:
+            temporal = query_params[self.const.SET_TEMPORAL][0]
         master_url = self.utils.extract_url_data(
-            env['QUERY_STRING'])
+            query_params['url'][0])
         # Confirming with master.
         req = CoreRequest(
             master_url['host'], master_url['port'], self.const.ADD_RECORD)
@@ -29,7 +35,8 @@ class PutProcess:
         # We have to send the key, volume and port.
         req.set_payload({
             'key': self.file_utils.key,
-            'volume': env[self.const.HTTP_HOST]
+            'volume': env[self.const.HTTP_HOST],
+            'temporal': temporal
         })
         if not req.make_request():
             # If an error ocurr in the server, we need to delete the file.

@@ -23,7 +23,8 @@ class Master:
         if request_type == self.const.SKYNET_RESTORE:
             self.response.set_response('200 OK')
             self.response.set_message(
-                self.utils.py_to_json({'response': 'start_backup'}, to_bin=True)
+                self.utils.py_to_json(
+                    {'response': 'start_backup'}, to_bin=True)
             )
 
         if request_type == self.const.SKYNET_RECORD_ADDED:
@@ -42,7 +43,8 @@ class Master:
         if request_type == self.const.SKYNET:
             self.response.set_response('200 OK')
             self.response.set_message(
-                self.utils.py_to_json({'response': {'synch': request['parameters']}}, to_bin=True)
+                self.utils.py_to_json(
+                    {'response': {'synch': request['parameters']}}, to_bin=True)
             )
         if request_type == self.const.ADMIN:
             self.response.set_response('200 OK')
@@ -58,20 +60,28 @@ class Master:
             url_path = env[self.const.PATH_INFO]
             if request['volume'] is None:
                 self.response.set_response('203 No Content')
-                self.response.set_message(b'There is not volumes registered or online')
+                self.response.set_message(
+                    b'There is not volumes registered or online')
             else:
                 redirect_url = 'http://' + self.utils.decode_byte_to_str(
                     request['volume']) + url_path
                 self.response.set_response('307 temporary redirect')
                 self.response.set_redirection(redirect_url)
-                
+
         if request_type == self.const.REDIRECT_POST:
             if request['volume'] is None:
                 self.response.set_response('203 No Content')
-                self.response.set_message(b'There is not volumes registered or online')
+                self.response.set_message(
+                    b'There is not volumes registered or online')
             else:
+                # Getting original query parameters
+                query_params = self.utils.extract_query_params(
+                    'http://fakeurl.com?' + env['QUERY_STRING'])
+
                 redirect_url = 'http://' + self.utils.decode_byte_to_str(
                     request['volume']) + ':9001' + env[self.const.PATH_INFO] + '?url=' + self.master_env[self.const.HTTP_HOST]
+                for param in query_params:
+                    redirect_url += '&' + param + '=' + query_params[param][0]
                 self.response.set_response('307 temporary redirect')
                 self.response.set_redirection(redirect_url)
                 self.response.set_message(b'ok')

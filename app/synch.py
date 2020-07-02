@@ -35,8 +35,6 @@ class Synchro:
         self.restored_ready = self.db_stats.get_value(
             self.utils.encode_str_to_byte('restored'))
         self.volume_port = server_config.get_config('volume', 'port')
-        self.backup_chunk = int(
-            server_config.get_config('volume', 'backup_chunk'))
         # Master url
         self.server_host = server_config.get_config('server', 'host')
         self.server_port = server_config.get_config('server', 'port')

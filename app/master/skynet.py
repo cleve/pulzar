@@ -39,6 +39,13 @@ class Skynet:
         current_datetime = self.utils.get_current_datetime_str()
         volume = params[b'volume'][0]
         composed_value = volume.decode() + ',' + current_datetime
+        # If its temporal, just saving it
+        if self.const.SET_TEMPORAL.encode() in params:
+            temporal_db = DB(self.const.DB_NOT_PERMANENT)
+            temporal_db.put_value(
+                params[b'key'][0],
+                params[b'temporal'][0]
+            )
         # Saving data with date.
         return self.master_db.put_value(
             params[b'key'][0],

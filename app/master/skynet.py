@@ -40,7 +40,7 @@ class Skynet:
         volume = params[b'volume'][0]
         composed_value = volume.decode() + ',' + current_datetime
         # If its temporal, just saving it
-        if self.const.SET_TEMPORAL.encode() in params:
+        if self.const.SET_TEMPORAL.encode() in params and params[b'temporal'][0] != b'-1':
             temporal_db = DB(self.const.DB_NOT_PERMANENT)
             temporal_db.put_value(
                 params[b'key'][0],

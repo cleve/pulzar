@@ -58,6 +58,15 @@ master:[port]/add_key/{key}
 curl -X PUT -L -T /path/to/file http://master:[port]/add_key/{key}
 ```
 
+## Add a key value during a time
+
+Use the **temporal** parameter.
+
+```sh
+master:[port]/add_key/{key}?temporal=[int:days]
+curl -X PUT -L -T /path/to/file http://master:[port]/add_key/{key}?temporal={int}
+```
+
 ### Read key value
 ```sh
 master:[port]/get_key/{key}

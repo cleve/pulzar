@@ -27,6 +27,8 @@ class TemporalCheck:
         self.master_port = server_config.get_config('server', 'port')
 
     def delete_request(self, bkey):
+        """Delete the key and from the temporal register
+        """
         key = self.utils.decode_base_64(bkey, True)
         url = self.master_url + ':' + self.master_port
         req = requests.delete(
@@ -52,6 +54,9 @@ class TemporalCheck:
                 value_datetime = self.utils.get_datetime_from_string(
                     master_value.split(',')[1])
                 delta = (current_time - value_datetime).days
+                if self.const.DEBUG:
+                    print('Key {} with time alive of {} days'.format(
+                        bkey.decode(), delta))
                 # Remove data
                 if delta > days:
                     self.delete_request(bkey)

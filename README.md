@@ -255,6 +255,22 @@ https://github.com/cleve/lmdb-viewer
 
 Keys will be encoded in base64, only ASCII chars are allowed.
 
+## Docker
+
+### Master
+
+```sh
+# From the root directory
+docker build --rm -f dockers/Dockerfile_master -t varidb_master:latest .
+```
+
+### Volume
+
+```sh
+# From the root directory
+docker build --rm -f dockers/Dockerfile_volume -t varidb_volume:latest .
+```
+
 # Test
 
 For test purposes files of 1kb were used.

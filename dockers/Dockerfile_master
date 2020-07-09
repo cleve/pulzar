@@ -10,7 +10,7 @@ RUN apk add --no-cache \
     python3 \
     py3-pip
 COPY app .
-COPY docker_config/requirements.txt requirements.txt
+COPY dockers/requirements.txt requirements.txt
 RUN rm -rf public/*
 RUN pip3 install --no-cache-dir -r requirements.txt
 CMD [ "uwsgi", "-i", "config/master.ini" ]

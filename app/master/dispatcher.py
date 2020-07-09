@@ -7,6 +7,7 @@ from master.delete_process import DeleteProcess
 from master.third_party_process import TPProcess
 from master.admin_process import AdminProcess
 
+
 class Dispatcher:
     """Calssify the type of request:
      - regular[GET/POST]
@@ -38,7 +39,7 @@ class Dispatcher:
             skynet = Skynet(env)
             action, synch_complete = skynet.process_request(
                 url_path, method)
-            self.complex_response['action'] = action 
+            self.complex_response['action'] = action
             self.complex_response['parameters'] = synch_complete
             return self.complex_response
 
@@ -46,21 +47,23 @@ class Dispatcher:
         elif self.utils.match_regex(url_path, self.re_admin):
             if method == self.const.GET:
                 admin_process = AdminProcess(self.const)
-                self.complex_response = admin_process.process_request(env, start_response, url_path)
+                self.complex_response = admin_process.process_request(env)
                 return self.complex_response
-        
+
         # Third party
         elif self.utils.match_regex(url_path, self.const.RE_THIRD_PARTY):
             if method == self.const.GET:
                 third_party = TPProcess(self.const)
-                self.complex_response = third_party.process_request(env, start_response, url_path)
+                self.complex_response = third_party.process_request(
+                    env, start_response, url_path)
 
         # General requests
         else:
             # Delete value.
             if method == self.const.DELETE:
                 delete_request = DeleteProcess(self.const)
-                self.complex_response = delete_request.process_request(env, start_response, url_path)
+                self.complex_response = delete_request.process_request(
+                    env, start_response, url_path)
 
             # Get key-value.
             if method == self.const.GET:

@@ -47,7 +47,7 @@ class Dispatcher:
         elif self.utils.match_regex(url_path, self.re_admin):
             if method == self.const.GET:
                 admin_process = AdminProcess(self.const)
-                self.complex_response = admin_process.process_request(env)
+                self.complex_response = admin_process.process_request(url_path)
                 return self.complex_response
 
         # Third party

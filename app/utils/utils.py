@@ -6,17 +6,20 @@ import tempfile
 from urllib.parse import urlparse
 import glob
 import os
-import psutil
 import datetime
 from timeit import default_timer as timer
 from urllib.parse import urlsplit
 from urllib.parse import parse_qs
+import psutil
 
 # Internal
 from utils.constants import Constants
 
 
 class Utils:
+    """Utilities for vari
+    """
+
     def __init__(self):
         self.const = Constants()
 

@@ -1,5 +1,7 @@
 import json
 
+from utils.public import Public
+
 
 class Search:
     """Search third party app:
@@ -12,11 +14,14 @@ class Search:
     def __init__(self, arg1, arg2):
         self.arg1 = arg1
         self.arg2 = arg2
+        self.public = Public()
 
     def do_the_work(self):
         """Method who actually do the search
         """
         print('Hello example with arg ', self.arg1)
+        for element in self.public.get_all_elements():
+            print(element)
 
     def json_return(self):
         """Json converter

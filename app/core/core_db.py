@@ -21,7 +21,11 @@ class DB:
     def get_cursor_iterator(self):
         """Iterator as read only mode
         """
-        return self.env.begin(write=False)
+        try:
+            return self.env.begin(write=False)
+        except lmdb.Error as err:
+            print("get_cursor_iterator", err)
+            return None
 
     def get_stats(self):
         """Get metadata from the DB

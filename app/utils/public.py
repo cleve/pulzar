@@ -27,4 +27,11 @@ class Public:
             - return
                 string with the value or None if does not exist
         """
+        try:
+            db_object = DB(self.const.DB_PATH)
+            db_object.get_value(key, to_str=True)
+
+        except Exception as err:
+            return None
+
         return None

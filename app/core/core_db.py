@@ -11,18 +11,26 @@ class DB:
         self.init_db()
 
     def init_db(self):
+        """Init configuration
+        """
         try:
             self.env = lmdb.open(self.db_path, max_dbs=1)
         except Exception as err:
             raise Exception("DB Class", err)
 
     def get_cursor_iterator(self):
+        """Iterator as read only mode
+        """
         return self.env.begin(write=False)
 
     def get_stats(self):
+        """Get metadata from the DB
+        """
         return self.env.stat()
 
     def put_value(self, key_string, value):
+        """Store value given a key
+        """
         with self.env.begin(write=True) as txn:
             if not txn.get(key_string):
                 txn.put(key_string, value)

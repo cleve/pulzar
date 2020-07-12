@@ -30,7 +30,7 @@ class TemporalCheck:
         """Delete the key and from the temporal register
         """
         key = self.utils.decode_base_64(bkey, True)
-        url = self.master_url + ':' + self.master_port
+        url = self.master_url + ':' + self.master_port + '/'
         req = requests.delete(
             url='http://' + url + '/delete_key/' + key
         )
@@ -51,6 +51,10 @@ class TemporalCheck:
 
                 # Get data from master
                 master_value = self.master_db.get_value(bkey, True)
+                if master_value is None:
+                    # If is not present, delete it.
+                    self.temporal_files.delete_value(bkey)
+                    return
                 value_datetime = self.utils.get_datetime_from_string(
                     master_value.split(',')[1])
                 delta = (current_time - value_datetime).days

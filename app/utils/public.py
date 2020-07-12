@@ -11,13 +11,17 @@ class Public:
 
     def get_all_elements(self):
         """Get all the elements
-            This is an iterator
+            - return: Iterator
+                elements are bytes of kind key, value
+
         """
         try:
             db_object = DB(self.const.DB_PATH)
-            return db_object.get_cursor_iterator()
+            iterator = db_object.get_cursor_iterator()
+            cursor = iterator.cursor()
+            return cursor
         except Exception as err:
-            return None
+            raise('Public::' + str(err))
 
     def get_value(self, key):
         """Get the value associated to the key
@@ -25,7 +29,11 @@ class Public:
                 key (str): String to be searched
 
             - return
-                string with the value or None if does not exist
+                dictionary or None if does not exist
+                {
+                    'value': [val],
+                    'datetime': [datetime object]
+                }
         """
         try:
             db_object = DB(self.const.DB_PATH)

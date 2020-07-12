@@ -43,11 +43,15 @@ class DB:
 
     def get_value(self, key_string, to_str=False):
         with self.env.begin(write=False) as txn:
-            return txn.get(key_string) if not to_str else txn.get(key_string).decode()
+            value = txn.get(key_string)
+            if value is None:
+                return None
+            return value if not to_str else value.decode()
 
     def get_equal_value(self, key_string, value):
         with self.env.begin(write=False) as txn:
             return txn.get(key_string) == value
+        return False
 
     def get_key_equal_to_value(self, value):
         """Return first match"""

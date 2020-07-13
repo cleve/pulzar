@@ -1,4 +1,5 @@
 import json
+import base64
 
 from utils.public import Public
 
@@ -15,18 +16,25 @@ class Search:
         self.arg1 = arg1
         self.arg2 = arg2
         self.public = Public()
+        self.response = []
 
     def do_the_work(self):
         """Method who actually do the search
         """
-        print('Hello example with arg ', self.arg1)
         for element in self.public.get_all_elements():
-            print(element)
+            key, val = element
+            key_string = base64.b64decode(key).decode()
+            if key_string.find(self.arg1) >= 0:
+                val_string = val.decode().split(',')[0]
+                self.response.append({
+                    'key': key_string,
+                    'url': val_string + '/' + key_string
+                })
 
     def json_return(self):
         """Json converter
         """
-        return json.dumps({'my_args': [self.arg1, self.arg2]})
+        return json.dumps({'results': self.response})
 
 
 def execute(arguments):

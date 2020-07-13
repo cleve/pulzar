@@ -41,6 +41,8 @@ def execute(arguments):
     """Entrance point
     """
     # Check arguments
-    search = Search(arguments[0], arguments[1])
+    if len(arguments) == 0:
+        return json.dumps({'err': 'no args detected'})
+    search = Search(arguments[0], None)
     search.do_the_work()
     return search.json_return()

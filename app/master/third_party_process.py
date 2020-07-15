@@ -16,7 +16,10 @@ class TPProcess:
             'volume': None
         }
 
-    def process_request(self, url_path):
+    def process_request(self, url_path, query_string):
+        # Extract query parameters if is the case
+        query_params = self.utils.extract_query_params(
+            'http://fakeurl.com?' + query_string)
         # Get request type, checking for key value.
         regex_result = self.utils.get_search_regex(
             url_path, self.const.RE_THIRD_PARTY)

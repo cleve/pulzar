@@ -54,7 +54,9 @@ class Dispatcher:
         elif self.utils.match_regex(url_path, self.const.RE_THIRD_PARTY):
             if method == self.const.GET:
                 third_party = TPProcess(self.const)
-                self.complex_response = third_party.process_request(url_path)
+                query_string = env['QUERY_STRING']
+                self.complex_response = third_party.process_request(
+                    url_path, query_string)
 
         # General requests
         else:

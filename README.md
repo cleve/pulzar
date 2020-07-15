@@ -136,6 +136,12 @@ def execute(arguments):
     return example.json_return()
 ```
 
+#### Search extension
+
+A search utility is included in order to demonstrate the powerful of this tool.
+
+
+
 # Maintenance
 
 ## System information

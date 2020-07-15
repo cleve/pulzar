@@ -33,7 +33,7 @@ class TPProcess:
                 if file_name + '.py' in modules:
                     import_fly = importlib.import_module(
                         'third_party.' + file_name)
-                    j_byte = import_fly.execute(args).encode()
+                    j_byte = import_fly.execute(args, query_params).encode()
                     self.complex_response['action'] = self.const.TP_RESPONSE
                     self.complex_response['parameters'] = j_byte
 

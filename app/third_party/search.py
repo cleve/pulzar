@@ -37,7 +37,7 @@ class Search:
         return json.dumps({'results': self.response})
 
 
-def execute(arguments):
+def execute(arguments, params):
     """Entrance point
     """
     # Check arguments

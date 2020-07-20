@@ -107,7 +107,7 @@ def execute(arguments, params):
                 else:
                     equals = datetime.datetime.strptime(
                         equals, datetime_format).date()
-        except Exception as err:
+        except re.error as err:
             print(err)
 
     if len(arguments) == 0:

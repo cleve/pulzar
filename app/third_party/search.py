@@ -33,11 +33,16 @@ class Search:
         self.date_configuration()
 
     def date_configuration(self):
+        """Detemine precedence, if eq parameter is present
+        will be the only parameter used
+        """
         if self.equal is not None:
             self.less_than = None
             self.greater_than = None
 
     def get_key_date(self, datetime_string):
+        """String to datetime object
+        """
         return datetime.datetime.strptime(
             datetime_string, self.date_format).date()
 

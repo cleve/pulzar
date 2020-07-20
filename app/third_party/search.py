@@ -13,6 +13,11 @@ class Search:
 
         - key
         - dates
+
+        Use:
+            server/third_party/[key_to_search]?eq=mm-dd-yyyy&lt=mm-dd-yyyy&gt=mm-dd-yyyy
+
+        eq has precedence.
     """
 
     def __init__(self, arg1, lt, gt, eq):

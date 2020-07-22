@@ -140,7 +140,18 @@ def execute(arguments):
 
 A search utility is included in order to demonstrate the powerful of this tool.
 
+You can search values using dates, the format is: *mm-dd-yyyy*
 
+```sh
+# Search a key
+master:[port]/third_party/search/[key]
+
+# Search a key lower and greater in a date
+master:[port]/third_party/search/[key]?eq=[date]
+
+# Search a key lower and greater than
+master:[port]/third_party/search/[key]?lt=[date]&gt=[date]
+```
 
 # Maintenance
 

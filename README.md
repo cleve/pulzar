@@ -146,7 +146,7 @@ You can search values using dates, the format is: *mm-dd-yyyy*
 # Search a key
 master:[port]/third_party/search/[key]
 
-# Search a key lower and greater in a date
+# Search a key in a specific date
 master:[port]/third_party/search/[key]?eq=[date]
 
 # Search a key lower and greater than

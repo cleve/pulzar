@@ -278,14 +278,14 @@ Keys will be encoded in base64, only ASCII chars are allowed.
 
 ```sh
 # From the root directory
-docker build --rm -f dockers/Dockerfile_master -t varidb_master:latest .
+docker build --rm -f dockers/DockerfileMaster -t varidb_master:latest .
 ```
 
 ### Volume
 
 ```sh
 # From the root directory
-docker build --rm -f dockers/Dockerfile_volume -t varidb_volume:latest .
+docker build --rm -f dockers/DockerfileVolume -t varidb_volume:latest .
 ```
 
 # Test

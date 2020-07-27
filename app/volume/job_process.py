@@ -1,6 +1,6 @@
 from utils.utils import Utils
 from utils.constants import ReqType
-from utils.file_utils import FileUtils
+from utils.node_utils import NodeUtils
 from core.core_request import CoreRequest
 from core.core_db import DB
 from core.core_job import Job
@@ -14,7 +14,6 @@ class JobProcess:
         self.const = constants
         self.utils = Utils()
         self.db_backup = DB(self.const.DB_BACKUP)
-        self.file_utils = FileUtils(self.const)
         self.complex_response = {
             'action': None,
             'parameters': None,
@@ -32,20 +31,14 @@ class JobProcess:
         req.set_path(self.const.ADD_RECORD)
         # We have to send the key, volume and port.
         req.set_payload({
-            'key': self.file_utils.key,
+            'key': 'self.file_utils.key',
             'volume': env[self.const.HTTP_HOST]
         })
         if not req.make_request():
             # If an error ocurr in the server, we need to delete the file.
-            self.file_utils.remove_file()
+
             return False
-        try:
-            self.db_backup.put_value(
-                self.file_utils.key.encode(),
-                b'1'
-            )
-        except Exception as err:
-            print('notify_record_to_master', err)
+
         return True
 
     def process_request(self, env, start_response, url_path):
@@ -57,8 +50,7 @@ class JobProcess:
                 base64_str = self.utils.encode_base_64(key_to_add, True)
                 # Trying to create the key-value
                 key_to_binary = self.utils.encode_str_to_byte(key_to_add)
-                self.file_utils.set_key(key_to_binary, base64_str)
-                key_generated = self.file_utils.read_binary_file(env)
+
                 # Try to reach to master.
                 if self.notify_record_to_master(env):
                     self.complex_response['action'] = self.const.KEY_ADDED

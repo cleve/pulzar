@@ -15,6 +15,6 @@ class CoreJobs:
         """
 
     def notification(self):
-        """Notify to the sender
+        """Notify to master
         """
         pass

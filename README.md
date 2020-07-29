@@ -153,6 +153,31 @@ master:[port]/third_party/search/[key]?eq=[date]
 master:[port]/third_party/search/[key]?lt=[date]&gt=[date]
 ```
 
+## Jobs
+
+You can launch jobs using the nodes. Similarly to third party, there is a directory 
+used to store the scripts.
+
+```
+app/jobs/[custom_directory]/[your_script].py
+```
+
+The API 
+
+```sh
+# POST
+master:[port]/launch_job/[custom_directory]/[your_script]
+```
+
+### Body
+
+```json
+{
+    "arg1": "value1",
+    "arg2" : "value2"
+}
+```
+
 # Maintenance
 
 ## System information
@@ -211,28 +236,6 @@ A JSON will be sent, of type:
     "percent": 13,
     "synch": true
 }
-```
-
-## Jobs
-
-You can launch jobs using the nodes. Similarly to third party, there is a directory 
-used to store the scripts.
-
-```
-app/jobs/[custom_directory]/[your_script].py
-```
-
-The API 
-
-```sh
-# POST
-master:[port]/launch_job/[custom_directory]/[your_script]
-```
-
-### Body
-
-```json
-{"params": [{"arg1": "value1", "arg2" : "value2"}]}
 ```
 
 ## Auto-backup

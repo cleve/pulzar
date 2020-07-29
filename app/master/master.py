@@ -90,4 +90,8 @@ class Master:
             self.response.set_response('200 OK')
             self.response.set_message(request['parameters'])
 
+        if request_type == self.const.JOB_RESPONSE:
+            self.response.set_response('200 OK')
+            self.response.set_message(b'job launched')
+
         return self.response.get_response(start_response)

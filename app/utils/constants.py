@@ -47,12 +47,14 @@ class Constants:
         self.HTTP_USER_AGENT = 'HTTP_USER_AGENT'
         self.SERVER_PROTOCOL = 'SERVER_PROTOCOL'
         self.CONTENT_LENGTH = 'CONTENT_LENGTH'
+        self.CONTENT_TYPE = 'CONTENT_TYPE'
         self.WSGI_INPUT = 'wsgi.input'
 
         self.POST = 'POST'
         self.PUT = 'PUT'
         self.GET = 'GET'
         self.DELETE = 'DELETE'
+        self.JSON_REQUEST = 'application/json'
 
         # REST admin paths
         self.SKYNET = '/skynet'
@@ -70,6 +72,7 @@ class Constants:
         self.RE_DELETE_VALUE = r'/delete_key/(\w+)$'
         self.RE_POST_VALUE = r'/add_key/(\w+)$'
         self.RE_THIRD_PARTY = r'/third_party((/\w+)+)'
+        self.RE_LAUNCH_JOB = r'\/launch_job([\/\w\d]+)\/([\w\d]+)'
         self.RE_ADMIN = r'/admin((/[\w-]+){1,2})'
 
         # Type of requests
@@ -93,3 +96,6 @@ class Constants:
         self.KEY_DELETED = 'key_deleted'
         self.BACKUP_SCHEDULED = 'backup_scheduled'
         self.SET_TEMPORAL = 'temporal'
+        self.JOB_RESPONSE = 'job_response'
+        self.JOB_ERROR = 'job_error'
+        self.JOB_OK = 'job_ok'

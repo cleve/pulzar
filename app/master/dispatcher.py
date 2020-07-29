@@ -2,6 +2,7 @@ from utils.constants import Constants
 from master.skynet import Skynet
 from master.get_process import GetProcess
 from master.post_process import PostProcess
+from master.job_process import JobProcess
 from master.put_process import PutProcess
 from master.delete_process import DeleteProcess
 from master.third_party_process import TPProcess
@@ -49,6 +50,14 @@ class Dispatcher:
                 admin_process = AdminProcess(self.const)
                 self.complex_response = admin_process.process_request(url_path)
                 return self.complex_response
+
+        # Jobs
+        elif self.utils.match_regex(url_path, self.const.RE_LAUNCH_JOB):
+            if method == self.const.POST:
+                job_process = JobProcess(self.const)
+                query_string = env['QUERY_STRING']
+                self.complex_response = job_process.process_request(
+                    url_path, query_string, env)
 
         # Third party
         elif self.utils.match_regex(url_path, self.const.RE_THIRD_PARTY):

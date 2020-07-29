@@ -41,6 +41,8 @@ class Utils:
         return json.dumps(py_object) if not to_bin else self.encode_str_to_byte(json.dumps(py_object))
 
     def json_to_py(self, json_srt):
+        """JSON to python object
+        """
         return json.loads(json_srt)
 
     # Encode/decode section
@@ -78,6 +80,8 @@ class Utils:
 
     # REGEX section
     def make_regex(self, string):
+        """Just compile the string into regex
+        """
         return re.compile(string)
 
     def match_regex(self, string, regex_str):

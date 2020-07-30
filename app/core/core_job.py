@@ -1,30 +1,29 @@
-from concurrent.futures import ThreadPoolExecutor
-
 # Internal imports
 from core.core_request import CoreRequest
+from utils.node_utils import NodeUtils
+from utils.constants import ReqType
 
 
 class Job:
     """Send tasks to the nodes
     """
 
-    def __init__(self):
+    def __init__(self, job_path, job_name, job_params):
         self.workers = None
+        self.job_path = job_path
+        self.job_name = job_name
+        self.job_params = job_params
 
-    def send_job(self, node_info):
+    def send_job(self, const):
         """Send job to the node selected
 
             params:
-             - node_info (Dict)
-                {'host': str, 'port': str, params: dict , 'third_party': str}
+             - const (Constants)
         """
-        host = node_info['host']
-        port = node_info['port']
-        params = node_info['params']
+        node_utils = NodeUtils(const)
+        node = node_utils.pick_a_volume()
         print('Sending job')
-
-    def start_job(self):
-        """Starting the job
-        """
-        with ThreadPoolExecutor(max_workers=1) as executor:
-            future = executor.submit(self.send_job)
+        request = CoreRequest(node.decode(), '9001', '/send_job')
+        request.set_type(ReqType.POST)
+        request.set_payload(self.job_params)
+        return request.make_request()

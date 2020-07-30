@@ -22,6 +22,7 @@ class JobProcess:
         }
 
     def notify_record_to_master(self, env):
+
         # Report the register creation.
         master_url = self.utils.extract_url_data(
             env['QUERY_STRING'])
@@ -50,12 +51,16 @@ class JobProcess:
                 url_path,
                 self.const.RE_LAUNCH_JOB
             )
-            print('Job path', job_path.groups())
+            job_path, job_name = job_path.groups()
             body = Body()
             params = body.extract_params(env)
+            print(job_path, job_name)
             print('params:', params)
 
-            self.complex_response['action'] = self.const.JOB_RESPONSE
+            job_object = Job(job_path, job_name, params)
+            if job_object.send_job(self.const):
+                self.complex_response['action'] = self.const.JOB_RESPONSE
+            self.complex_response['action'] = self.const.JOB_ERROR
 
         except Exception as err:
             print('Error extracting keywerwe', err)

@@ -94,4 +94,8 @@ class Master:
             self.response.set_response('200 OK')
             self.response.set_message(b'job launched')
 
+        if request_type == self.const.JOB_ERROR:
+            self.response.set_response('200 OK')
+            self.response.set_message(b'error launching job')
+
         return self.response.get_response(start_response)

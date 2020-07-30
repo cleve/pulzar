@@ -22,7 +22,7 @@ class NodeUtils:
 
     def pick_a_volume(self):
         """Volume selection using the load
-            return (byte): URL
+            return (byte): URL without port
         """
         volumes = self.db_volumes.get_keys_values()
         current_datetime = self.utils.get_current_datetime()

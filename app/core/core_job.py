@@ -8,10 +8,7 @@ class Job:
     """Send tasks to the nodes
     """
 
-    def __init__(self, job_path, job_name, job_params):
-        self.workers = None
-        self.job_path = job_path
-        self.job_name = job_name
+    def __init__(self, job_params):
         self.job_params = job_params
 
     def send_job(self, const):
@@ -26,4 +23,4 @@ class Job:
         request = CoreRequest(node.decode(), '9001', '/send_job')
         request.set_type(ReqType.POST)
         request.set_payload(self.job_params)
-        return request.make_request()
+        return request.make_request(json_request=True)

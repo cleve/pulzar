@@ -137,7 +137,6 @@ class Utils:
             file_list_raw = glob.glob(os.path.join(os.getcwd(), dir_path, '*'))
         file_list_raw = glob.glob(os.path.join(
             os.getcwd(), dir_path, '*.' + file_type))
-        print(file_list_raw)
         for raw_path in file_list_raw:
             file_list.append(os.path.basename(raw_path))
         return file_list

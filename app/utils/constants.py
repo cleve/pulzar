@@ -34,8 +34,9 @@ class Constants:
         self.DB_STATS = 'storage/volume_st.db'
         self.DB_BACKUP = 'storage/volume_bk.db'
         self.DB_NOT_PERMANENT = 'storage/temporal_data.db'
-        # job DB
+        # job DBs
         self.DB_JOBS = 'storage/jobs.db'
+        self.DB_NODE_JOBS = 'storage/node_jobs.db'
 
         # Env
         self.REQUEST_METHOD = 'REQUEST_METHOD'

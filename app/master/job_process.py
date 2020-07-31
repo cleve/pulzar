@@ -51,13 +51,18 @@ class JobProcess:
                 url_path,
                 self.const.RE_LAUNCH_JOB
             )
+            # parameters to send to a node
+            params = {}
             job_path, job_name = job_path.groups()
             body = Body()
-            params = body.extract_params(env)
-            print(job_path, job_name)
+            job_params = body.extract_params(env)
+            params['job_path'] = job_path
+            params['job_name'] = job_name
+            params['job_id'] = None
+            params['parameters'] = job_params
             print('params:', params)
 
-            job_object = Job(job_path, job_name, params)
+            job_object = Job(params)
             if job_object.send_job(self.const):
                 self.complex_response['action'] = self.const.JOB_RESPONSE
             self.complex_response['action'] = self.const.JOB_ERROR

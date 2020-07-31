@@ -1,9 +1,12 @@
+import importlib
 from utils.utils import Utils
 from core.core_db import DB
-import importlib
 
 
 class TPProcess:
+    """Process Third party calls
+    """
+
     def __init__(self, constants):
         self.const = constants
         self.utils = Utils()

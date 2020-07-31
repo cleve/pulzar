@@ -9,9 +9,19 @@ class RDB:
         self.database = sqlite3.connect(db_path)
         self.cursor = self.database.cursor()
 
-    def execute_sql_with_params(self, query, param):
-        self.cursor.execute(query, param)
+    def execute_sql(self, query):
+        self.cursor.execute(query)
         self.database.commit()
 
+    def execute_sql_insert(self, query, param):
+        """Insert data
+            return ID (int)
+        """
+        self.cursor.execute(query, param)
+        self.database.commit()
+        return self.cursor.lastrowid
+
     def close(self):
+        """Close conn
+        """
         self.cursor.close()

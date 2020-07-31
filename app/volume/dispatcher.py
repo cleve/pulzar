@@ -1,9 +1,9 @@
 from utils.constants import Constants
 from volume.get_process import GetProcess
-from volume.post_process import PostProcess
 from volume.put_process import PutProcess
 from volume.delete_process import DeleteProcess
 from volume.admin_process import AdminProcess
+from volume.job_process import JobProcess
 
 
 class Dispatcher:
@@ -20,6 +20,7 @@ class Dispatcher:
         # reg strings
         self.re_admin = r'/admin/\w'
         self.re_skynet = r'/skynet/\w'
+        self.re_job = r'/send_job$'
         self.re_autodiscovery = r'/autodiscovery$'
 
         # Response to master, can or not contains data as parameter
@@ -47,6 +48,14 @@ class Dispatcher:
                 self.complex_response = response
                 return self.complex_response
 
+        # Jobs
+        if self.utils.match_regex(url_path, self.re_job):
+            if method == self.const.POST:
+                job_process = JobProcess(self.const)
+                response = job_process.process_request(url_path, env)
+                self.complex_response = response
+                return self.complex_response
+
         else:
             # Delete value.
             if method == self.const.DELETE:
@@ -63,12 +72,6 @@ class Dispatcher:
 
                 self.complex_response = response
                 return self.complex_response
-
-            # POST key-value.
-            if method == self.const.POST:
-                post_request = PostProcess(self.const)
-                self.complex_response = post_request.process_request(
-                    env, start_response, url_path)
 
             # PUT key-value.
             if method == self.const.PUT:

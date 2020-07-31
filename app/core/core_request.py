@@ -22,7 +22,7 @@ class CoreRequest:
     def set_payload(self, payload):
         self.payload = payload
 
-    def make_request(self, json_request=True):
+    def make_request(self, json_request=False):
         try:
             # Check
             req = None
@@ -36,11 +36,18 @@ class CoreRequest:
                     timeout=10
                 )
             if self.request_type == ReqType.POST:
-                req = requests.post(
-                    url_port,
-                    data=self.payload,
-                    timeout=10
-                )
+                if json_request:
+                    req = requests.post(
+                        url_port,
+                        json=self.payload,
+                        timeout=10
+                    )
+                else:
+                    req = requests.post(
+                        url_port,
+                        data=self.payload,
+                        timeout=10
+                    )
 
             if req.status_code == 200:
                 self.response = req.text

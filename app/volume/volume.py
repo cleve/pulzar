@@ -64,4 +64,7 @@ class Volume:
             self.response.set_message(b'key not found')
         if request_type == self.const.KEY_FOUND:
             return self.file_utils.read_value(request['parameters'], start_response)
+        if request_type == self.const.JOB_OK:
+            self.response.set_response('200 OK')
+            self.response.set_message(b'job ready')
         return self.response.get_response(start_response)

@@ -56,6 +56,9 @@ class Job:
         print('Sending job to node ', node)
         # Register in data base
         self.register_job(const.DB_JOBS, node.decode())
+        if self.job_id is None:
+            return False
+        self.job_params['job_id'] = self.job_id
         request = CoreRequest(node.decode(), '9001', '/send_job')
         request.set_type(ReqType.POST)
         request.set_payload(self.job_params)

@@ -3,7 +3,7 @@ from utils.utils import Utils
 from utils.constants import ReqType
 from core.core_request import CoreRequest
 from core.core_db import DB
-from core.core_job import Job
+from core.core_job_node import Job
 from core.core_body import Body
 
 
@@ -31,6 +31,7 @@ class JobProcess:
             print('params for job', params)
 
             # Scheduling job
+            job_id = params['job_id']
             job_file_name = params['job_name']
             job_file_path = params['job_path']
             job_parameters = params['parameters']
@@ -38,12 +39,14 @@ class JobProcess:
             # check if the job exists
             path_to_search = 'jobs' + job_file_path + '/' + job_file_name + '.py'
             print('path: ', path_to_search)
+            good = False
             if self.utils.file_exists(path_to_search):
                 print('Job exists, scheduling ', job_file_name)
+                job_object = Job(job_id, path_to_search, job_parameters)
+                good = job_object.schedule_job(self.const)
 
             # Response
-            if True:
-                print('======')
+            if good:
                 self.complex_response['action'] = self.const.JOB_OK
             else:
                 self.complex_response['action'] = self.const.KEY_ERROR

@@ -65,7 +65,8 @@ class JobProcess:
             job_object = Job(params)
             if job_object.send_job(self.const):
                 self.complex_response['action'] = self.const.JOB_RESPONSE
-            self.complex_response['action'] = self.const.JOB_ERROR
+            else:
+                self.complex_response['action'] = self.const.JOB_ERROR
 
         except Exception as err:
             print('Error extracting keywerwe', err)

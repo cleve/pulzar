@@ -1,8 +1,16 @@
-# VariDB
+# Pulzar
 
 Intended to be used in an internal network. In the future will be added security.
 
-VariDB is a distributed database system, with load balance, easy to recover and backup.
+Pulzar has two components
+
+### VariDB
+
+Is a distributed database system, with load balance, easy to recover and backup.
+
+### Job system
+
+Is a distributed job system with load balance.
 
 ## Uses
 
@@ -84,7 +92,10 @@ curl -X DELETE -L http://master:[port]/delete_key/{key}
 ### Extending the app
 
 Sometimes you would like to add your own code, like some analysis over the data
-or even a totally new kind of process. In order to do this, you can add a module into the
+or even a totally new kind of process. This feature is intended to execute process 
+during the request operation.
+
+In order to do this, you can add a module into the
 ***app/third_party/*** directory. There is only one mandatory function to be added:
 
 ```py

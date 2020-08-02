@@ -10,6 +10,12 @@ class CoreJobs:
         self.parameters = parameters
         self.notification_enabled = notification
 
+    def process_params(self):
+        for job in self.jobs_to_launch:
+            args = job['job_args']
+            if args != '':
+                job['job_args'] = self.utils.json_to_py(args)
+    
     def run_job(self):
         """Send job to be proccesed
         """

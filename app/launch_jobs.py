@@ -1,5 +1,5 @@
-import importlib
 import os
+import importlib
 from pulzarutils.utils import Utils
 from pulzarutils.constants import Constants
 from pulzarcore.core_rdb import RDB
@@ -16,19 +16,22 @@ class LaunchJobs:
         self.jobs_to_launch = []
 
     def process_params(self):
+        """JSON to python objects
+        """
         for job in self.jobs_to_launch:
             args = job['job_args']
             if args != '':
                 job['job_args'] = self.utils.json_to_py(args)
 
     def execute_jobs(self):
+        """Execute jobs selected
+        """
         for job in self.jobs_to_launch:
             print('Launching', job['job_id'], 'located in ', job['job_path'])
             custom_module = os.path.splitext(job['job_path'])[
                 0].replace('/', '.')
-            print(custom_module)
             import_fly = importlib.import_module(custom_module)
-            j_byte = import_fly.execute(['222'])
+            j_byte = import_fly.execute(job['job_args'])
 
     def search_jobs(self):
         """Search job scheduled
@@ -46,4 +49,5 @@ class LaunchJobs:
 
 launcher = LaunchJobs()
 launcher.search_jobs()
+launcher.process_params()
 launcher.execute_jobs()

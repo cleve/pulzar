@@ -1,5 +1,4 @@
-import os
-import sys
+import time
 from pulzarcore.core_jobs import CoreJobs
 
 
@@ -10,14 +9,12 @@ class Example(CoreJobs):
     def __init__(self, params):
         print(params)
 
+    def run_job(self):
+        time.sleep(10)
+
 
 def execute(arguments):
     """Point of entrance
     """
-    example = Example(arguments[0])
+    example = Example(arguments)
     example.run_job()
-
-
-if __name__ == '__main__':
-    args = sys.argv[1]
-    execute(args)

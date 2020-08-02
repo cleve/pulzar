@@ -8,4 +8,5 @@ setup(name='pulzar',
       author_email='mauricio.cleveland@gmail.com',
       license='Apache',
       packages=['pulzarcore', 'pulzarutils'],
-      zip_safe=False)
+      zip_safe=False
+      )

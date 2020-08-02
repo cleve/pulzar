@@ -92,7 +92,7 @@ class Master:
 
         if request_type == self.const.JOB_RESPONSE:
             self.response.set_response('200 OK')
-            self.response.set_message(b'job launched')
+            self.response.set_message(request['parameters'])
 
         if request_type == self.const.JOB_ERROR:
             self.response.set_response('200 OK')

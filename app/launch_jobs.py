@@ -23,15 +23,29 @@ class LaunchJobs:
             if args != '':
                 job['job_args'] = self.utils.json_to_py(args)
 
+    def mark_job(self, job_id, state):
+        """Mark a job if is ok or failed
+        """
+        status = 1 if state else 2
+        sql = 'UPDATE job SET ready = {} WHERE job_id = {}'.format(
+            status, job_id)
+        self.data_base.execute_sql(sql)
+
     def execute_jobs(self):
         """Execute jobs selected
         """
         for job in self.jobs_to_launch:
-            print('Launching', job['job_id'], 'located in ', job['job_path'])
-            custom_module = os.path.splitext(job['job_path'])[
-                0].replace('/', '.')
-            import_fly = importlib.import_module(custom_module)
-            j_byte = import_fly.execute(job['job_args'])
+            try:
+                print('Launching', job['job_id'],
+                      'located in ', job['job_path'])
+                custom_module = os.path.splitext(job['job_path'])[
+                    0].replace('/', '.')
+                job['job_args']['job_id'] = job['job_id']
+                import_fly = importlib.import_module(custom_module)
+                status = import_fly.execute(job['job_args'])
+                self.mark_job(job['job_id'], status)
+            except Exception as err:
+                print('Error executing the job: ', err)
 
     def search_jobs(self):
         """Search job scheduled

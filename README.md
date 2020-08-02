@@ -16,6 +16,7 @@ Is a distributed job system with load balance.
 
 * Configuration server.
 * Store big amount of data, scalable.
+* Run jobs (Python scripts in parallel).
 
 ## Configuration
 

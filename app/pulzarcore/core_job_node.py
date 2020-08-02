@@ -11,7 +11,6 @@ class Job:
         self.job_path = job_path
         self.job_params = job_params
         self.utils = Utils()
-        self.job_id = None
 
     def unregister_job(self, path_db_jobs):
         """Mark as failed job in master

@@ -1,6 +1,6 @@
 import os
 import sys
-from core.core_jobs import CoreJobs
+from pulzarcore.core_jobs import CoreJobs
 
 
 class Example(CoreJobs):

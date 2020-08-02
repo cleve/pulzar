@@ -1,6 +1,6 @@
-from utils.utils import Utils
-from utils.constants import Constants
-from core.core_rdb import RDB
+from pulzarutils.utils import Utils
+from pulzarutils.constants import Constants
+from pulzarcore.core_rdb import RDB
 
 
 class LaunchJobs:

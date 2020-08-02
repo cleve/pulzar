@@ -1,5 +1,5 @@
-from core.core_db import DB
-from utils.constants import Constants
+from pulzarcore.core_db import DB
+from pulzarutils.constants import Constants
 
 
 class Public:

@@ -1,5 +1,5 @@
-from core.core_rdb import RDB
-from utils.utils import Utils
+from pulzarcore.core_rdb import RDB
+from pulzarutils.utils import Utils
 
 
 class Job:

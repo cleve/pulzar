@@ -1,7 +1,7 @@
-from utils.constants import Constants
-from utils.utils import Utils
+from pulzarutils.constants import Constants
+from pulzarutils.utils import Utils
 from master.dispatcher import Dispatcher
-from core.core_response import ResponseClass
+from pulzarcore.core_response import ResponseClass
 
 
 class Master:

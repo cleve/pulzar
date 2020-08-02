@@ -1,4 +1,4 @@
-from utils.constants import Response
+from pulzarutils.constants import Response
 
 
 class ResponseClass:

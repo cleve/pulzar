@@ -1,6 +1,6 @@
 import requests
-from utils.constants import ReqType
-from utils.utils import Utils
+from pulzarutils.constants import ReqType
+from pulzarutils.utils import Utils
 
 
 class CoreRequest:

@@ -1,10 +1,10 @@
-from utils.utils import Utils
-from utils.constants import ReqType
-from utils.node_utils import NodeUtils
-from core.core_request import CoreRequest
-from core.core_db import DB
-from core.core_job import Job
-from core.core_body import Body
+from pulzarutils.utils import Utils
+from pulzarutils.constants import ReqType
+from pulzarutils.node_utils import NodeUtils
+from pulzarcore.core_request import CoreRequest
+from pulzarcore.core_db import DB
+from pulzarcore.core_job import Job
+from pulzarcore.core_body import Body
 
 
 class JobProcess:

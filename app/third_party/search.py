@@ -4,7 +4,7 @@ import re
 import datetime
 
 # Public library from Vari
-from utils.public import Public
+from pulzarutils.public import Public
 
 
 class Search:

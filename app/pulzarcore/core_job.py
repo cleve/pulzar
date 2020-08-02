@@ -1,8 +1,8 @@
-from core.core_request import CoreRequest
-from core.core_rdb import RDB
-from utils.node_utils import NodeUtils
-from utils.constants import ReqType
-from utils.utils import Utils
+from pulzarcore.core_request import CoreRequest
+from pulzarcore.core_rdb import RDB
+from pulzarutils.node_utils import NodeUtils
+from pulzarutils.constants import ReqType
+from pulzarutils.utils import Utils
 
 
 class Job:

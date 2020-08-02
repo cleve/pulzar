@@ -1,6 +1,6 @@
-from utils.utils import Utils
-from core.core_db import DB
-from core.core_rdb import RDB
+from pulzarutils.utils import Utils
+from pulzarcore.core_db import DB
+from pulzarcore.core_rdb import RDB
 
 
 class NodeUtils:

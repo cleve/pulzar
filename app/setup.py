@@ -7,5 +7,5 @@ setup(name='pulzar',
       author='Mauricio Cleveland',
       author_email='mauricio.cleveland@gmail.com',
       license='Apache',
-      packages=['core'],
+      packages=['pulsarcore', 'pulzarutils'],
       zip_safe=False)

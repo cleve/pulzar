@@ -1,4 +1,4 @@
-from utils.constants import Constants
+from pulzarutils.constants import Constants
 from master.skynet import Skynet
 from master.get_process import GetProcess
 from master.post_process import PostProcess

@@ -1,7 +1,7 @@
-from core.core_db import DB
-from utils.constants import Constants
-from utils.utils import Utils
-from core.core_body import Body
+from pulzarcore.core_db import DB
+from pulzarcore.core_body import Body
+from pulzarutils.constants import Constants
+from pulzarutils.utils import Utils
 
 
 class Skynet:

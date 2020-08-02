@@ -1,9 +1,9 @@
 import argparse
 
 # Internal imports
-from core.core_request import CoreRequest
-from utils.constants import Constants
-from utils.stream import Config
+from pulzarcore.core_request import CoreRequest
+from pulzarutils.constants import Constants
+from pulzarutils.stream import Config
 
 
 def restore(url):

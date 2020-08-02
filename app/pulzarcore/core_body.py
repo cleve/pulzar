@@ -1,7 +1,7 @@
 from urllib.parse import parse_qs
 from html import escape
-from utils.constants import Constants
-from utils.utils import Utils
+from pulzarutils.constants import Constants
+from pulzarutils.utils import Utils
 
 
 class Body:

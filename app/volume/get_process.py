@@ -1,6 +1,6 @@
-from utils.utils import Utils
-from core.core_db import DB
-from utils.file_utils import FileUtils
+from pulzarutils.utils import Utils
+from pulzarcore.core_db import DB
+from pulzarutils.file_utils import FileUtils
 
 
 class GetProcess:

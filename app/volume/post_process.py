@@ -1,8 +1,8 @@
-from utils.utils import Utils
-from utils.constants import ReqType
-from utils.file_utils import FileUtils
-from core.core_request import CoreRequest
-from core.core_db import DB
+from pulzarutils.utils import Utils
+from pulzarutils.constants import ReqType
+from pulzarutils.file_utils import FileUtils
+from pulzarcore.core_request import CoreRequest
+from pulzarcore.core_db import DB
 
 
 class PostProcess:

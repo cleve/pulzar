@@ -1,11 +1,11 @@
-from utils.constants import Constants
-from utils.constants import ReqType
-from utils.utils import Utils
-from utils.file_utils import FileUtils
-from core.core_request import CoreRequest
+from pulzarutils.constants import Constants
+from pulzarutils.constants import ReqType
+from pulzarutils.utils import Utils
+from pulzarutils.file_utils import FileUtils
+from pulzarcore.core_request import CoreRequest
 from volume.dispatcher import Dispatcher
-from core.core_db import DB
-from core.core_response import ResponseClass
+from pulzarcore.core_db import DB
+from pulzarcore.core_response import ResponseClass
 
 
 class Volume:

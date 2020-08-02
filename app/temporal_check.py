@@ -1,10 +1,10 @@
 import requests
 
 # Internal imports
-from core.core_db import DB
-from utils.constants import Constants
-from utils.utils import Utils
-from utils.stream import Config
+from pulzarcore.core_db import DB
+from pulzarutils.constants import Constants
+from pulzarutils.utils import Utils
+from pulzarutils.stream import Config
 
 
 class TemporalCheck:

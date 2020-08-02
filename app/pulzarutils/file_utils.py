@@ -1,5 +1,5 @@
-from utils.utils import Utils
-from utils.stream import Config
+from pulzarutils.utils import Utils
+from pulzarutils.stream import Config
 import os
 
 

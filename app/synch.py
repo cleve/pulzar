@@ -1,9 +1,9 @@
-from core.core_request import CoreRequest
-from utils.utils import Utils
-from utils.constants import Constants
-from utils.constants import ReqType
-from core.core_db import DB
-from utils.stream import Config
+from pulzarcore.core_request import CoreRequest
+from pulzarutils.utils import Utils
+from pulzarutils.constants import Constants
+from pulzarutils.constants import ReqType
+from pulzarcore.core_db import DB
+from pulzarutils.stream import Config
 
 
 class Synchro:

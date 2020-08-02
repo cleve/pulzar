@@ -1,4 +1,4 @@
-from utils.utils import Utils
+from pulzarutils.utils import Utils
 
 class CoreJobs:
     """Base class for job implementation

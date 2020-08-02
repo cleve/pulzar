@@ -1,4 +1,4 @@
-from utils.constants import Constants
+from pulzarutils.constants import Constants
 from volume.get_process import GetProcess
 from volume.put_process import PutProcess
 from volume.delete_process import DeleteProcess

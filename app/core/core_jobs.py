@@ -1,3 +1,5 @@
+from utils.utils import Utils
+
 class CoreJobs:
     """Base class for job implementation
     """
@@ -7,6 +9,7 @@ class CoreJobs:
             arguments:
              - parameters (dict)
         """
+        self.utils = Utils()
         self.parameters = parameters
         self.notification_enabled = notification
 

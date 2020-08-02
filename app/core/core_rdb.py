@@ -13,6 +13,14 @@ class RDB:
         self.cursor.execute(query)
         self.database.commit()
 
+    def execute_sql_with_results(self, query, param=None):
+        """Execute query and return iterator
+        """
+        if param is None:
+            self.cursor.execute(query)
+        return self.cursor.fetchall()
+
+
     def execute_sql_insert(self, query, param):
         """Insert data
             return ID (int)

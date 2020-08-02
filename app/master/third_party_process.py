@@ -1,6 +1,7 @@
 import importlib
 from pulzarutils.utils import Utils
-from from pulzarcore.core_body import Body.core_db import DB
+from pulzarcore.core_body import Body
+from pulzarcore.core_db import DB
 
 
 class TPProcess:

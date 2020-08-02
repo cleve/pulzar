@@ -13,7 +13,7 @@ from urllib.parse import parse_qs
 import psutil
 
 # Internal
-from utils.constants import Constants
+from pulzarutils.constants import Constants
 
 
 class Utils:

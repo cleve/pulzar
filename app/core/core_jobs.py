@@ -13,8 +13,9 @@ class CoreJobs:
     def run_job(self):
         """Send job to be proccesed
         """
+        print('Running job')
 
     def notification(self):
         """Notify to master
         """
-        pass
+        print('Sending notification...')

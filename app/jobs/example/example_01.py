@@ -1,3 +1,5 @@
+import os
+import sys
 from core.core_jobs import CoreJobs
 
 
@@ -6,7 +8,7 @@ class Example(CoreJobs):
     """
 
     def __init__(self, params):
-        super().__init__(self, params)
+        print(params)
 
 
 def execute(arguments):
@@ -14,3 +16,8 @@ def execute(arguments):
     """
     example = Example(arguments[0])
     example.run_job()
+
+
+if __name__ == '__main__':
+    args = sys.argv[1]
+    execute(args)

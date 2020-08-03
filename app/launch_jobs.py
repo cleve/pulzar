@@ -15,6 +15,9 @@ class LaunchJobs:
         self.data_base = RDB(self.const.DB_NODE_JOBS)
         self.jobs_to_launch = []
 
+    def notify_to_master(self):
+        pass
+
     def process_params(self):
         """JSON to python objects
         """

@@ -11,7 +11,7 @@ class Example(CoreJobs):
 
     def run_job(self):
         try:
-            time.sleep(10)
+            time.sleep(2)
             r = 1/0
             return True
         except Exception as err:

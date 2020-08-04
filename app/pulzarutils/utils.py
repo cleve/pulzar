@@ -30,7 +30,9 @@ class Utils:
     def get_current_datetime(self):
         return datetime.datetime.now()
 
-    def get_datetime_from_string(self, datetime_str):
+    def get_datetime_from_string(self, datetime_str, full=False):
+        if full:
+            return datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S.%f")
         return datetime.datetime.strptime(datetime_str, "%Y-%m-%d-%H-%M-%S")
 
     def get_time_it(self):

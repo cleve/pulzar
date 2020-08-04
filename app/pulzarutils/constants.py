@@ -74,6 +74,7 @@ class Constants:
         self.RE_POST_VALUE = r'/add_key/(\w+)$'
         self.RE_THIRD_PARTY = r'/third_party((/\w+)+)'
         self.RE_LAUNCH_JOB = r'\/launch_job([\/\w\d]+)\/([\w\d]+)'
+        self.RE_NOTIFICATION_JOB = r'\/notification_job$'
         self.RE_ADMIN = r'/admin((/[\w-]+){1,2})'
 
         # Type of requests

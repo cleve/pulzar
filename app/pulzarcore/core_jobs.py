@@ -21,23 +21,33 @@ class CoreJobs:
         self._log = []
         self._failed_job = False
 
+    def _pulzar_run_job(executor):
+        """Decorator to handle job execution
+        """
+
+        def wrapper(self):
+            print('Pulzar core executing')
+            try:
+                executor(self)
+            except Exception as err:
+                self._mark_as_failed()
+                self.pulzar_add_log(str(err))
+            self._pulzar_notification()
+            return self.is_the_job_ok()
+        return wrapper
+
     def is_the_job_ok(self):
         """Should be at the end
         """
         return not self._failed_job
 
-    def mark_as_failed(self):
+    def _mark_as_failed(self):
         self._failed_job = True
 
-    def add_log(self, message):
+    def pulzar_add_log(self, message):
         self._log.append(message)
 
-    def run_job(self) -> None:
-        """Send job to be proccesed
-        """
-        pass
-
-    def notification(self):
+    def _pulzar_notification(self):
         """Notify to master
         """
         # Saving logs

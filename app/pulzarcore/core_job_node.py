@@ -30,11 +30,11 @@ class Job:
         parameters = self.utils.py_to_json(self.job_params)
         # Master job database
         data_base = RDB(path_db_jobs)
-        sql = 'INSERT INTO job (job_id, job_path, parameters, creation_time, ready) values (?, ?, ?, ?, ?)'
+        sql = 'INSERT INTO job (job_id, job_path, parameters, creation_time, ready, notification) values (?, ?, ?, ?, ?, ?)'
         register_id = data_base.execute_sql_insert(
             sql,
             (
-                self.job_id, self.job_path, parameters, self.utils.get_current_datetime(), 0
+                self.job_id, self.job_path, parameters, self.utils.get_current_datetime(), 0, 0
             )
         )
         return register_id

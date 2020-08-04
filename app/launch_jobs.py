@@ -2,7 +2,10 @@ import os
 import importlib
 from pulzarutils.utils import Utils
 from pulzarutils.constants import Constants
+from pulzarutils.constants import ReqType
+from pulzarutils.stream import Config
 from pulzarcore.core_rdb import RDB
+from pulzarcore.core_request import CoreRequest
 
 
 class LaunchJobs:
@@ -14,9 +17,45 @@ class LaunchJobs:
         self.utils = Utils()
         self.data_base = RDB(self.const.DB_NODE_JOBS)
         self.jobs_to_launch = []
+        # Master configuration
+        self.server_host = None
+        self.server_port = None
+        self.get_config()
+        self.search_pending_jobs()
 
-    def notify_to_master(self):
-        pass
+    def get_config(self):
+        """Configuration from ini file
+        """
+        server_config = Config(self.const.CONF_PATH)
+        # Master url
+        self.server_host = server_config.get_config('server', 'host')
+        self.server_port = server_config.get_config('server', 'port')
+
+    def notify_to_master(self, job_id):
+        """Sending the signal to master
+        """
+        current_datetime = self.utils.get_current_datetime()
+        # Recovering data of job
+        sql = 'SELECT log, creation_time, ready FROM job WHERE job_id = {} AND notification = 0'.format(
+            job_id)
+        row = self.data_base.execute_sql_with_results(sql)[0]
+        start_datetime = self.utils.get_datetime_from_string(row[1], True)
+        delta = current_datetime - start_datetime
+        payload = {
+            'job_id': job_id,
+            'log': row[0],
+            'time': delta.total_seconds(),
+            'state': row[2]
+        }
+        req = CoreRequest(self.server_host, self.server_port,
+                          '/notification_job')
+        req.set_type(ReqType.POST)
+        req.set_payload(payload)
+        if req.make_request(json_request=True):
+            # Update the state
+            sql = 'UPDATE job SET notification = 1 WHERE job_id = {}'.format(
+                job_id)
+            self.data_base.execute_sql(sql)
 
     def process_params(self):
         """JSON to python objects
@@ -32,7 +71,7 @@ class LaunchJobs:
         status = 1 if state else 2
         sql = 'UPDATE job SET ready = {} WHERE job_id = {}'.format(
             status, job_id)
-        self.data_base.execute_sql(sql)
+        return self.data_base.execute_sql(sql) > 0
 
     def execute_jobs(self):
         """Execute jobs selected
@@ -46,7 +85,9 @@ class LaunchJobs:
                 job['job_args']['job_id'] = job['job_id']
                 import_fly = importlib.import_module(custom_module)
                 status = import_fly.execute(job['job_args'])
-                self.mark_job(job['job_id'], status)
+                # Report to master
+                if self.mark_job(job['job_id'], status):
+                    self.notify_to_master(job['job_id'])
             except Exception as err:
                 print('Error executing the job: ', err)
 
@@ -62,6 +103,14 @@ class LaunchJobs:
                 'job_args': row[2],
                 'job_creation': row[4]
             })
+
+    def search_pending_jobs(self):
+        """Search job scheduled
+        """
+        sql = 'SELECT * FROM job WHERE ready <> 0 AND notification = 0'
+        rows = self.data_base.execute_sql_with_results(sql)
+        for row in rows:
+            self.notify_to_master(row[0])
 
 
 launcher = LaunchJobs()

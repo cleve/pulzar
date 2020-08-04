@@ -2,7 +2,7 @@ from pulzarutils.utils import Utils
 from pulzarutils.constants import ReqType
 from pulzarutils.node_utils import NodeUtils
 from pulzarcore.core_request import CoreRequest
-from pulzarcore.core_db import DB
+from pulzarcore.core_rdb import RDB
 from pulzarcore.core_job import Job
 from pulzarcore.core_body import Body
 
@@ -14,33 +14,35 @@ class JobProcess:
     def __init__(self, constants):
         self.const = constants
         self.utils = Utils()
-        self.db_backup = DB(self.const.DB_BACKUP)
+        self.data_base = RDB(self.const.DB_JOBS)
         self.complex_response = {
             'action': None,
             'parameters': None,
             'volume': None
         }
 
-    def notify_record_to_master(self, env):
+    def process_notification_request(self, url_path, query_string, env):
+        """Processing job notification from node
+        """
+        try:
+            body = Body()
+            job_params = body.extract_params(env)
+            print('params:', job_params)
+            sql = 'UPDATE job SET log = "{}", ready = {} WHERE id = {}'.format(
+                job_params['log'], job_params['state'], job_params['job_id'])
+            rows_affected = self.data_base.execute_sql(sql)
 
-        # Report the register creation.
-        master_url = self.utils.extract_url_data(
-            env['QUERY_STRING'])
-        # Confirming with master.
-        req = CoreRequest(
-            master_url['host'], master_url['port'], self.const.ADD_RECORD)
-        req.set_type(ReqType.POST)
-        req.set_path(self.const.ADD_RECORD)
-        # We have to send the key, volume and port.
-        req.set_payload({
-            'key': 'self.file_utils.key',
-            'volume': env[self.const.HTTP_HOST]
-        })
-        if not req.make_request():
-            # If an error ocurr in the server, we need to delete the file.
-            return False
+            if rows_affected > 0:
+                self.complex_response['action'] = self.const.JOB_RESPONSE
+                self.complex_response['parameters'] = b'ok'
+            else:
+                self.complex_response['action'] = self.const.JOB_ERROR
 
-        return True
+        except Exception as err:
+            print('Error extracting keywerwe', err)
+            self.complex_response['action'] = self.const.JOB_ERROR
+
+        return self.complex_response
 
     def process_request(self, url_path, query_string, env):
         """Processing job request

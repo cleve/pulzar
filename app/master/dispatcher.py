@@ -59,6 +59,13 @@ class Dispatcher:
                 self.complex_response = job_process.process_request(
                     url_path, query_string, env)
 
+        elif self.utils.match_regex(url_path, self.const.RE_NOTIFICATION_JOB):
+            if method == self.const.POST:
+                job_process = JobProcess(self.const)
+                query_string = env['QUERY_STRING']
+                self.complex_response = job_process.process_notification_request(
+                    url_path, query_string, env)
+
         # Third party
         elif self.utils.match_regex(url_path, self.const.RE_THIRD_PARTY):
             if method == self.const.GET:

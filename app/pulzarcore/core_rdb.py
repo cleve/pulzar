@@ -10,8 +10,12 @@ class RDB:
         self.cursor = self.database.cursor()
 
     def execute_sql(self, query):
+        """Generic query
+            return int: rows affected
+        """
         self.cursor.execute(query)
         self.database.commit()
+        return self.cursor.rowcount
 
     def execute_sql_with_results(self, query, param=None):
         """Execute query and return iterator
@@ -19,7 +23,6 @@ class RDB:
         if param is None:
             self.cursor.execute(query)
         return self.cursor.fetchall()
-
 
     def execute_sql_insert(self, query, param):
         """Insert data

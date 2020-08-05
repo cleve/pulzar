@@ -76,7 +76,7 @@ class AdminProcess:
                     ready_jobs = []
                     failed_jobs = []
                     # Get pending jobs
-                    sql = 'SELECT id, job_name, parameters, node, log, creation_time, ready FROM job WHERE ready = 0'
+                    sql = 'SELECT id, job_name, parameters, node, creation_time, state FROM job WHERE state = 0'
                     rows = data_base.execute_sql_with_results(sql)
                     for pending in rows:
                         pendings_jobs.append({
@@ -84,11 +84,10 @@ class AdminProcess:
                             'job_name': pending[1],
                             'parameters': pending[2],
                             'node': pending[3],
-                            'log': pending[4],
                             'creation_time': pending[5]
                         })
                     # Get ready jobs
-                    sql = 'SELECT id, job_name, parameters, node, log, creation_time, ready FROM job WHERE ready = 1'
+                    sql = 'SELECT id, job_name, parameters, node, creation_time, state FROM job WHERE state = 1'
                     rows = data_base.execute_sql_with_results(sql)
                     for ready in rows:
                         ready_jobs.append({
@@ -96,11 +95,10 @@ class AdminProcess:
                             'job_name': ready[1],
                             'parameters': ready[2],
                             'node': ready[3],
-                            'log': ready[4],
                             'creation_time': ready[5]
                         })
                     # Get failed jobs
-                    sql = 'SELECT id, job_name, parameters, node, log, creation_time, ready FROM job WHERE ready = 2'
+                    sql = 'SELECT id, job_name, parameters, node, creation_time, state FROM job WHERE state = 2'
                     rows = data_base.execute_sql_with_results(sql)
                     for failed in rows:
                         failed_jobs.append({
@@ -108,7 +106,6 @@ class AdminProcess:
                             'job_name': failed[1],
                             'parameters': failed[2],
                             'node': failed[3],
-                            'log': failed[4],
                             'creation_time': failed[5]
                         })
                     result = {

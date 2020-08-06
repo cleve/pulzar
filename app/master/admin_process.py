@@ -116,6 +116,31 @@ class AdminProcess:
                     self.complex_response['parameters'] = self.utils.py_to_json(
                         result, to_bin=True)
 
+                # job details
+                elif len(call_path_list) == 2 and call_path_list[0] == 'jobs':
+                    data_base = RDB(self.const.DB_JOBS)
+                    job_id = call_path_list[1]
+                    # Getting details
+                    sql = 'SELECT state FROM job WHERE id = {}'.format(job_id)
+                    rows = data_base.execute_sql_with_results(sql)
+                    if len(rows) == 0:
+                        self.complex_response['action'] = self.const.KEY_NOT_FOUND
+                        return self.complex_response
+                    if rows[0][0] == 1:
+                        table = 'successful_job'
+                    elif rows[0][0] == 2:
+                        table = 'failed_job'
+                    sql = 'SELECT log, time, output FROM {} WHERE job_id = {}'.format(
+                        table, job_id)
+                    job_details = data_base.execute_sql_with_results(sql)
+                    result = {
+                        'job': job_id,
+                        'log': job_details[0][0],
+                        'time': job_details[0][1]
+                    }
+                    self.complex_response['parameters'] = self.utils.py_to_json(
+                        result, to_bin=True)
+
                 elif len(call_path_list) == 1 and call_path_list[0] == 'status':
                     db_master = DB(self.const.DB_PATH)
                     self.complex_response['parameters'] = self.utils.py_to_json(

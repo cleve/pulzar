@@ -34,17 +34,15 @@ class LaunchJobs:
     def notify_to_master(self, job_id):
         """Sending the signal to master
         """
-        current_datetime = self.utils.get_current_datetime()
         # Recovering data of job
-        sql = 'SELECT log, creation_time, ready FROM job WHERE job_id = {} AND notification = 0'.format(
+        sql = 'SELECT log, duration, ready FROM job WHERE job_id = {} AND notification = 0'.format(
             job_id)
         row = self.data_base.execute_sql_with_results(sql)[0]
-        start_datetime = self.utils.get_datetime_from_string(row[1], True)
-        delta = current_datetime - start_datetime
+
         payload = {
             'job_id': job_id,
             'log': row[0],
-            'time': delta.total_seconds(),
+            'time': row[1],
             'state': row[2]
         }
         req = CoreRequest(self.server_host, self.server_port,

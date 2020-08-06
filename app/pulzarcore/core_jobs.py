@@ -21,6 +21,15 @@ class CoreJobs:
         self._log = []
         self._failed_job = False
 
+        # log
+        self.pulzar_register_parameters()
+
+    def pulzar_register_parameters(self):
+        if self.parameters:
+            self.pulzar_add_log(
+                self.utils.py_to_json(self.parameters)
+            )
+
     def _pulzar_run_job(executor):
         """Decorator to handle job execution
         """
@@ -52,9 +61,9 @@ class CoreJobs:
         """
         # Saving logs
         final_log = '\n'.join(self._log)
-        sql = 'UPDATE job SET log = "{}" WHERE job_id = {}'.format(
-            final_log, self._job_id)
-        self.database.execute_sql(sql)
+        sql = 'UPDATE job SET log = ? WHERE job_id = {}'.format(
+            self._job_id)
+        self.database.execute_sql_insert(sql, (final_log,))
         # Notifications
         if self._notification_enabled:
             print('Sending notification...')

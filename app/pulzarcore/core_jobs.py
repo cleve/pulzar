@@ -18,6 +18,7 @@ class CoreJobs:
         self.parameters = parameters
         self._notification_enabled = notification
         self._job_id = parameters['job_id']
+        self._start_time = self.utils.get_current_datetime()
         self._log = []
         self._failed_job = False
 
@@ -59,11 +60,14 @@ class CoreJobs:
     def _pulzar_notification(self):
         """Notify to master
         """
+        end_time = self.utils.get_current_datetime()
+        delta = end_time - self._start_time
         # Saving logs
         final_log = '\n'.join(self._log)
-        sql = 'UPDATE job SET log = ? WHERE job_id = {}'.format(
+        sql = 'UPDATE job SET log = ?, duration = ? WHERE job_id = {}'.format(
             self._job_id)
-        self.database.execute_sql_insert(sql, (final_log,))
+        self.database.execute_sql_insert(
+            sql, (final_log, delta.total_seconds()))
         # Notifications
         if self._notification_enabled:
             print('Sending notification...')

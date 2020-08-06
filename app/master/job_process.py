@@ -3,7 +3,7 @@ from pulzarutils.constants import ReqType
 from pulzarutils.node_utils import NodeUtils
 from pulzarcore.core_request import CoreRequest
 from pulzarcore.core_rdb import RDB
-from pulzarcore.core_job import Job
+from pulzarcore.core_job_master import Job
 from pulzarcore.core_body import Body
 
 
@@ -23,15 +23,26 @@ class JobProcess:
 
     def process_notification_request(self, url_path, query_string, env):
         """Processing job notification from node
+            state = 1: succeful
+            state = 2: error
         """
         try:
             body = Body()
             job_params = body.extract_params(env)
             print('params:', job_params)
-            sql = 'UPDATE job SET log = "{}", ready = {} WHERE id = {}'.format(
-                job_params['log'], job_params['state'], job_params['job_id'])
+            # Main table
+            sql = 'UPDATE job SET state = {} WHERE id = {}'.format(
+                job_params['state'], job_params['job_id'])
             rows_affected = self.data_base.execute_sql(sql)
-
+            # Store log and time
+            state = job_params['state']
+            if state == 1:
+                table = 'successful_job'
+            elif state == 2:
+                table = 'failed_job'
+            sql = 'INSERT INTO {} (job_id, log) VALUES ({}, "{}")'.format(
+                table, job_params['job_id'], job_params['log'])
+            rows_affected = self.data_base.execute_sql(sql)
             if rows_affected > 0:
                 self.complex_response['action'] = self.const.JOB_RESPONSE
                 self.complex_response['parameters'] = b'ok'
@@ -39,7 +50,7 @@ class JobProcess:
                 self.complex_response['action'] = self.const.JOB_ERROR
 
         except Exception as err:
-            print('Error extracting keywerwe', err)
+            print('Error process_notification_request', err)
             self.complex_response['action'] = self.const.JOB_ERROR
 
         return self.complex_response

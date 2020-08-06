@@ -11,8 +11,11 @@ class Example(CoreJobs):
 
     @CoreJobs._pulzar_run_job
     def run_my_code(self):
-        time.sleep(20)
-        r = 1.0/10.0
+        print('Parameters: ', self.parameters, type(self.parameters))
+        number = self.parameters['arg1']
+        number_two = self.parameters['arg2']
+        time.sleep(1)
+        r = number / number_two
         self.pulzar_add_log('Result is: ' + str(r))
 
 

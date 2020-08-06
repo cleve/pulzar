@@ -33,17 +33,23 @@ class JobProcess:
             # Main table
             sql = 'UPDATE job SET state = {} WHERE id = {}'.format(
                 job_params['state'], job_params['job_id'])
-            rows_affected = self.data_base.execute_sql(sql)
+            update_rows_affected = self.data_base.execute_sql(sql)
+            if update_rows_affected == 0:
+                self.complex_response['action'] = self.const.JOB_ERROR
+                return self.complex_response
             # Store log and time
             state = job_params['state']
             if state == 1:
                 table = 'successful_job'
             elif state == 2:
                 table = 'failed_job'
-            sql = 'INSERT INTO {} (job_id, log, time) VALUES ({}, "{}", {})'.format(
-                table, job_params['job_id'], job_params['log'], job_params['time'])
-            rows_affected = self.data_base.execute_sql(sql)
-            if rows_affected > 0:
+            sql = 'INSERT INTO {} (job_id, log, time) VALUES (?, ?, ?)'.format(
+                table)
+            insert_rows_affected = self.data_base.execute_sql_insert(
+                sql, (job_params['job_id'],
+                      job_params['log'], job_params['time'])
+            )
+            if insert_rows_affected > 0:
                 self.complex_response['action'] = self.const.JOB_RESPONSE
                 self.complex_response['parameters'] = b'ok'
             else:

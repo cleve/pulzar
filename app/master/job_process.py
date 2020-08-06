@@ -40,8 +40,8 @@ class JobProcess:
                 table = 'successful_job'
             elif state == 2:
                 table = 'failed_job'
-            sql = 'INSERT INTO {} (job_id, log) VALUES ({}, "{}")'.format(
-                table, job_params['job_id'], job_params['log'])
+            sql = 'INSERT INTO {} (job_id, log, time) VALUES ({}, "{}", {})'.format(
+                table, job_params['job_id'], job_params['log'], job_params['time'])
             rows_affected = self.data_base.execute_sql(sql)
             if rows_affected > 0:
                 self.complex_response['action'] = self.const.JOB_RESPONSE

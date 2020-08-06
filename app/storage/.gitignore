@@ -1,4 +1,7 @@
 # Ignore everything in this directory
 *
+# Except relational databases
+!jobs.db
+!node_jobs.db
 # Except this file
 !.gitignore

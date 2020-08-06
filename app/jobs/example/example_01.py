@@ -11,7 +11,7 @@ class Example(CoreJobs):
 
     @CoreJobs._pulzar_run_job
     def run_my_code(self):
-        print('Parameters: ', self.parameters, type(self.parameters))
+        print('Parameters: ', self.parameters)
         number = self.parameters['arg1']
         number_two = self.parameters['arg2']
         time.sleep(1)

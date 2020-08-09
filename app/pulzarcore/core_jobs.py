@@ -21,11 +21,29 @@ class CoreJobs:
         self._start_time = self.utils.get_current_datetime()
         self._log = []
         self._failed_job = False
+        self._pulzar_data_file_path = None
 
         # log
-        self.pulzar_register_parameters()
+        self._pulzar_register_parameters()
+        self._pulzar_get_data()
 
-    def pulzar_register_parameters(self):
+    def _pulzar_get_data(self):
+        """Check file and assign it
+        """
+        if 'pulzar_data' in self.parameters:
+            file_path = self.parameters['pulzar_data']
+            abs_path = '/var/lib/pulzar/data/' + self.utils.encode_base_64(
+                file_path, to_str=True)
+            if self.utils.file_exists(abs_path):
+                self._pulzar_data_file_path = abs_path
+        print(self._pulzar_data_file_path)
+
+    def pulzar_get_filepath(self):
+        """Return filepath
+        """
+        return self._pulzar_data_file_path
+
+    def _pulzar_register_parameters(self):
         if self.parameters:
             self.pulzar_add_log(
                 self.utils.py_to_json(self.parameters)

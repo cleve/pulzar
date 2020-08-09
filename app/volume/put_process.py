@@ -53,7 +53,7 @@ class PutProcess:
 
     def process_request(self, env, start_response, url_path):
         regex_result = self.utils.get_search_regex(
-            url_path, self.const.RE_POST_VALUE)
+            url_path, self.const.RE_PUT_VALUE)
         if regex_result:
             try:
                 key_to_add = regex_result.groups()[0]

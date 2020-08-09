@@ -1,5 +1,6 @@
 from pulzarcore.core_request import CoreRequest
 from pulzarcore.core_rdb import RDB
+from pulzarcore.core_db import DB
 from pulzarutils.node_utils import NodeUtils
 from pulzarutils.constants import ReqType
 from pulzarutils.utils import Utils
@@ -42,15 +43,31 @@ class Job:
             )
         )
 
+    def select_node(self, const):
+        """Picking a node since parameters
+        """
+        if 'pulzar_data' in self.job_params['parameters']:
+            # Send to the node where the data is
+            data_base = DB(const.DB_PATH)
+            composed_data = data_base.get_value(
+                self.utils.encode_base_64(
+                    self.job_params['parameters']['pulzar_data']), to_str=True
+            )
+            print(composed_data)
+            node = composed_data.split(',')[0].split(':')[0]
+            return node.encode()
+        else:
+            node_utils = NodeUtils(const)
+            return node_utils.pick_a_volume()
+
     def send_job(self, const):
         """Send job to the node selected
 
             params:
              - const (Constants)
         """
-
-        node_utils = NodeUtils(const)
-        node = node_utils.pick_a_volume()
+        node = self.select_node(const)
+        print('node', node)
         if node is None:
             return False
         print('Sending job to node ', node)

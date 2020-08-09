@@ -15,7 +15,7 @@ class Example(CoreJobs):
             line_number = 1
             with open(self.pulzar_get_filepath(), 'rb') as f:
                 for line in f:
-                    print('(' + str(line_number) + ')', line)
+                    print('(' + str(line_number) + ')', line.decode())
                     line_number += 1
 
     @CoreJobs._pulzar_run_job

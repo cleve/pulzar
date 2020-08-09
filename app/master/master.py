@@ -55,6 +55,17 @@ class Master:
             self.response.set_response('200 OK')
             self.response.set_message(b'key not found')
 
+        if request_type == self.const.KEY_FOUND_DELETE:
+            url_path = env[self.const.PATH_INFO]
+            if request['volume'] is None:
+                self.response.set_response('203 No Content')
+                self.response.set_message(
+                    b'There is not volumes registered or online')
+            else:
+                redirect_url = 'http://' + request['volume'] + url_path
+                self.response.set_response('307 temporary redirect')
+                self.response.set_redirection(redirect_url)
+
         if request_type == self.const.KEY_FOUND:
             # Here redirection or negotiation
             url_path = env[self.const.PATH_INFO]

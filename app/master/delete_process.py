@@ -26,13 +26,14 @@ class DeleteProcess:
                 key_to_binary = self.utils.encode_base_64(key_to_search)
                 value = self.db_values.get_value(key_to_binary)
                 if value is None:
-                    self.complex_response['action'] = self.const.KEY_NOT_FOUND 
+                    self.complex_response['action'] = self.const.KEY_NOT_FOUND
                     return self.complex_response
                 # Delete register on master.
                 self.db_values.delete_value(key_to_binary)
                 # Redirect to volume does not matter if was not deleted on master.
-                self.complex_response['action'] = self.const.KEY_FOUND
-                self.complex_response['volume'] = value
+                value_string_volume = value.decode().split(',')[0]
+                self.complex_response['action'] = self.const.KEY_FOUND_DELETE
+                self.complex_response['volume'] = value_string_volume
                 return self.complex_response
 
             except Exception as err:

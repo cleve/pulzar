@@ -95,6 +95,7 @@ class Constants:
         self.SKYNET_RECORD_ALREADY_ADDED = 'skynet_record_already'
         self.KEY_NOT_FOUND = 'key_not_found'
         self.KEY_FOUND = 'key_found'
+        self.KEY_FOUND_DELETE = 'key_found_delete'
         self.KEY_DELETED = 'key_deleted'
         self.BACKUP_SCHEDULED = 'backup_scheduled'
         self.SET_TEMPORAL = 'temporal'

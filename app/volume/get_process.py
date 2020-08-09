@@ -24,12 +24,14 @@ class GetProcess:
                 key_to_search = regex_result.groups()[0]
                 # Searching in the database
                 key_to_binary = self.utils.encode_base_64(key_to_search)
-                value = self.file_utils.is_value_present(self.utils.decode_byte_to_str(key_to_binary))
+                value = self.file_utils.is_value_present(
+                    self.utils.decode_byte_to_str(key_to_binary))
                 if not value:
-                    self.complex_response['action'] = self.const.KEY_NOT_FOUND 
+                    self.complex_response['action'] = self.const.KEY_NOT_FOUND
                     return self.complex_response
                 self.complex_response['action'] = self.const.KEY_FOUND
-                self.complex_response['parameters'] = self.utils.decode_byte_to_str(key_to_binary)
+                self.complex_response['parameters'] = self.utils.decode_byte_to_str(
+                    key_to_binary)
                 return self.complex_response
 
             except Exception as err:

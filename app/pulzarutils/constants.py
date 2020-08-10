@@ -69,9 +69,9 @@ class Constants:
         self.RE_URL_OPTION_ORDER = r'([\w]+)*\/([\w]+)+$'
 
         # API calls
-        self.RE_GET_VALUE = r'\/get_key\/([\w|\.]+)$'
-        self.RE_DELETE_VALUE = r'\/delete_key\/([\w|\.]+)$'
-        self.RE_PUT_VALUE = r'\/add_key\/([\w|\.]+)$'
+        self.RE_GET_VALUE = r'\/get_key([\w+|\/{1}]+)?\/([\w|\.]+)$'
+        self.RE_DELETE_VALUE = r'\/delete_key([\w+|\/{1}]+)?\/([\w|\.]+)$'
+        self.RE_PUT_VALUE = r'\/add_key([\w+|\/{1}]+)?\/([\w|\.]+)$'
         self.RE_THIRD_PARTY = r'/third_party((/\w+)+)'
         self.RE_LAUNCH_JOB = r'\/launch_job([\/\w\d]+)\/([\w\d]+)'
         self.RE_NOTIFICATION_JOB = r'\/notification_job$'

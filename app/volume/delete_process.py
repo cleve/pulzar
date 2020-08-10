@@ -21,18 +21,24 @@ class DeleteProcess:
             url_path, self.const.RE_DELETE_VALUE)
         if regex_result:
             try:
-                key_to_search = regex_result.groups()[0]
+                root_path, base_name = regex_result.groups()
+                if root_path is None:
+                    root_path = ''
                 # Searching in the database
-                key_to_binary = self.utils.encode_base_64(key_to_search)
-                value = self.file_utils.is_value_present(self.utils.decode_byte_to_str(key_to_binary))
+                key_to_binary = self.utils.encode_base_64(
+                    root_path + '/' + base_name)
+                full_path = root_path + '/' + \
+                    self.utils.decode_byte_to_str(key_to_binary)
+                value = self.file_utils.is_value_present(full_path)
                 if not value:
-                    self.complex_response['action'] = self.const.KEY_NOT_FOUND 
-                    return self.complex_response
-                if self.file_utils.remove_file_with_key(self.utils.decode_byte_to_str(key_to_binary)):
-                    self.complex_response['action'] = self.const.KEY_DELETED
-                else:    
                     self.complex_response['action'] = self.const.KEY_NOT_FOUND
-                    self.complex_response['parameters'] = self.utils.decode_byte_to_str(key_to_binary)
+                    return self.complex_response
+                if self.file_utils.remove_file_with_path(full_path):
+                    self.complex_response['action'] = self.const.KEY_DELETED
+                else:
+                    self.complex_response['action'] = self.const.KEY_NOT_FOUND
+                    self.complex_response['parameters'] = self.utils.decode_byte_to_str(
+                        key_to_binary)
                 return self.complex_response
 
             except Exception as err:

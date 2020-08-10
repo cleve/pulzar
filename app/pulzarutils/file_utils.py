@@ -10,6 +10,7 @@ class FileUtils():
         self.config = Config(self.const.CONF_PATH)
         self.binary_key = b''
         self.key = ''
+        self.base_dir = None
         self.volume_path = ''
         self.init_config()
 
@@ -21,6 +22,14 @@ class FileUtils():
         self.binary_key = binary_key
         self.key = base64_str_key
 
+    def set_path(self, root_path):
+        """Defining the basedir
+        """
+        self.base_dir = root_path
+
+    def get_key(self):
+        return self.key
+
     def is_value_present(self, key_name):
         value_path = self.volume_path + '/' + key_name
         return self.file_exists(value_path)
@@ -31,8 +40,8 @@ class FileUtils():
     def dir_exists(self, dir_path):
         return os.path.isdir(dir_path)
 
-    def remove_file_with_key(self, key):
-        file_path = self.volume_path + '/' + key
+    def remove_file_with_path(self, full_path):
+        file_path = self.volume_path + '/' + full_path
         if self.file_exists(file_path):
             os.remove(file_path)
             return True
@@ -48,16 +57,18 @@ class FileUtils():
     def read_value(self, key_name, start_response):
         value_path = self.volume_path + '/' + key_name
         fh = open(value_path, 'rb')
-        start_response('200 OK', [('Content-Type','application/octet-stream')])
-        return self.fbuffer(fh,1024)
-    
+        start_response(
+            '200 OK', [('Content-Type', 'application/octet-stream')])
+        return self.fbuffer(fh, 1024)
+
     def fbuffer(self, f, chunk_size):
-        '''Generator to buffer file chunks'''  
+        '''Generator to buffer file chunks'''
         while True:
-            chunk = f.read(chunk_size)      
-            if not chunk: break
+            chunk = f.read(chunk_size)
+            if not chunk:
+                break
             yield chunk
-    
+
     def read_binary_file(self, env):
         try:
             request_body_size = int(env[self.const.CONTENT_LENGTH])
@@ -70,10 +81,16 @@ class FileUtils():
             f = env[self.const.WSGI_INPUT]
             for piece in self.read_in_chunks(f):
                 temp_file.write(piece)
-            
+
+            # Creating directories if does not exist.
+            full_path = self.volume_path + self.base_dir
+            if self.base_dir is not None and not self.utils.dir_exists(full_path):
+                print('Creating directory')
+                os.makedirs(full_path)
+
             temp_file.close()  # Close the file to be copied.
             if destiny_path == self.utils.move_file(
-                    temp_file.name, self.volume_path + '/' + self.key):
+                    temp_file.name, full_path + '/' + self.key):
                 return self.key
 
     def read_in_chunks(self, file_object, chunk_size=1024):

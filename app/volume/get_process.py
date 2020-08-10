@@ -21,9 +21,13 @@ class GetProcess:
             url_path, self.const.RE_GET_VALUE)
         if regex_result:
             try:
-                key_to_search = regex_result.groups()[0]
+                root_path, base_name = regex_result.groups()
+                if root_path is None:
+                    root_path = ''
                 # Searching in the database
-                key_to_binary = self.utils.encode_base_64(key_to_search)
+                key_to_binary = self.utils.encode_base_64(
+                    root_path + '/' + base_name)
+
                 value = self.file_utils.is_value_present(
                     self.utils.decode_byte_to_str(key_to_binary))
                 if not value:

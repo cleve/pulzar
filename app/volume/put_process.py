@@ -34,7 +34,7 @@ class PutProcess:
         req.set_path(self.const.ADD_RECORD)
         # We have to send the key, volume and port.
         req.set_payload({
-            'key': self.file_utils.key,
+            'key': self.file_utils.get_key(),
             'volume': env[self.const.HTTP_HOST],
             'temporal': temporal
         })
@@ -56,11 +56,16 @@ class PutProcess:
             url_path, self.const.RE_PUT_VALUE)
         if regex_result:
             try:
-                key_to_add = regex_result.groups()[0]
-                base64_str = self.utils.encode_base_64(key_to_add, True)
+                root_path, base_name = regex_result.groups()
+                if root_path is None:
+                    root_path = ''
+
+                base64_str = self.utils.encode_base_64(
+                    root_path + '/' + base_name, True)
                 # Trying to create the key-value
-                key_to_binary = self.utils.encode_str_to_byte(key_to_add)
+                key_to_binary = self.utils.encode_str_to_byte(base64_str)
                 self.file_utils.set_key(key_to_binary, base64_str)
+                self.file_utils.set_path(root_path)
                 key_generated = self.file_utils.read_binary_file(env)
                 # Try to reach to master.
                 if self.notify_record_to_master(env):

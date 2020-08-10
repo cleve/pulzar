@@ -42,11 +42,18 @@ class PutProcess:
     def process_request(self, env, start_response, url_path):
         regex_result = self.utils.get_search_regex(
             url_path, self.const.RE_PUT_VALUE)
+
         if regex_result:
             try:
-                key_to_add = regex_result.groups()[0]
+                raw_root_path, key_to_add = regex_result.groups()
+                if raw_root_path is None:
+                    root_path = ''
+                else:
+                    root_path = raw_root_path
                 # Searching in the database
-                key_to_binary = self.utils.encode_str_to_byte(key_to_add)
+                key = root_path + '/' + key_to_add
+                print('===> KEY ', key)
+                key_to_binary = self.utils.encode_str_to_byte(key)
                 value = self.db_values.get_value(key_to_binary)
                 # If not, we will try to create the entry process.
                 if value is None:

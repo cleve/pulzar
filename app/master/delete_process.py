@@ -21,9 +21,12 @@ class DeleteProcess:
             url_path, self.const.RE_DELETE_VALUE)
         if regex_result:
             try:
-                key_to_search = regex_result.groups()[0]
+                root_path, base_name = regex_result.groups()
+                if root_path is None:
+                    root_path = ''
                 # Searching in the database
-                key_to_binary = self.utils.encode_base_64(key_to_search)
+                key_to_binary = self.utils.encode_base_64(
+                    root_path + '/' + base_name)
                 value = self.db_values.get_value(key_to_binary)
                 if value is None:
                     self.complex_response['action'] = self.const.KEY_NOT_FOUND

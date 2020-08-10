@@ -20,11 +20,17 @@ class GetProcess:
         regex_result = self.utils.get_search_regex(
             url_path, self.const.RE_GET_VALUE)
 
+        print(regex_result.groups())
+
         if regex_result:
             try:
-                key_to_search = regex_result.groups()[0]
+                root_path = ''
+                raw_root_path, key = regex_result.groups()
+                if raw_root_path is not None:
+                    root_path = raw_root_path
                 # Searching in the database
-                key_to_binary = self.utils.encode_base_64(key_to_search)
+                key_to_binary = self.utils.encode_base_64(
+                    root_path + '/' + key)
                 # Getting volume,string_datetime
                 composed_value = self.db_values.get_value(
                     key_to_binary, to_str=True)

@@ -31,7 +31,7 @@ class LaunchJobs:
         self.server_host = server_config.get_config('server', 'host')
         self.server_port = server_config.get_config('server', 'port')
 
-    def notify_to_master(self, job_id):
+    def notify_to_master(self, job_id, repetitive=False):
         """Sending the signal to master
         """
         # Recovering data of job

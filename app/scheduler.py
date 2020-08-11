@@ -22,7 +22,7 @@ class Scheduler(LaunchJobs):
         self.server_port = None
         self.get_config()
 
-    def search_jobs(self):
+    def _search_jobs(self):
         """Search job scheduled
         """
         sql = 'SELECT * FROM schedule_job WHERE scheduled = 0'
@@ -38,9 +38,12 @@ class Scheduler(LaunchJobs):
                 'job_repeat': row[6]
             })
 
+    def run_forever(self):
+        while True:
+            self._search_jobs()
+            schedule.run_pending()
+            time.sleep(60)
+
 
 scheduler_object = Scheduler()
-while True:
-    scheduler_object.search_jobs()
-    schedule.run_pending()
-    time.sleep(60)
+scheduler_object.run_forever()

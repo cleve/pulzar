@@ -26,7 +26,7 @@ class Example(CoreJobs):
 
         self.process_data()
 
-        r = number / number_two
+        r = float(number) / float(number_two)
         self.pulzar_add_log('Result is: ' + str(r))
 
 

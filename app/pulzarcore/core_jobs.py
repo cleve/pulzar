@@ -1,6 +1,8 @@
 from pulzarutils.utils import Utils
 from pulzarutils.utils import Constants
+from pulzarutils.constants import ReqType
 from pulzarcore.core_rdb import RDB
+from pulzarcore.core_request import CoreRequest
 
 
 class CoreJobs:
@@ -22,14 +24,17 @@ class CoreJobs:
         self._log = []
         self._failed_job = False
         self._pulzar_data_file_path = None
+        self._pulzar_job_type = 'regular'
 
         # log
         self._pulzar_register_parameters()
         self._pulzar_get_data()
 
     def _pulzar_get_data(self):
-        """Check file and assign it
+        """Check file/config and assign it
         """
+        if 'pulzar_type' in self.parameters:
+            self._pulzar_job_type = self.parameters['pulzar_type']
         if 'pulzar_data' in self.parameters:
             file_path = self.parameters['pulzar_data']
             abs_path = '/var/lib/pulzar/data/' + self.utils.encode_base_64(
@@ -78,14 +83,32 @@ class CoreJobs:
     def _pulzar_notification(self):
         """Notify to master
         """
+        job_table = 'job'
+        if self._pulzar_job_type == 'scheduled':
+            job_table = 'schedule_job'
         end_time = self.utils.get_current_datetime()
         delta = end_time - self._start_time
         # Saving logs
         final_log = '\n'.join(self._log)
-        sql = 'UPDATE job SET log = ?, duration = ? WHERE job_id = {}'.format(
-            self._job_id)
+        sql = 'UPDATE {} SET log = ?, duration = ? WHERE job_id = {}'.format(
+            job_table, self._job_id)
         self.database.execute_sql_insert(
             sql, (final_log, delta.total_seconds()))
+
+        # Only for scheduled jobs
+        if self._pulzar_job_type == 'scheduled':
+            payload = {
+                'job_id': self._job_id,
+                'log': final_log,
+                'time': delta.total_seconds(),
+                'state': 1 if self.is_the_job_ok() else 2
+            }
+            req = CoreRequest('127.0.0.1', '9000',
+                              '/notification_job')
+            req.set_type(ReqType.POST)
+            req.set_payload(payload)
+            if req.make_request(json_request=True):
+                print('Notification sent')
         # Notifications
         if self._notification_enabled:
             print('Sending notification...')

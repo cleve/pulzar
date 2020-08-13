@@ -35,6 +35,7 @@ class JobProcess:
             job_file_name = params['job_name']
             job_file_path = params['job_path']
             job_parameters = params['parameters']
+            job_scheduled = params['scheduled']
 
             # check if the job exists
             path_to_search = 'jobs' + job_file_path + '/' + job_file_name + '.py'
@@ -42,7 +43,8 @@ class JobProcess:
             good = False
             if self.utils.file_exists(path_to_search):
                 print('Job exists, scheduling ', job_file_name)
-                job_object = Job(job_id, path_to_search, job_parameters)
+                job_object = Job(job_id, path_to_search,
+                                 job_parameters, job_scheduled)
                 good = job_object.schedule_job(self.const)
 
             # Response

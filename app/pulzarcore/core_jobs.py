@@ -22,6 +22,7 @@ class CoreJobs:
         self._log = []
         self._failed_job = False
         self._pulzar_data_file_path = None
+        self._pulzar_config = parameters['_pulzar_config']
 
         # log
         self._pulzar_register_parameters()
@@ -79,7 +80,7 @@ class CoreJobs:
         """Notify to master
         """
         job_table = 'job'
-        if self._pulzar_job_type == 'scheduled':
+        if self._pulzar_config['scheduled']:
             job_table = 'schedule_job'
         end_time = self.utils.get_current_datetime()
         delta = end_time - self._start_time

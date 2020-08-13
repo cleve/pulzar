@@ -76,6 +76,7 @@ class Job:
         if self.job_id is None:
             return False
         self.job_params['job_id'] = self.job_id
+        self.job_params['scheduled'] = 0
         request = CoreRequest(node.decode(), '9001', '/send_job')
         request.set_type(ReqType.POST)
         request.set_payload(self.job_params)
@@ -83,4 +84,27 @@ class Job:
         if not job_response:
             # removing job
             self.unregister_job(const.DB_JOBS)
+        return job_response
+
+    def send_scheduled_job(self, const, parameters):
+        """Send job to the node selected
+
+            params:
+             - const (Constants)
+             - params: dict
+        """
+        node = self.select_node(const)
+        print('node', node)
+        print('parameters', parameters)
+        if node is None:
+            return False
+        print('Sending job to node ', node)
+        request = CoreRequest(node.decode(), '9001', '/send_job')
+        request.set_type(ReqType.POST)
+        request.set_payload(parameters)
+        job_response = request.make_request(json_request=True)
+        print(request.response)
+        if not job_response:
+            # removing job
+            print('FALSE')
         return job_response

@@ -65,12 +65,11 @@ class Scheduler():
                 print('Scheduling', job['job_id'],
                       'located in ', job['job_path'])
                 job['scheduled'] = 1
-                schedule.every(1).minutes.do(
-                    self._notify_to_node(job)
-                )
+                schedule.every(1).minutes.do(self._notify_to_node, params=job)
                 # mark as scheduled
                 sql = 'UPDATE schedule_job SET scheduled = 1 WHERE job_id = {}'.format(
                     job['job_id'])
+                print(sql)
                 self.schedule_data_base.execute_sql(sql)
             except Exception as err:
                 print('Error executing the job: ', err)

@@ -80,7 +80,7 @@ class Scheduler():
             self._process_params()
             self._schedule_jobs()
             schedule.run_pending()
-            time.sleep(160)
+            time.sleep(1)
 
 
 scheduler_object = Scheduler()

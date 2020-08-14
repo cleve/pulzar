@@ -31,18 +31,24 @@ class JobProcess:
             job_params = body.extract_params(env)
             print('params:', job_params)
             # Main table
-            sql = 'UPDATE job SET state = {} WHERE id = {}'.format(
-                job_params['state'], job_params['job_id'])
+            table, id_table = ('job', 'id') if not job_params['scheduled'] else (
+                'schedule_job', 'job_id')
+            sql = 'UPDATE {} SET state = {} WHERE {} = {}'.format(
+                table, job_params['state'], id_table, job_params['job_id'])
             update_rows_affected = self.data_base.execute_sql(sql)
             if update_rows_affected == 0:
                 self.complex_response['action'] = self.const.JOB_ERROR
                 return self.complex_response
             # Store log and time
             state = job_params['state']
-            if state == 1:
+            if int(state) == 1:
                 table = 'successful_job'
+                if job_params['scheduled']:
+                    table = 'successful_schedule_job'
             elif state == 2:
                 table = 'failed_job'
+                if job_params['scheduled']:
+                    table = 'failed_schedule_job'
             sql = 'INSERT INTO {} (job_id, log, time) VALUES (?, ?, ?)'.format(
                 table)
             insert_rows_affected = self.data_base.execute_sql_insert(

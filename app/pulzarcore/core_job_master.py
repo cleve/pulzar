@@ -14,6 +14,12 @@ class Job:
         self.job_params = job_params
         self.utils = Utils()
         self.job_id = None
+        self.scheduler_options = [
+            'minutes',
+            'hours',
+            'days',
+            'weeks'
+        ]
 
     def unregister_job(self, path_db_jobs):
         """Mark as failed job in master
@@ -25,6 +31,37 @@ class Job:
         data_base.execute_sql(
             sql
         )
+
+    def register_scheduled_job(self, path_db_jobs):
+        """Register job in master
+        """
+        print('registering job')
+        job_path = self.job_params['job_path']
+        job_name = self.job_params['job_name']
+
+        # Scheduler
+        scheduler_object = self.job_params['parameters']['scheduled']
+        # Checking scheduler options
+        if scheduler_object['interval'] not in self.scheduler_options:
+            return False
+        parameters = self.utils.py_to_json(self.job_params['parameters'])
+        # Master job database
+        data_base = RDB(path_db_jobs)
+        sql = 'INSERT INTO schedule_job (job_name, job_path, parameters, creation_time, interval, time_unit, repeat, state) values (?, ?, ?, ?, ?, ?, ?, ?)'
+        self.job_id = data_base.execute_sql_insert(
+            sql,
+            (
+                job_name,
+                job_path,
+                parameters,
+                self.utils.get_current_datetime(),
+                scheduler_object['interval'],
+                scheduler_object['time_unit'],
+                scheduler_object['repeat'],
+                0
+            )
+        )
+        return True
 
     def register_job(self, path_db_jobs, node):
         """Register job in master
@@ -66,6 +103,9 @@ class Job:
             params:
              - const (Constants)
         """
+        # Scheduled job
+        if 'scheduled' in self.job_params['parameters']:
+            return self.register_scheduled_job(const.DB_JOBS)
         node = self.select_node(const)
         print('node', node)
         if node is None:

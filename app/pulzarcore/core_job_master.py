@@ -90,7 +90,8 @@ class Job:
                 self.utils.encode_base_64(
                     self.job_params['parameters']['pulzar_data']), to_str=True
             )
-            print(composed_data)
+            if composed_data is None:
+                return None
             node = composed_data.split(',')[0].split(':')[0]
             return node.encode()
         else:

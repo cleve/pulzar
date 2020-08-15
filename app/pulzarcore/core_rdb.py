@@ -32,6 +32,14 @@ class RDB:
         self.database.commit()
         return self.cursor.lastrowid
 
+    def execute_sql_update(self, query, param):
+        """Update data
+            return rows affected
+        """
+        self.cursor.execute(query, param)
+        self.database.commit()
+        return self.cursor.rowcount
+
     def close(self):
         """Close conn
         """

@@ -25,8 +25,11 @@ class Example(CoreJobs):
         number_two = self.parameters['arg2']
 
         self.process_data()
-
-        r = float(number) / float(number_two)
+        r = 0
+        counter = 0
+        while counter < 1000:
+            r += float(number) / float(number_two)
+            counter += 1
         self.pulzar_add_log('Result is: ' + str(r))
 
 

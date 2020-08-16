@@ -127,7 +127,14 @@ class LaunchJobs:
             self.notify_to_master(row[0])
 
 
-launcher = LaunchJobs()
-launcher.search_jobs()
-launcher.process_params()
-launcher.execute_jobs()
+def main():
+    """Entrance
+    """
+    launcher = LaunchJobs()
+    launcher.search_jobs()
+    launcher.process_params()
+    launcher.execute_jobs()
+
+
+if __name__ == "__main__":
+    main()

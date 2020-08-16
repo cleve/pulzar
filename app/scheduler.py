@@ -145,6 +145,13 @@ class Scheduler():
             time.sleep(20)
 
 
-scheduler_object = Scheduler()
-scheduler_object.init_state()
-scheduler_object.run_forever()
+def main():
+    """Entrance
+    """
+    scheduler_object = Scheduler()
+    scheduler_object.init_state()
+    scheduler_object.run_forever()
+
+
+if __name__ == "__main__":
+    main()

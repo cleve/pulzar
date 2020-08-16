@@ -41,9 +41,13 @@ class Job:
 
         # Scheduler
         scheduler_object = self.job_params['parameters']['scheduled']
+
         # Checking scheduler options
         if scheduler_object['interval'] not in self.scheduler_options:
             return False
+
+        # Removing extra params
+        del self.job_params['parameters']['scheduled']
         parameters = self.utils.py_to_json(self.job_params['parameters'])
         # Master job database
         data_base = RDB(path_db_jobs)
@@ -61,6 +65,7 @@ class Job:
                 0
             )
         )
+
         return True
 
     def register_job(self, path_db_jobs, node):

@@ -19,6 +19,25 @@ class Scheduler():
         self.max_jobs_running = 4
         self.jobs_to_launch = []
 
+    def init_state(self):
+        """Restart schedule state at the begining
+        """
+        sql = 'UPDATE schedule_job SET scheduled = 0 WHERE scheduled = 1'
+        self.schedule_data_base.execute_sql(sql)
+
+    def update_state(self):
+        """Update next iteration
+        """
+        sql = 'SELECT job_id FROM schedule_job'
+        rows = self.schedule_data_base.execute_sql_with_results(sql)
+        for row in rows:
+            for job in schedule.jobs:
+                if row[0] in job.tags:
+                    sql = 'UPDATE schedule_job SET next_execution = ? WHERE job_id = {}'.format(
+                        row[0])
+                    self.schedule_data_base.execute_sql_update(
+                        sql, (job.next_run,))
+
     def _process_params(self):
         """JSON to python objects
         """
@@ -82,6 +101,7 @@ class Scheduler():
     def update_next_execution_job(self, job_id):
         """Update the date of the next execution
         """
+        time.sleep(5)
         for job in schedule.jobs:
             if job_id in job.tags:
                 sql = 'UPDATE schedule_job SET next_execution = ? WHERE job_id = {}'.format(
@@ -118,6 +138,7 @@ class Scheduler():
     def run_forever(self):
         while True:
             self._search_jobs()
+            self.update_state()
             self._process_params()
             self._schedule_jobs()
             schedule.run_pending()
@@ -125,4 +146,5 @@ class Scheduler():
 
 
 scheduler_object = Scheduler()
+scheduler_object.init_state()
 scheduler_object.run_forever()

@@ -72,6 +72,7 @@ class AdminProcess:
                 # Jobs
                 elif len(call_path_list) == 1 and call_path_list[0] == 'jobs':
                     data_base = RDB(self.const.DB_JOBS)
+                    scheduled_job = []
                     pendings_jobs = []
                     ready_jobs = []
                     failed_jobs = []
@@ -108,10 +109,25 @@ class AdminProcess:
                             'node': failed[3],
                             'creation_time': failed[5]
                         })
+                    # Get scheduled jobs
+                    sql = 'SELECT job_id, job_name, parameters, creation_time, interval, time_unit, repeat, next_execution FROM schedule_job'
+                    rows = data_base.execute_sql_with_results(sql)
+                    for schedule in rows:
+                        scheduled_job.append({
+                            'job_id': schedule[0],
+                            'job_name': schedule[1],
+                            'parameters': schedule[2],
+                            'creation_time': schedule[3],
+                            'interval': schedule[4],
+                            'time_unit': schedule[5],
+                            'repeat': schedule[6],
+                            'next_execution': schedule[7]
+                        })
                     result = {
                         'pendings': pendings_jobs,
                         'ready': ready_jobs,
-                        'failed': failed_jobs
+                        'failed': failed_jobs,
+                        'scheduled': scheduled_job
                     }
                     self.complex_response['parameters'] = self.utils.py_to_json(
                         result, to_bin=True)

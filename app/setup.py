@@ -1,12 +1,22 @@
 from setuptools import setup
 
-setup(name='pulzar',
-      version='0.1',
-      description='Distributed database and jobs',
-      url='http://github.com/cleve/pulzar',
+# with open("../README.md", "r") as fh:
+#    long_description = fh.read()
+
+setup(name='pulzar-pkg',
+      version='0.0.1',
       author='Mauricio Cleveland',
       author_email='mauricio.cleveland@gmail.com',
-      license='Apache',
+      description='Distributed database and jobs',
+      #    long_description=long_description,
+      #     long_description_content_type="text/markdown",
+      # data_files=[('/var/lib/pulzar/data', [])],
+      url='http://github.com/cleve/pulzar',
       packages=['pulzarcore', 'pulzarutils'],
-      zip_safe=False
+      classifiers=[
+          "Programming Language :: Python :: 3",
+          "License :: OSI Approved :: MIT License",
+          "Operating System :: POSIX :: Linux"
+      ],
+      python_requires='>=3.6',
       )

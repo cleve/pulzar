@@ -95,7 +95,7 @@ class JobProcess:
                 self.complex_response['action'] = self.const.JOB_ERROR
 
         except Exception as err:
-            print('Error extracting keywerwe', err)
+            print('Job_process_Error', err)
             self.complex_response['action'] = self.const.JOB_ERROR
 
         return self.complex_response

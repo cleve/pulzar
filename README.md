@@ -18,6 +18,15 @@ Is a distributed job system with load balance.
 * Store big amount of data, scalable.
 * Run jobs (Python scripts in parallel).
 
+## Dependences
+
+### Next Python modules are needed
+
+* lmdb
+* requests
+* psutil
+* schedule
+
 ## Configuration
 
 The system can be configured under **config/server.conf**
@@ -47,14 +56,6 @@ cd app
 uwsgi --ini config/master.ini
 uwsgi --ini config/volume.ini
 ```
-
-## Dependences
-
-### Next Python modules are needed
-
-* lmdb
-* requests
-* psutil
 
 # Methods
 
@@ -181,14 +182,52 @@ The API
 master:[port]/launch_job/[custom_directory]/[your_script]
 ```
 
-### Body
+#### Body
 
 ```json
 {
     "arg1": "value1",
-    "arg2" : "value2"
+    "arg2" : 123
 }
 ```
+
+### Scheduling jobs
+
+To schedule a job, you need to add the *scheduled* key into the body
+
+#### Body
+
+```json
+{
+    "arg1": 12,
+    "arg2": 225798,
+    "scheduled": {"interval": "minutes", "time_unit": 5, "repeat": 1}
+}
+```
+
+Where:
+
+**interval**
+
+The repetitive interval of time, this string can be:
+
+* minutes
+* hours
+* weeks
+
+**time_unit**
+
+Indicates the repetition time based in the interval type. For example:
+
+    interval = minutes
+    time_unit = 5: 
+
+Launch a job every 5 minutes
+
+    interval = hours
+    time_unit = 24
+
+Launch a job every day
 
 # Maintenance
 
@@ -247,6 +286,73 @@ A JSON will be sent, of type:
     "node": "node_name",
     "percent": 13,
     "synch": true
+}
+```
+
+### Get job status
+
+```sh
+master:[port]/admin/jobs
+curl -X GET -L http://master:[port]/admin/jobs
+```
+
+A JSON will be sent, of type:
+
+```json
+{
+    "pendings": [
+        {
+            "job_id": 21,
+            "job_name": "example_01",
+            "parameters": "{\"arg1\": \"12\", \"arg2\": \"20\"}",
+            "node": "mauricio-ksrd",
+            "creation_time": 0
+        }
+    ],
+    "ready": [
+        {
+            "job_id": 19,
+            "job_name": "example_01",
+            "parameters": "{\"arg1\": \"12\", \"arg2\": \"20\"}",
+            "node": "mauricio-ksrd",
+            "creation_time": 1
+        }
+        {
+            "job_id": 26,
+            "job_name": "example_01",
+            "parameters": "{\"arg1\": \"12\", \"arg2\": \"20\"}",
+            "node": "mauricio-ksrd",
+            "creation_time": 1
+        }
+    ],
+    "failed": [
+        {
+            "job_id": 4,
+            "job_name": "example_01",
+            "parameters": "{\"arg1\": \"1\", \"arg2\": \"2\", \"arg3\": \"33\"}",
+            "node": "mauricio-ksrd",
+            "creation_time": 2
+        },
+        {
+            "job_id": 5,
+            "job_name": "example_01",
+            "parameters": "{\"arg1\": \"1\", \"arg2\": \"2\", \"arg3\": \"33\"}",
+            "node": "mauricio-ksrd",
+            "creation_time": 2
+        }
+    ],
+    "scheduled": [
+        {
+            "job_id": 20,
+            "job_name": "example_01",
+            "parameters": "{\"arg1\": 12, \"arg2\": 225798}",
+            "creation_time": "2020-08-16 11:50:55.276460",
+            "interval": "minutes",
+            "time_unit": "5",
+            "repeat": 1,
+            "next_execution": "2020-08-16 14:23:53.398787"
+        }
+    ]
 }
 ```
 

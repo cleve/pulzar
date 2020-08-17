@@ -4,6 +4,7 @@ from pulzarutils.constants import Response
 class ResponseClass:
     def __init__(self):
         self.JSON = ('Content-Type', 'application/json')
+        self.CORS = ('Access-Control-Allow-Origin', '*')
         self.headers = []
         self.message = b''
         self.response_code = None
@@ -31,6 +32,8 @@ class ResponseClass:
         self.headers.append(header)
 
     def get_response(self, start_response, type=Response.JSON):
+        # Cors enabled
+        self.headers.append(self.CORS)
         if type == Response.JSON:
             self.headers.append(self.JSON)
             pass

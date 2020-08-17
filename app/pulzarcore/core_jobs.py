@@ -28,6 +28,12 @@ class CoreJobs:
         self._pulzar_register_parameters()
         self._pulzar_get_data()
 
+    def _pulzar_store_file(self, key):
+        """Store some results
+            Using varidb system
+        """
+        pass
+
     def _pulzar_get_data(self):
         """Check file/config and assign it
         """

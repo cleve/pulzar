@@ -69,6 +69,27 @@ class FileUtils():
                 break
             yield chunk
 
+    def read_binary_local_file(self, file_path):
+        """Storing file created locally
+        """
+        destiny_path = self.volume_path + '/' + self.key
+        temp_file = self.utils.get_tmp_file()
+        # Read binary file
+        with open(file_path, 'rb') as f:
+            for piece in self.read_in_chunks(f):
+                temp_file.write(piece)
+
+        # Creating directories if does not exist.
+        full_path = self.volume_path + self.base_dir
+        if self.base_dir is not None and not self.utils.dir_exists(full_path):
+            print('Creating directory')
+            os.makedirs(full_path)
+
+        temp_file.close()  # Close the file to be copied.
+        if destiny_path == self.utils.move_file(
+                temp_file.name, full_path + '/' + self.key):
+            return self.key
+
     def read_binary_file(self, env):
         try:
             request_body_size = int(env[self.const.CONTENT_LENGTH])

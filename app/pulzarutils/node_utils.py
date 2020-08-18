@@ -17,8 +17,15 @@ class NodeUtils:
         # Jobs database
         self.job_db = RDB(self.const.DB_JOBS)
 
-    def register_job(self):
-        pass
+    def discover_volume(self):
+        """Get the volume name
+
+        return: (str)
+        """
+        keys = self.db_volumes.get_keys()
+        if keys is None:
+            return None
+        return keys[0].decode()
 
     def pick_a_volume(self):
         """Volume selection using the load

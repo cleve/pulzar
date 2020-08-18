@@ -29,11 +29,11 @@ class Constants:
         self.CONF_PATH = 'config/server.conf'
 
         # Databases
-        self.DB_PATH = '/var/lib/pulzar/dbs/master.db'
-        self.DB_VOLUME = '/var/lib/pulzar/dbs/volume.db'
-        self.DB_STATS = '/var/lib/pulzar/dbs/volume_st.db'
-        self.DB_BACKUP = '/var/lib/pulzar/dbs/volume_bk.db'
-        self.DB_NOT_PERMANENT = '/var/lib/pulzar/dbs/temporal_data.db'
+        self.DB_PATH = 'storage/master.db' if self.DEBUG else '/var/lib/pulzar/dbs/master.db'
+        self.DB_VOLUME = 'storage/volume.db' if self.DEBUG else '/var/lib/pulzar/dbs/volume.db'
+        self.DB_STATS = 'storage/volume_st.db' if self.DEBUG else '/var/lib/pulzar/dbs/volume_st.db'
+        self.DB_BACKUP = 'storage/volume_bk.db' if self.DEBUG else '/var/lib/pulzar/dbs/volume_bk.db'
+        self.DB_NOT_PERMANENT = 'storage/temporal_data.db' if self.DEBUG else '/var/lib/pulzar/dbs/temporal_data.db'
         # job DBs
         self.DB_JOBS = 'storage/jobs.db' if self.DEBUG else '/var/lib/pulzar/dbs/jobs.db'
         self.DB_NODE_JOBS = 'storage/node_jobs.db' if self.DEBUG else '/var/lib/pulzar/dbs/'

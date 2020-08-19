@@ -36,7 +36,7 @@ class LaunchJobs:
         """
         # Recovering data of job
         table = 'job' if not scheduled else 'schedule_job'
-        sql = 'SELECT log, duration, ready FROM {} WHERE job_id = {} AND notification = 0'.format(
+        sql = 'SELECT log, duration, state FROM {} WHERE job_id = {} AND notification = 0'.format(
             table, job_id)
         row = self.data_base.execute_sql_with_results(sql)[0]
 
@@ -70,7 +70,7 @@ class LaunchJobs:
         """
         status = 1 if state else 2
         table = 'job' if not scheduled else 'schedule_job'
-        sql = 'UPDATE {} SET ready = {} WHERE job_id = {}'.format(
+        sql = 'UPDATE {} SET state = {} WHERE job_id = {}'.format(
             table, status, job_id)
         return self.data_base.execute_sql(sql) > 0
 
@@ -97,7 +97,7 @@ class LaunchJobs:
     def search_jobs(self):
         """Search job scheduled
         """
-        sql = 'SELECT * FROM job WHERE ready = 0'
+        sql = 'SELECT * FROM job WHERE state = 0'
         rows = self.data_base.execute_sql_with_results(sql)
         for row in rows:
             self.jobs_to_launch.append({
@@ -107,7 +107,7 @@ class LaunchJobs:
                 'job_creation': row[4],
                 'scheduled': False
             })
-        sql = 'SELECT * FROM schedule_job WHERE ready = 0'
+        sql = 'SELECT * FROM schedule_job WHERE state = 0'
         rows = self.data_base.execute_sql_with_results(sql)
         for row in rows:
             self.jobs_to_launch.append({
@@ -121,7 +121,7 @@ class LaunchJobs:
     def search_pending_jobs(self):
         """Search job scheduled
         """
-        sql = 'SELECT * FROM job WHERE ready <> 0 AND notification = 0'
+        sql = 'SELECT * FROM job WHERE state <> 0 AND notification = 0'
         rows = self.data_base.execute_sql_with_results(sql)
         for row in rows:
             self.notify_to_master(row[0])

@@ -1,6 +1,11 @@
 from pulzarutils.utils import Utils
 from pulzarutils.utils import Constants
+from pulzarutils.file_utils import FileUtils
+from pulzarutils.constants import ReqType
+from pulzarutils.stream import Config
 from pulzarcore.core_rdb import RDB
+from pulzarcore.core_request import CoreRequest
+from pulzarutils.node_utils import NodeUtils
 
 
 class CoreJobs:
@@ -28,11 +33,48 @@ class CoreJobs:
         self._pulzar_register_parameters()
         self._pulzar_get_data()
 
-    def _pulzar_store_file(self, key):
+    def _pulzar_store_file(self, file_name):
         """Store some results
             Using varidb system
         """
-        pass
+        file_utils = FileUtils(self.const)
+        server_config = Config(self.const.CONF_PATH)
+        node_utils = NodeUtils(self.const)
+        node = node_utils.discover_volume()
+        # Master url
+        server_host = server_config.get_config('server', 'host')
+        server_port = server_config.get_config('server', 'port')
+        base_dir = '/jobs'
+        if self._pulzar_config['scheduled']:
+            base_dir += '/sheduled/' + str(self._job_id)
+        else:
+            base_dir += '/regular/' + str(self._job_id)
+        file_utils.set_path(base_dir)
+        full_key = base_dir + '/' + \
+            self.utils.get_base_name_from_file(file_name)
+        # File creation
+        base64_str = self.utils.encode_base_64(
+            full_key, True)
+        # Trying to create the key-value
+        key_to_binary = self.utils.encode_str_to_byte(base64_str)
+        file_utils.set_key(key_to_binary, base64_str)
+        file_utils.read_binary_local_file(file_name)
+        request_object = CoreRequest(
+            server_host, server_port, self.const.ADD_RECORD)
+        request_object.set_type(ReqType.POST)
+        request_object.set_path(self.const.ADD_RECORD)
+        # We have to send the key, volume and port.
+        request_object.set_payload({
+            'key': file_utils.get_key(),
+            'volume': node,
+            'temporal': 90
+        })
+        if not request_object.make_request():
+            # If an error ocurr in the server, we need to delete the file.
+            file_utils.remove_file()
+            return False
+        self.pulzar_add_log('FILE: ' + file_utils.get_decoded_key())
+        return True
 
     def _pulzar_get_data(self):
         """Check file/config and assign it
@@ -66,7 +108,7 @@ class CoreJobs:
                 executor(self)
             except Exception as err:
                 self._mark_as_failed()
-                self.pulzar_add_log(str(err))
+                self.pulzar_add_log('PULZAR_ERROR::' + str(err))
             self._pulzar_notification()
             return self.is_the_job_ok()
         return wrapper

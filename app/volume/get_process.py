@@ -25,13 +25,11 @@ class GetProcess:
                 if root_path is None:
                     root_path = ''
                 # Searching in the database
-
                 key_to_binary = self.utils.encode_base_64(
                     root_path + '/' + base_name)
                 full_path = root_path + '/' + \
                     self.utils.decode_byte_to_str(key_to_binary)
                 value = self.file_utils.is_value_present(full_path)
-                print(value)
                 if not value:
                     self.complex_response['action'] = self.const.KEY_NOT_FOUND
                     return self.complex_response

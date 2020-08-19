@@ -38,7 +38,7 @@ class Job:
         table = 'job'
         if self.schedule_job:
             table = 'schedule_job'
-        sql = 'INSERT INTO {} (job_id, job_path, parameters, creation_time, ready, notification) values (?, ?, ?, ?, ?, ?)'.format(
+        sql = 'INSERT INTO {} (job_id, job_path, parameters, creation_time, state, notification) values (?, ?, ?, ?, ?, ?)'.format(
             table)
         register_id = data_base.execute_sql_insert(
             sql,

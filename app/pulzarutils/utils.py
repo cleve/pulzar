@@ -144,7 +144,14 @@ class Utils:
         return file_list
 
     def get_base_name_from_file(self, path_name):
+        """Get file name only
+        """
         return os.path.basename(path_name)
+
+    def get_parent_name_from_file(self, path_name):
+        """Get all parents of a given path
+        """
+        return os.path.dirname(path_name)
 
     def get_all_files(self, directory, rec=True):
         """Return an iterator
@@ -153,9 +160,13 @@ class Utils:
         return glob.iglob(directory, recursive=rec)
 
     def file_exists(self, file_path):
+        """Just a binding
+        """
         return os.path.isfile(file_path)
 
     def dir_exists(self, dir_path):
+        """Just a binding
+        """
         return os.path.isdir(dir_path)
 
     # Custom methods

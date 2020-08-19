@@ -1,4 +1,5 @@
 from pulzarutils.utils import Utils
+from pulzarutils.stream import Config
 from pulzarcore.core_db import DB
 from pulzarcore.core_rdb import RDB
 
@@ -22,10 +23,12 @@ class NodeUtils:
 
         return: (str)
         """
+        server_config = Config(self.const.CONF_PATH)
+        volume_port = server_config.get_config('volume', 'port')
         keys = self.db_volumes.get_keys()
         if keys is None:
             return None
-        return keys[0].decode()
+        return keys[0].decode() + ':' + volume_port
 
     def pick_a_volume(self):
         """Volume selection using the load

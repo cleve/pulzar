@@ -30,6 +30,12 @@ class FileUtils():
     def get_key(self):
         return self.key
 
+    def get_decoded_key(self):
+        """Get the complete path
+        return (str)
+        """
+        return self.utils.decode_base_64(self.key, to_str=True)
+
     def is_value_present(self, key_name):
         value_path = self.volume_path + '/' + key_name
         return self.file_exists(value_path)
@@ -48,6 +54,8 @@ class FileUtils():
         return False
 
     def remove_file(self):
+        """If error delete file
+        """
         file_path = self.volume_path + '/' + self.key
         if self.file_exists(file_path):
             os.remove(file_path)

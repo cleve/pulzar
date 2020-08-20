@@ -31,7 +31,7 @@ class Synchro:
         server_config = Config(self.const.CONF_PATH)
         self.volume_dir = server_config.get_config('volume', 'dir')
         self.volume_host = self.db_stats.get_value(
-            self.utils.encode_str_to_byte(self.const.SERVER_NAME))
+            self.utils.encode_str_to_byte(self.const.HOST_NAME))
         self.restored_ready = self.db_stats.get_value(
             self.utils.encode_str_to_byte('restored'))
         self.volume_port = server_config.get_config('volume', 'port')

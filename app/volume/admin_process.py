@@ -9,8 +9,6 @@ class AdminProcess:
     def __init__(self, constants):
         self.const = constants
         self.utils = Utils()
-        # DB of values already loaded
-        self.db_volumes = DB(self.const.DB_VOLUME)
         # Complex response, store the info necessary.
         self.complex_response = {
             'action': None,

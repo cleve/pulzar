@@ -60,7 +60,7 @@ class TemporalCheck:
                 delta = (current_time - value_datetime).days
                 if self.const.DEBUG:
                     print('Key {} with time alive of {} days'.format(
-                        bkey.decode(), delta))
+                        self.utils.decode_base_64(bkey, to_str=True), delta))
                 # Remove data
                 if delta > days:
                     self.delete_request(bkey)

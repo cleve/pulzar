@@ -1,5 +1,6 @@
 from pulzarutils.constants import Constants
 from volume.get_process import GetProcess
+from volume.discovery_process import DiscoveryProcess
 from volume.put_process import PutProcess
 from volume.delete_process import DeleteProcess
 from volume.admin_process import AdminProcess
@@ -37,7 +38,9 @@ class Dispatcher:
 
         # Autodiscovery
         if self.utils.match_regex(url_path, self.re_autodiscovery):
-            self.complex_response['action'] = self.const.AUTODISCOVERY
+            discovery_process = DiscoveryProcess(self.const)
+            self.complex_response['action'] = discovery_process.process_request(
+                env)
             return self.complex_response
 
         # Admin

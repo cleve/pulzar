@@ -33,7 +33,7 @@ class Example(CoreJobs):
         with open(temporary_file.name, 'w') as f:
             line = 0
             while line < total_lines:
-                f.write(str(random.randint(0, 1000)))
+                f.write(str(random.randint(0, 1000)) + '\n')
                 line += 1
         print('saving file', temporary_file.name)
         self._pulzar_store_file(temporary_file.name)

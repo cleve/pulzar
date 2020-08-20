@@ -30,6 +30,11 @@ class Utils:
     def get_current_datetime(self):
         return datetime.datetime.now()
 
+    def get_datetime_days_diff(self, days):
+        """Get days difference
+        """
+        return datetime.datetime.now() + datetime.timedelta(days=days)
+
     def get_datetime_from_string(self, datetime_str, full=False):
         if full:
             return datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S.%f")

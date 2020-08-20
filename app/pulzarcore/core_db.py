@@ -76,6 +76,8 @@ class DB:
     def update_or_insert_value(self, key_string, value):
         with self.env.begin(write=True) as txn:
             txn.put(key_string, value)
+            return True
+        return False
 
     def get_values(self):
         with self.env.begin() as txn:

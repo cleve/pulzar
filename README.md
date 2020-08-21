@@ -459,3 +459,19 @@ For a set of 10000 instances
 ## Restore test
 
 Preparing 600 files: 23.977071480000177(s)
+
+## Windows
+
+You can use the linux subsystem. Tested with Ubuntu 20.04.
+
+First install pip3 using
+
+```sh
+sudo apt install python3-pip
+```
+
+After, install **uwsgi** with pip3
+
+```sh
+ sudo pip3 install uwsgi
+```

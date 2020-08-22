@@ -33,7 +33,7 @@ class Job:
         )
 
     def register_scheduled_job(self, path_db_jobs):
-        """Register job in master
+        """Register schedule job in master
         """
         print('registering job')
         job_path = self.job_params['job_path']
@@ -51,7 +51,7 @@ class Job:
         parameters = self.utils.py_to_json(self.job_params['parameters'])
         # Master job database
         data_base = RDB(path_db_jobs)
-        sql = 'INSERT INTO schedule_job (job_name, job_path, parameters, creation_time, interval, time_unit, repeat, state) values (?, ?, ?, ?, ?, ?, ?, ?)'
+        sql = 'INSERT INTO schedule_job (job_name, job_path, parameters, interval, time_unit, repeat, state) values (?, ?, ?, ?, ?, ?, ?)'
         self.job_id = data_base.execute_sql_insert(
             sql,
             (

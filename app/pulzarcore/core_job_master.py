@@ -77,7 +77,7 @@ class Job:
         parameters = self.utils.py_to_json(self.job_params['parameters'])
         # Master job database
         data_base = RDB(path_db_jobs)
-        sql = 'INSERT INTO job (job_name, job_path, parameters, node, creation_time, state) values (?, ?, ?, ?, ?, ?)'
+        sql = 'INSERT INTO job (job_name, job_path, parameters, node, state) values (?, ?, ?, ?, ?)'
         self.job_id = data_base.execute_sql_insert(
             sql,
             (

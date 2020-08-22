@@ -18,6 +18,19 @@ class Scheduler():
         self.schedule_data_base = RDB(self.const.DB_JOBS)
         self.max_jobs_running = 4
         self.jobs_to_launch = []
+        self.days_of_retention = 90
+
+    def retention_policy(self):
+        """Delete data since the policy"""
+        # Scheduled successful jobs
+        date_diff = self.utils.get_date_days_diff(days=-90, to_string=True)
+        sql = 'DELETE FROM successfull_schedule_job WHERE creation_time > {}'.format(
+            date_diff)
+        self.schedule_data_base.execute_sql(sql)
+        # Failed jobs
+        sql = 'DELETE FROM failed_schedule_job WHERE creation_time > {}'.format(
+            date_diff)
+        self.schedule_data_base.execute_sql(sql)
 
     def init_state(self):
         """Restart schedule state at the begining

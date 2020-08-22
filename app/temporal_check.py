@@ -19,6 +19,19 @@ class TemporalCheck:
         self.master_db = DB(self.const.DB_PATH)
         self.init_config()
 
+    def retention_policy(self):
+        """Delete data since the policy"""
+        # jobs
+        date_diff = self.utils.get_date_days_diff(
+            days=-1*self.days_of_retention, to_string=True)
+        sql = 'DELETE FROM job WHERE creation_time > {}'.format(
+            date_diff)
+        self.schedule_data_base.execute_sql(sql)
+        # Scheduled jobs
+        sql = 'DELETE FROM schedule_job WHERE creation_time > {}'.format(
+            date_diff)
+        self.schedule_data_base.execute_sql(sql)
+
     def init_config(self):
         """Getting server information
         """
@@ -71,6 +84,7 @@ def main():
     """
     temporal_checker = TemporalCheck()
     temporal_checker.start_process()
+    temporal_checker.retention_policy()
 
 
 if __name__ == "__main__":

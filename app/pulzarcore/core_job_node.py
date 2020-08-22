@@ -20,7 +20,7 @@ class Job:
         # Master job database
         data_base = RDB(path_db_jobs)
         table = 'job'
-        if self.schedule_job:
+        if self.job_scheduled:
             table = 'schedule_job'
         sql = 'UPDATE {} SET ready = 2 WHERE id = {}'.format(
             self.job_id).format(table)
@@ -36,14 +36,14 @@ class Job:
         # Master job database
         data_base = RDB(path_db_jobs)
         table = 'job'
-        if self.schedule_job:
+        if self.job_scheduled:
             table = 'schedule_job'
-        sql = 'INSERT INTO {} (job_id, job_path, parameters, creation_time, state, notification) values (?, ?, ?, ?, ?, ?)'.format(
+        sql = 'INSERT INTO {} (job_id, job_path, parameters, state, notification) values (?, ?, ?, ?, ?)'.format(
             table)
         register_id = data_base.execute_sql_insert(
             sql,
             (
-                self.job_id, self.job_path, parameters, self.utils.get_current_datetime(), 0, 0
+                self.job_id, self.job_path, parameters, 0, 0
             )
         )
         return register_id

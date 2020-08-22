@@ -30,10 +30,28 @@ class Utils:
     def get_current_datetime(self):
         return datetime.datetime.now()
 
-    def get_datetime_days_diff(self, days):
-        """Get days difference
+    def get_date_days_diff(self, days, to_string=False):
+        """Get days difference using the current date as base
+        :param days: amount of days to operate
+        :type days: int
+        :return: date operated
+        :rtype: date or string
         """
-        return datetime.datetime.now() + datetime.timedelta(days=days)
+        date_object = datetime.date.today() + datetime.timedelta(days=days)
+        if to_string:
+            return date_object.strftime('%Y-%m-%d')
+        return date_object
+
+    def get_date_today(self, to_string=False):
+        """Get the curren date
+        :param to_string: Boolean to get string or object
+        :return: current date
+        :rtype: date or string
+        """
+        date_object = datetime.date.today()
+        if to_string:
+            return date_object.strftime('%Y-%m-%d')
+        return date_object
 
     def get_datetime_from_string(self, datetime_str, full=False):
         if full:

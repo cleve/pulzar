@@ -35,7 +35,7 @@ class Job:
     def register_scheduled_job(self, path_db_jobs):
         """Register schedule job in master
         """
-        print('registering job')
+        print('registering scheduled job')
         job_path = self.job_params['job_path']
         job_name = self.job_params['job_name']
 
@@ -58,7 +58,6 @@ class Job:
                 job_name,
                 job_path,
                 parameters,
-                self.utils.get_current_datetime(),
                 scheduler_object['interval'],
                 scheduler_object['time_unit'],
                 scheduler_object['repeat'],
@@ -81,7 +80,7 @@ class Job:
         self.job_id = data_base.execute_sql_insert(
             sql,
             (
-                job_name, job_path, parameters, node, self.utils.get_current_datetime(), 0
+                job_name, job_path, parameters, node, 0
             )
         )
 

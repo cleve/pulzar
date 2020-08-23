@@ -1,6 +1,7 @@
 from pulzarutils.utils import Utils
 from pulzarutils.constants import ReqType
 from pulzarutils.node_utils import NodeUtils
+from pulzarutils.messenger import Messenger
 from pulzarcore.core_request import CoreRequest
 from pulzarcore.core_rdb import RDB
 from pulzarcore.core_job_master import Job
@@ -15,11 +16,7 @@ class JobProcess:
         self.const = constants
         self.utils = Utils()
         self.data_base = RDB(self.const.DB_JOBS)
-        self.complex_response = {
-            'action': None,
-            'parameters': None,
-            'volume': None
-        }
+        self.messenger = Messenger()
 
     def process_notification_request(self, url_path, query_string, env):
         """Processing job notification from node
@@ -29,7 +26,6 @@ class JobProcess:
         try:
             body = Body()
             job_params = body.extract_params(env)
-            print('params:', job_params)
             # Main table
             table, id_table = ('job', 'id') if not job_params['scheduled'] else (
                 'schedule_job', 'job_id')
@@ -37,8 +33,9 @@ class JobProcess:
                 table, job_params['state'], id_table, job_params['job_id'])
             update_rows_affected = self.data_base.execute_sql(sql)
             if update_rows_affected == 0:
-                self.complex_response['action'] = self.const.JOB_ERROR
-                return self.complex_response
+                self.messenger.code_type = self.const.JOB_ERROR
+                self.messenger.mark_as_failed()
+                return self.messenger
             # Store log and time
             state = job_params['state']
             if int(state) == 1:
@@ -56,16 +53,18 @@ class JobProcess:
                       job_params['log'], job_params['time'])
             )
             if insert_rows_affected > 0:
-                self.complex_response['action'] = self.const.JOB_RESPONSE
-                self.complex_response['parameters'] = b'ok'
+                self.messenger.code_type = self.const.JOB_RESPONSE
+                self.messenger.set_message = 'ok'
             else:
-                self.complex_response['action'] = self.const.JOB_ERROR
+                self.messenger.code_type = self.const.JOB_ERROR
+                self.messenger.mark_as_failed()
 
         except Exception as err:
             print('Error process_notification_request', err)
-            self.complex_response['action'] = self.const.JOB_ERROR
+            self.messenger.code_type = self.const.JOB_ERROR
+            self.messenger.mark_as_failed()
 
-        return self.complex_response
+        return self.messenger
 
     def process_request(self, url_path, query_string, env):
         """Processing job request
@@ -88,14 +87,18 @@ class JobProcess:
 
             job_object = Job(params)
             if job_object.send_job(self.const):
-                self.complex_response['action'] = self.const.JOB_RESPONSE
-                self.complex_response['parameters'] = (
-                    'Job added with id ' + str(job_object.job_id)).encode()
+                self.messenger.code_type = self.const.JOB_RESPONSE
+                self.messenger.set_message = 'Job added with id ' + \
+                    str(job_object.job_id)
+
             else:
-                self.complex_response['action'] = self.const.JOB_ERROR
+                self.messenger.code_type = self.const.JOB_ERROR
+                self.messenger.mark_as_failed()
 
         except Exception as err:
             print('Job_process_Error', err)
-            self.complex_response['action'] = self.const.JOB_ERROR
+            self.messenger.code_type = self.const.JOB_ERROR
+            self.messenger.mark_as_failed()
+            self.messenger.set_message = str(err)
 
-        return self.complex_response
+        return self.messenger

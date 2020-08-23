@@ -1,8 +1,8 @@
 from pulzarutils.utils import Utils
 
 
-class HttpResponse:
-    """Base class for Json responses
+class Messenger:
+    """Base class for messages
     """
 
     def __init__(self):

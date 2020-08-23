@@ -10,13 +10,20 @@ class Messenger:
         self.volume = None
         self.code_type = 'default'
         self.http_code = '200 OK'
+        self.extra = None
         self.response = {
             'response': None,
             'status': 'ok',
             'msg': ''
         }
 
-    @property.setter
+    @property
+    def set_message(self):
+        """Add message into the dictionary
+        """
+        return self.response['msg']
+
+    @set_message.setter
     def set_message(self, message):
         """Add message into the dictionary
         """
@@ -32,14 +39,14 @@ class Messenger:
         """
         self.response['response'] = response
 
-    def get_json(self):
+    def get_bjson(self):
         """Get the response dictionary into JSON format
         """
         try:
-            return self.utils.py_to_json(self.response)
+            return self.utils.py_to_json(self.response).encode()
         except Exception as err:
             return self.utils.py_to_json({
                 'response': 'Internal error',
                 'status': 'ko',
                 'msg': str(err)
-            })
+            }).encode()

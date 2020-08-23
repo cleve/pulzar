@@ -1,4 +1,5 @@
 from pulzarutils.utils import Utils
+from pulzarutils.messenger import Messenger
 from pulzarcore.core_db import DB
 
 
@@ -12,12 +13,7 @@ class PutProcess:
         self.db_values = DB(self.const.DB_PATH)
         # DB of volumes/keys.
         self.db_volumes = DB(self.const.DB_VOLUME)
-        # Complex response, store the info necessary.
-        self.complex_response = {
-            'action': None,
-            'parameters': None,
-            'volume': None
-        }
+        self.messenger = Messenger()
 
     def pick_a_volume(self):
         volumes = self.db_volumes.get_keys_values()
@@ -52,21 +48,34 @@ class PutProcess:
                     root_path = raw_root_path
                 # Searching in the database
                 key = root_path + '/' + key_to_add
-                print('===> KEY ', key)
                 key_to_binary = self.utils.encode_str_to_byte(key)
                 value = self.db_values.get_value(key_to_binary)
                 # If not, we will try to create the entry process.
                 if value is None:
                     volume = self.pick_a_volume()
+                    if volume is None:
+                        self.messenger.code_type = self.const.PULZAR_ERROR
+                        self.messenger.mark_as_failed()
+                        self.messenger.set_message = 'Not volumes sync'
+                        return self.messenger
                     # Populating dictionary with the info needed.
-                    self.complex_response['action'] = self.const.REDIRECT_POST
-                    self.complex_response['parameters'] = key_to_binary
-                    self.complex_response['volume'] = volume
-                    return self.complex_response
+                    self.messenger.code_type = self.const.REDIRECT_PUT
+                    self.messenger.http_code = '307 temporary redirect'
+                    self.messenger.volume = volume.decode()
+                    return self.messenger
                 # Since key was found, an element was already added before
                 # using the same key.
-                self.complex_response['action'] = self.const.KEY_ALREADY_ADDED
-                return self.complex_response
+                self.messenger.code_type = self.const.KEY_ALREADY_ADDED
 
             except Exception as err:
-                print('Error extracting key', err)
+                print('Error PUT process extracting key', err)
+                self.messenger.code_type = self.const.PULZAR_ERROR
+                self.messenger.mark_as_failed()
+                self.messenger.set_message = str(err)
+
+        else:
+            self.messenger.code_type = self.const.USER_ERROR
+            self.messenger.mark_as_failed()
+            self.messenger.set_message = 'Wrong query'
+
+        return self.messenger

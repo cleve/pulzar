@@ -1,4 +1,5 @@
 from pulzarutils.utils import Utils
+from pulzarutils.messenger import Messenger
 from pulzarcore.core_db import DB
 from pulzarcore.core_rdb import RDB
 
@@ -9,23 +10,20 @@ class AdminProcess:
         self.utils = Utils()
         # DB of values already loaded
         self.db_volumes = DB(self.const.DB_VOLUME)
-        # Complex response, store the info necessary.
-        self.complex_response = {
-            'action': None,
-            'parameters': None,
-            'volume': None
-        }
+        self.messenger = Messenger()
 
     def process_request(self, url_path):
+        """Entrance for Admin
+        :param url_path:
+        """
         # Get request type, checking for key value.
         regex_result = self.utils.get_search_regex(
             url_path, self.const.RE_ADMIN)
         if regex_result:
             try:
-                self.complex_response['action'] = self.const.ADMIN
+                self.messenger.code_type = self.const.ADMIN
                 call_path_list = regex_result.groups()[0].split('/')
                 call_path_list = [x for x in call_path_list if x != '']
-                print(call_path_list)
                 # All node status
                 if len(call_path_list) == 1 and call_path_list[0] == 'network':
                     nodes_info = []
@@ -46,10 +44,8 @@ class AdminProcess:
                             }
                         )
 
-                    self.complex_response['parameters'] = self.utils.py_to_json(
-                        nodes_info,
-                        to_bin=True
-                    )
+                    self.messenger.set_response(nodes_info)
+
                 # Node status
                 elif len(call_path_list) == 2 and call_path_list[0] == 'network':
                     node_to_search = self.utils.encode_str_to_byte(
@@ -66,8 +62,7 @@ class AdminProcess:
                         'load': raw_split_info[1],
                         'synch': True if delta_t.total_seconds() < 1200 else False
                     }
-                    self.complex_response['parameters'] = self.utils.py_to_json(
-                        get_result, to_bin=True)
+                    self.messenger.set_response(get_result)
 
                 # Jobs
                 elif len(call_path_list) == 1 and call_path_list[0] == 'jobs':
@@ -129,8 +124,7 @@ class AdminProcess:
                         'failed': failed_jobs,
                         'scheduled': scheduled_job
                     }
-                    self.complex_response['parameters'] = self.utils.py_to_json(
-                        result, to_bin=True)
+                    self.messenger.set_response(result)
 
                 # job details
                 elif len(call_path_list) == 2 and call_path_list[0] == 'jobs':
@@ -140,8 +134,8 @@ class AdminProcess:
                     sql = 'SELECT state FROM job WHERE id = {}'.format(job_id)
                     rows = data_base.execute_sql_with_results(sql)
                     if len(rows) == 0:
-                        self.complex_response['action'] = self.const.KEY_NOT_FOUND
-                        return self.complex_response
+                        self.messenger.code_type = self.const.KEY_NOT_FOUND
+                        return self.messenger
                     if rows[0][0] == 1:
                         table = 'successful_job'
                     elif rows[0][0] == 2:
@@ -154,16 +148,19 @@ class AdminProcess:
                         'log': job_details[0][0],
                         'time': job_details[0][1]
                     }
-                    self.complex_response['parameters'] = self.utils.py_to_json(
-                        result, to_bin=True)
+                    self.messenger.set_response(result)
 
                 elif len(call_path_list) == 1 and call_path_list[0] == 'status':
                     db_master = DB(self.const.DB_PATH)
-                    self.complex_response['parameters'] = self.utils.py_to_json(
-                        db_master.get_stats(), to_bin=True)
+                    self.messenger.set_response(db_master.get_stats())
                 else:
-                    self.complex_response['action'] = self.const.KEY_NOT_FOUND
-                return self.complex_response
+                    self.messenger.code_type = self.const.KEY_NOT_FOUND
+                    self.messenger.mark_as_failed()
+                return self.messenger
 
             except Exception as err:
                 print('Error extracting key', err)
+                self.messenger.code_type = self.const.PULZAR_ERROR
+                self.messenger.set_message = str(err)
+                self.messenger.mark_as_failed()
+                return self.messenger

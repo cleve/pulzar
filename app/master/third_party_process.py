@@ -2,6 +2,7 @@ import importlib
 from pulzarutils.utils import Utils
 from pulzarcore.core_body import Body
 from pulzarcore.core_db import DB
+from pulzarutils.messenger import Messenger
 
 
 class TPProcess:
@@ -13,12 +14,7 @@ class TPProcess:
         self.utils = Utils()
         # DB of values already loaded
         self.db_values = DB(self.const.DB_PATH)
-        # Complex response, store the info necessary.
-        self.complex_response = {
-            'action': None,
-            'parameters': None,
-            'volume': None
-        }
+        self.messenger = Messenger()
 
     def process_request(self, url_path, query_string):
         # Extract query parameters if is the case
@@ -37,11 +33,23 @@ class TPProcess:
                 if file_name + '.py' in modules:
                     import_fly = importlib.import_module(
                         'third_party.' + file_name)
-                    j_byte = import_fly.execute(args, query_params).encode()
-                    self.complex_response['action'] = self.const.TP_RESPONSE
-                    self.complex_response['parameters'] = j_byte
-
-                return self.complex_response
+                    j_byte = import_fly.execute(args, query_params)
+                    self.messenger.code_type = self.const.TP_RESPONSE
+                    self.messenger.set_response(j_byte)
+                else:
+                    self.messenger.code_type = self.const.USER_ERROR
+                    self.messenger.mark_as_failed()
+                    self.messenger.set_message = 'Wrong query, extension not found'
 
             except Exception as err:
                 print('Error third party', err)
+                self.messenger.code_type = self.const.PULZAR_ERROR
+                self.messenger.mark_as_failed()
+                self.messenger.set_message = str(msg)
+
+        else:
+            self.messenger.code_type = self.const.USER_ERROR
+            self.messenger.mark_as_failed()
+            self.messenger.set_message = 'Wrong query'
+
+        return self.messenger

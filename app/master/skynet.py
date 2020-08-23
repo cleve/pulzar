@@ -2,6 +2,7 @@ from pulzarcore.core_db import DB
 from pulzarcore.core_body import Body
 from pulzarutils.constants import Constants
 from pulzarutils.utils import Utils
+from pulzarutils.messenger import Messenger
 
 
 class Skynet:
@@ -14,7 +15,7 @@ class Skynet:
         self.env = env
         self.db_volume = DB(self.const.DB_VOLUME)
         self.master_db = DB(self.const.DB_PATH)
-
+        self.messenger = Messenger()
         # Skynet options
         self.sync_status = self.const.SKYNET + '/sync'
         self.sync_key_added = self.const.SKYNET + '/add_record'
@@ -25,7 +26,6 @@ class Skynet:
         params = body.extract_params(self.env)
         key = params[b'key'][0]
         volume = params[b'volume'][0]
-        print('key: ', key)
         # Saving data
         return self.master_db.put_value(
             key,
@@ -52,15 +52,14 @@ class Skynet:
             composed_value.encode()
         )
 
-    def sync_volume(self):
+    def _sync_volume(self):
         response = self.const.SKYNET
         body = Body()
         params = body.extract_params(self.env)
-        print("params", params)
         volume_data = self.db_volume.get_value(params[b'host'][0])
         # Check if volume exists.
         if volume_data is None:
-            response = self.const.SKYNET, False
+            response = self.const.PULZAR_ERROR
         # Get records registered
         records_in_master = self.master_db.count_values(
             params[b'host'][0], ':')
@@ -78,27 +77,46 @@ class Skynet:
         return response, volume_records_int == records_in_master
 
     def process_request(self, url_path, method):
-        if method != self.const.POST:
-            return None
+        try:
+            if method != self.const.POST:
+                return None
 
-        # Restoring data.
-        if url_path.find(self.start_backup) == 1:
-            return self.const.SKYNET_RECORD_RESTORED, self.restore_master()
+            # Restoring data.
+            if url_path.find(self.start_backup) == 1:
+                self.messenger.code_type = self.const.SKYNET_RECORD_RESTORED
+                self.messenger.set_response({'msg': 'ok'})
+                return self.messenger
 
-        # This is a confirmation from volume.
-        if url_path.find(self.sync_key_added) == 1:
-            if self.save_key_and_volume():
-                return self.const.SKYNET_RECORD_ADDED, None
-            return self.const.SKYNET_RECORD_ALREADY_ADDED, None
+            # This is a confirmation from volume.
+            if url_path.find(self.sync_key_added) == 1:
+                if self.save_key_and_volume():
+                    self.messenger.code_type = self.const.SKYNET_RECORD_ADDED
+                    self.messenger.set_message = 'record added'
+                    return self.messenger
+                self.messenger.code_type = self.const.SKYNET_RECORD_ALREADY_ADDED
+                self.messenger.http_code = '406 Not acceptable'
+                self.messenger.set_message = 'already added'
+                return self.messenger
 
-        # This is a meta-data received from volume
-        if url_path.find(self.sync_status) == 1:
-            # Extracting last section of the url
-            groups = self.utils.get_search_regex(
-                url_path,
-                self.const.RE_URL_OPTION_ORDER
-            )
-            if groups is None:
-                return None, None
+            # This is a meta-data received from volume
+            if url_path.find(self.sync_status) == 1:
+                # Extracting last section of the url
+                groups = self.utils.get_search_regex(
+                    url_path,
+                    self.const.RE_URL_OPTION_ORDER
+                )
+                if groups is None:
+                    self.messenger.code_type = self.const.PULZAR_ERROR
+                    self.messenger.mark_as_failed()
 
-            return self.sync_volume()
+                code, synch = self._sync_volume()
+                self.messenger.code_type = code
+                self.messenger.set_response({'synch': synch})
+
+        except Exception as err:
+            print('Error Skynet', err)
+            self.messenger.code_type = self.const.PULZAR_ERROR
+            self.messenger.mark_as_failed()
+            self.messenger.set_message = str(err)
+
+        return self.messenger

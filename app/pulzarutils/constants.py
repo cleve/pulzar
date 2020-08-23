@@ -79,11 +79,15 @@ class Constants:
         self.RE_ADMIN = r'/admin((/[\w-]+){1,2})'
 
         # Type of requests
+        self.PULZAR_ERROR = 'pulzar_error'
+        self.PULZAR_DEFAULT_MESSAGE = 'default'
+        self.USER_ERROR = 'user_error'
         self.AUTODISCOVERY = 'autodiscovery'
         self.REGULAR_GET = 'regular'
         self.REGULAR_PUT = 'put'
         self.TP_RESPONSE = 'third_party_response'
         self.REDIRECT_POST = 'redirect_post'
+        self.REDIRECT_PUT = 'redirect_put'
         self.NOTIFY_KEY_TO_MASTER = 'notify2master'
         self.KEY_ALREADY_ADDED = 'duplicated'
         self.KEY_ERROR = 'key_error'

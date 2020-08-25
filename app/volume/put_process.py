@@ -3,6 +3,7 @@ from pulzarutils.constants import ReqType
 from pulzarutils.file_utils import FileUtils
 from pulzarcore.core_request import CoreRequest
 from pulzarcore.core_db import DB
+from pulzarutils.messenger import Messenger
 
 
 class PutProcess:
@@ -11,11 +12,7 @@ class PutProcess:
         self.utils = Utils()
         self.db_backup = DB(self.const.DB_BACKUP)
         self.file_utils = FileUtils(self.const)
-        self.complex_response = {
-            'action': None,
-            'parameters': None,
-            'volume': None
-        }
+        self.messenger = Messenger()
 
     def notify_record_to_master(self, env):
         """Report the register creation.
@@ -41,6 +38,10 @@ class PutProcess:
         if not req.make_request():
             # If an error ocurr in the server, we need to delete the file.
             self.file_utils.remove_file()
+            py_object = self.utils.json_to_py(req.response)
+            self.messenger.code_type = self.const.PULZAR_ERROR
+            self.messenger.set_message = py_object['msg']
+            self.messenger.mark_as_failed()
             return False
         try:
             self.db_backup.put_value(
@@ -49,6 +50,10 @@ class PutProcess:
             )
         except Exception as err:
             print('notify_record_to_master', err)
+            self.messenger.code_type = self.const.PULZAR_ERROR
+            self.messenger.set_message = str(err)
+            self.messenger.mark_as_failed()
+            return False
         return True
 
     def process_request(self, env, start_response, url_path):
@@ -69,12 +74,13 @@ class PutProcess:
                 key_generated = self.file_utils.read_binary_file(env)
                 # Try to reach to master.
                 if self.notify_record_to_master(env):
-                    self.complex_response['action'] = self.const.KEY_ADDED
-                else:
-                    self.complex_response['action'] = self.const.KEY_ERROR
+                    self.messenger.code_type = self.const.KEY_ADDED
+                    self.messenger.http_code = '201 CREATED'
+                    self.messenger.set_message = 'key added'
 
             except Exception as err:
-                print('Error extracting key', err)
-                self.complex_response['action'] = self.const.KEY_ERROR
+                self.messenger.code_type = self.const.USER_ERROR
+                self.messenger.set_message = str(err)
+                self.messenger.mark_as_failed()
 
-        return self.complex_response
+        return self.messenger

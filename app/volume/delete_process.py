@@ -1,4 +1,5 @@
 from pulzarutils.utils import Utils
+from pulzarutils.messenger import Messenger
 from pulzarcore.core_db import DB
 from pulzarutils.file_utils import FileUtils
 
@@ -8,12 +9,7 @@ class DeleteProcess:
         self.const = constants
         self.file_utils = FileUtils(self.const)
         self.utils = Utils()
-        # Complex response, store the info necessary.
-        self.complex_response = {
-            'action': None,
-            'parameters': None,
-            'volume': None
-        }
+        self.messenger = Messenger()
 
     def process_request(self, env, start_response, url_path):
         # Get request type, checking for key value.
@@ -31,15 +27,26 @@ class DeleteProcess:
                     self.utils.decode_byte_to_str(key_to_binary)
                 value = self.file_utils.is_value_present(full_path)
                 if not value:
-                    self.complex_response['action'] = self.const.KEY_NOT_FOUND
-                    return self.complex_response
-                if self.file_utils.remove_file_with_path(full_path):
-                    self.complex_response['action'] = self.const.KEY_DELETED
+                    self.messenger.code_type = self.const.KEY_NOT_FOUND
+                    self.messenger.set_message = 'key not found'
+                    self.messenger.mark_as_failed()
+                elif self.file_utils.remove_file_with_path(full_path):
+                    self.messenger.code_type = self.const.KEY_DELETED
+                    self.messenger.set_message = 'key deleted'
                 else:
-                    self.complex_response['action'] = self.const.KEY_NOT_FOUND
-                    self.complex_response['parameters'] = self.utils.decode_byte_to_str(
-                        key_to_binary)
-                return self.complex_response
+                    self.messenger.code_type = self.const.KEY_NOT_FOUND
+                    self.messenger.set_message = 'key not found'
+                    self.messenger.mark_as_failed()
 
             except Exception as err:
-                print('Error extracting key', err)
+                print('Error DeleteProcess', err)
+                self.messenger.code_type = self.const.PULZAR_ERROR
+                self.messenger.set_message = str(err)
+                self.messenger.mark_as_failed()
+
+        else:
+            self.messenger.code_type = self.const.USER_ERROR
+            self.messenger.set_message = 'wrong request'
+            self.messenger.mark_as_failed()
+
+        return self.messenger

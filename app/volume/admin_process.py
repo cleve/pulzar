@@ -1,4 +1,5 @@
 from pulzarutils.utils import Utils
+from pulzarutils.messenger import Messenger
 from pulzarcore.core_db import DB
 
 
@@ -9,12 +10,7 @@ class AdminProcess:
     def __init__(self, constants):
         self.const = constants
         self.utils = Utils()
-        # Complex response, store the info necessary.
-        self.complex_response = {
-            'action': None,
-            'parameters': None,
-            'volume': None
-        }
+        self.messenger = Messenger()
         self.mark_of_local_verification = b'varidb_execute_file_verification'
 
     def process_request(self, url_path):
@@ -32,10 +28,17 @@ class AdminProcess:
                     db_backup = DB(self.const.DB_BACKUP)
                     db_backup.update_or_insert_value(
                         self.mark_of_local_verification, b'1')
-                    self.complex_response['action'] = self.const.BACKUP_SCHEDULED
-                return self.complex_response
+                    self.messenger.code_type = self.const.BACKUP_SCHEDULED
+                    self.messenger.set_message = 'backup scheduled'
 
             except Exception as err:
-                print('Error processing requesgmt', err)
-                return self.complex_response
-        return self.complex_response
+                print('Error processing request', err)
+                self.messenger.code_type = self.const.PULZAR_ERROR
+                self.messenger.set_message = str(err)
+                self.messenger.mark_as_failed()
+        else:
+            self.messenger.code_type = self.const.USER_ERROR
+            self.messenger.set_message = 'wrong request'
+            self.messenger.mark_as_failed()
+
+        return self.messenger

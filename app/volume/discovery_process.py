@@ -1,4 +1,5 @@
 from pulzarutils.utils import Utils
+from pulzarutils.messenger import Messenger
 from pulzarcore.core_db import DB
 
 
@@ -6,6 +7,7 @@ class DiscoveryProcess:
     def __init__(self, constants):
         self.const = constants
         self.utils = Utils()
+        self.messenger = Messenger()
 
     def save_status(self, env):
         """Save stats to synch
@@ -21,14 +23,17 @@ class DiscoveryProcess:
             self.utils.encode_str_to_byte(
                 env[self.const.SERVER_PORT])
         )
-        print(result)
 
     def process_request(self, env):
         """Just getting the data
         """
         try:
             self.save_status(env)
-            return self.const.AUTODISCOVERY
+            self.messenger.code_type = self.const.AUTODISCOVERY
+            self.messenger.set_message = 'ok'
 
         except Exception as err:
             print('Error::Autodiscovery', err)
+            self.messenger.code_type = self.const.PULZAR_ERROR
+            self.messenger.set_message = str(err)
+            self.messenger.mark_as_failed()

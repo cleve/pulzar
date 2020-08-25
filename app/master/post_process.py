@@ -1,8 +1,11 @@
 from pulzarutils.utils import Utils
+from pulzarutils.messenger import Messenger
 from pulzarcore.core_db import DB
 
 
 class PostProcess:
+    """UNUSED CLASS"""
+
     def __init__(self, constants):
         self.const = constants
         # 20 mins max to consider a volume online.
@@ -12,6 +15,7 @@ class PostProcess:
         self.db_values = DB(self.const.DB_PATH)
         # DB of volumes/keys.
         self.db_volumes = DB(self.const.DB_VOLUME)
+        self.messenger = Messenger()
         # Complex response, store the info necessary.
         self.complex_response = {
             'action': None,
@@ -28,7 +32,8 @@ class PostProcess:
             # meta_raw[0] = precent, meta_raw[1] = load
             meta_raw = self.utils.decode_byte_to_str(elem[1]).split(':')
             percent = int(meta_raw[0])
-            last_update_reported = self.utils.get_datetime_from_string(meta_raw[3])
+            last_update_reported = self.utils.get_datetime_from_string(
+                meta_raw[3])
             delta_time = current_datetime - last_update_reported
             # Check availability of node.
             if delta_time.total_seconds() >= self.second_range:

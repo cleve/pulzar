@@ -52,7 +52,9 @@ class CoreRequest:
             if req.status_code == 200:
                 self.response = req.text
                 return True
+            self.response = req.text
             return False
         except Exception as err:
             print(err)
+            self.response = 'no response'
             return False

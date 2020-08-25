@@ -22,29 +22,36 @@ class Volume:
     def process_request(self, env, start_response):
         # Get request type
         self.volume_env = self.utils.extract_host_env(env)
-        request = self.dispatcher.classify_request(env, start_response)
-        request_type = request['action']
+        message = self.dispatcher.classify_request(env, start_response)
+        request_type = message.code_type
+        # First the general errors
+        if request_type == self.const.PULZAR_ERROR or request_type == self.const.USER_ERROR:
+            self.response.set_response(message.http_code)
+            self.response.set_message(message.get_bjson())
         if request_type == self.const.BACKUP_SCHEDULED:
-            self.response.set_response('200 OK')
-            self.response.set_message(b'restauration scheduled')
-        if request_type == self.const.AUTODISCOVERY:
-            self.response.set_response('200 OK')
-            self.response.set_message(b'discovered')
-        if request_type == self.const.KEY_DELETED:
-            self.response.set_response('200 Deleted')
-            self.response.set_message(b'record deleted')
-        if request_type == self.const.KEY_ADDED:
-            self.response.set_response('201 Created')
-            self.response.set_message(b'record added')
-        if request_type == self.const.KEY_ERROR:
+            self.response.set_response(message.http_code)
+            self.response.set_message(message.get_bjson())
+        elif request_type == self.const.AUTODISCOVERY:
+            self.response.set_response(message.http_code)
+            self.response.set_message(message.get_bjson())
+        elif request_type == self.const.KEY_DELETED:
+            self.response.set_response(message.http_code)
+            self.response.set_message(message.get_bjson())
+        elif request_type == self.const.KEY_ADDED:
+            self.response.set_response(message.http_code)
+            self.response.set_message(message.get_bjson())
+        elif request_type == self.const.KEY_ERROR:
             self.response.set_response('406 Not acceptable')
             self.response.set_message(b'record already added')
-        if request_type == self.const.KEY_NOT_FOUND:
-            self.response.set_response('404 Not found')
-            self.response.set_message(b'key not found')
-        if request_type == self.const.KEY_FOUND:
-            return self.file_utils.read_value(request['parameters'], start_response)
-        if request_type == self.const.JOB_OK:
-            self.response.set_response('200 OK')
-            self.response.set_message(b'job ready')
+        elif request_type == self.const.KEY_NOT_FOUND:
+            self.response.set_response(message.http_code)
+            self.response.set_message(message.get_bjson())
+        elif request_type == self.const.KEY_FOUND:
+            return self.file_utils.read_value(message.extra, start_response)
+        elif request_type == self.const.JOB_OK:
+            self.response.set_response(message.http_code)
+            self.response.set_message(message.get_bjson())
+        else:
+            self.response.set_response(message.http_code)
+            self.response.set_message(message.get_bjson())
         return self.response.get_response(start_response)

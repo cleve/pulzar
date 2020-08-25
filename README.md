@@ -77,6 +77,8 @@ master:[port]/add_key/{key}?temporal=[int:days]
 curl -X PUT -L -T /path/to/file http://master:[port]/add_key/{key}?temporal={int}
 ```
 
+Where the int value indicates the amount of days than the file will be available.
+
 ### Read key value
 ```sh
 master:[port]/get_key/{key}

@@ -1,4 +1,5 @@
 from pulzarutils.constants import Constants
+from pulzarutils.messenger import Messenger
 from volume.get_process import GetProcess
 from volume.discovery_process import DiscoveryProcess
 from volume.put_process import PutProcess
@@ -8,7 +9,7 @@ from volume.job_process import JobProcess
 
 
 class Dispatcher:
-    """Calssify the type of request:
+    """Classify the type of request:
      - regular
      - admin
      - skynet
@@ -24,12 +25,6 @@ class Dispatcher:
         self.re_job = r'/send_job$'
         self.re_autodiscovery = r'/autodiscovery$'
 
-        # Response to master, can or not contains data as parameter
-        self.complex_response = {
-            'action': None,
-            'parameters': None
-        }
-
     def classify_request(self, env, start_response):
         """Return the type
         """
@@ -39,47 +34,42 @@ class Dispatcher:
         # Autodiscovery
         if self.utils.match_regex(url_path, self.re_autodiscovery):
             discovery_process = DiscoveryProcess(self.const)
-            self.complex_response['action'] = discovery_process.process_request(
-                env)
-            return self.complex_response
+            return discovery_process.process_request(env)
 
         # Admin
         if self.utils.match_regex(url_path, self.re_admin):
             admin_process = AdminProcess(self.const)
             if method == self.const.GET:
-                response = admin_process.process_request(url_path)
-                self.complex_response = response
-                return self.complex_response
+                return admin_process.process_request(url_path)
 
         # Jobs
         if self.utils.match_regex(url_path, self.re_job):
             if method == self.const.POST:
                 job_process = JobProcess(self.const)
-                response = job_process.process_request(url_path, env)
-                self.complex_response = response
-                return self.complex_response
+                return job_process.process_request(url_path, env)
 
+        # Regular requests
         else:
             # Delete value.
             if method == self.const.DELETE:
                 get_request = DeleteProcess(self.const)
-                response = get_request.process_request(
+                return get_request.process_request(
                     env, start_response, url_path)
 
-                self.complex_response = response
             # Get key-value.
             if method == self.const.GET:
                 get_request = GetProcess(self.const)
-                response = get_request.process_request(
+                return get_request.process_request(
                     env, start_response, url_path)
-
-                self.complex_response = response
-                return self.complex_response
 
             # PUT key-value.
             if method == self.const.PUT:
                 put_request = PutProcess(self.const)
-                self.complex_response = put_request.process_request(
+                return put_request.process_request(
                     env, start_response, url_path)
 
-        return self.complex_response
+        # Generic response
+        messenger = Messenger()
+        messenger.code_type = self.const.PULZAR_ERROR
+        messenger.set_message = 'internal error'
+        return messenger

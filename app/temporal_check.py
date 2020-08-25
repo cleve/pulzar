@@ -2,6 +2,7 @@ import requests
 
 # Internal imports
 from pulzarcore.core_db import DB
+from pulzarcore.core_rdb import RDB
 from pulzarutils.constants import Constants
 from pulzarutils.utils import Utils
 from pulzarutils.stream import Config
@@ -17,6 +18,8 @@ class TemporalCheck:
         self.utils = Utils()
         self.temporal_files = DB(self.const.DB_NOT_PERMANENT)
         self.master_db = DB(self.const.DB_PATH)
+        self.schedule_data_base = RDB(self.const.DB_JOBS)
+        self.days_of_retention = 90
         self.init_config()
 
     def retention_policy(self):

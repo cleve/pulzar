@@ -1,4 +1,5 @@
 from pulzarutils.constants import Constants
+from pulzarutils.messenger import Messenger
 from master.skynet import Skynet
 from master.get_process import GetProcess
 from master.post_process import PostProcess
@@ -24,12 +25,6 @@ class Dispatcher:
         self.re_admin = r'/admin/\w'
         self.re_skynet = r'/skynet/\w'
 
-        # Response to master, can or not contains data as parameter
-        self.complex_response = {
-            'action': None,
-            'parameters': None
-        }
-
     def classify_request(self, essential_env, env, start_response):
         """Return dictionary complex_response {action, parameters}
         """
@@ -38,67 +33,81 @@ class Dispatcher:
         # Skynet
         if self.utils.match_regex(url_path, self.re_skynet):
             skynet = Skynet(env)
-            action, synch_complete = skynet.process_request(
-                url_path, method)
-            self.complex_response['action'] = action
-            self.complex_response['parameters'] = synch_complete
-            return self.complex_response
+            return skynet.process_request(url_path, method)
 
         # Admin
         elif self.utils.match_regex(url_path, self.re_admin):
             if method == self.const.GET:
                 admin_process = AdminProcess(self.const)
-                self.complex_response = admin_process.process_request(url_path)
-                return self.complex_response
+                return admin_process.process_request(url_path)
+            else:
+                messenger = Messenger()
+                messenger.code_type = self.const.USER_ERROR
+                messenger.mark_as_failed()
+                messenger.set_message = 'Method used does not match'
+                return messenger
 
         # Jobs
         elif self.utils.match_regex(url_path, self.const.RE_LAUNCH_JOB):
             if method == self.const.POST:
                 job_process = JobProcess(self.const)
                 query_string = env['QUERY_STRING']
-                self.complex_response = job_process.process_request(
+                return job_process.process_request(
                     url_path, query_string, env)
+            else:
+                messenger = Messenger()
+                messenger.code_type = self.const.USER_ERROR
+                messenger.mark_as_failed()
+                messenger.set_message = 'Method used does not match'
+                return messenger
 
         elif self.utils.match_regex(url_path, self.const.RE_NOTIFICATION_JOB):
             if method == self.const.POST:
                 job_process = JobProcess(self.const)
                 query_string = env['QUERY_STRING']
-                self.complex_response = job_process.process_notification_request(
+                return job_process.process_notification_request(
                     url_path, query_string, env)
+            else:
+                messenger = Messenger()
+                messenger.code_type = self.const.USER_ERROR
+                messenger.mark_as_failed()
+                messenger.set_message = 'Method used does not match'
+                return messenger
 
         # Third party
         elif self.utils.match_regex(url_path, self.const.RE_THIRD_PARTY):
             if method == self.const.GET:
                 third_party = TPProcess(self.const)
                 query_string = env['QUERY_STRING']
-                self.complex_response = third_party.process_request(
+                return third_party.process_request(
                     url_path, query_string)
+            else:
+                messenger = Messenger()
+                messenger.code_type = self.const.USER_ERROR
+                messenger.mark_as_failed()
+                messenger.set_message = 'Method used does not match'
+                return messenger
 
         # General requests
         else:
             # Delete value.
             if method == self.const.DELETE:
                 delete_request = DeleteProcess(self.const)
-                self.complex_response = delete_request.process_request(
+                return delete_request.process_request(
                     env, start_response, url_path)
 
             # Get key-value.
             if method == self.const.GET:
                 get_request = GetProcess(self.const)
-                self.complex_response = get_request.process_request(
-                    env, start_response, url_path)
-
-                return self.complex_response
-
-            # Post key-value.
-            if method == self.const.POST:
-                post_request = PostProcess(self.const)
-                self.complex_response = post_request.process_request(
+                return get_request.process_request(
                     env, start_response, url_path)
 
             # Put key-value.
             if method == self.const.PUT:
                 put_request = PutProcess(self.const)
-                self.complex_response = put_request.process_request(
+                return put_request.process_request(
                     env, start_response, url_path)
-        return self.complex_response
+
+            else:
+                return Messenger()
+        return Messenger()

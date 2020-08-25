@@ -74,10 +74,10 @@ class Search:
                     'url': val_string + '/' + key_string
                 })
 
-    def json_return(self):
-        """Json converter
+    def get_response(self):
+        """Get the final object
         """
-        return json.dumps({'results': self.response})
+        return self.response
 
 
 def execute(arguments, params):
@@ -124,4 +124,4 @@ def execute(arguments, params):
         return json.dumps({'err': 'no args detected'})
     search = Search(arguments[0], less_than, great_than, equals)
     search.do_the_work()
-    return search.json_return()
+    return search.get_response()

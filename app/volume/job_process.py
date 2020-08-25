@@ -1,6 +1,7 @@
 import importlib
 from pulzarutils.utils import Utils
 from pulzarutils.constants import ReqType
+from pulzarutils.messenger import Messenger
 from pulzarcore.core_request import CoreRequest
 from pulzarcore.core_db import DB
 from pulzarcore.core_job_node import Job
@@ -15,11 +16,7 @@ class JobProcess:
         self.const = constants
         self.utils = Utils()
         self.db_backup = DB(self.const.DB_BACKUP)
-        self.complex_response = {
-            'action': None,
-            'parameters': None,
-            'volume': None
-        }
+        self.messenger = Messenger()
 
     def process_request(self, url_path, env):
         """Receiving the order to launch a job
@@ -49,12 +46,17 @@ class JobProcess:
 
             # Response
             if good:
-                self.complex_response['action'] = self.const.JOB_OK
+                self.messenger.code_type = self.const.JOB_OK
+                self.messenger.set_message = 'ok'
             else:
-                self.complex_response['action'] = self.const.KEY_ERROR
+                self.messenger.code_type = self.const.JOB_ERROR
+                self.messenger.set_message = 'internal error'
+                self.messenger.mark_as_failed()
 
         except Exception as err:
-            print('Error extracting key', err)
-            self.complex_response['action'] = self.const.KEY_ERROR
+            print('Error JobProcess', err)
+            self.messenger.code_type = self.const.PULZAR_ERROR
+            self.messenger.set_message = str(err)
+            self.messenger.mark_as_failed()
 
-        return self.complex_response
+        return self.messenger

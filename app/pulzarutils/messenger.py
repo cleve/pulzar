@@ -12,7 +12,7 @@ class Messenger:
         self.http_code = '200 OK'
         self.extra = None
         self.response = {
-            'response': None,
+            'data': None,
             'status': 'ok',
             'msg': ''
         }
@@ -37,7 +37,7 @@ class Messenger:
     def set_response(self, response):
         """Add response into the dictionary
         """
-        self.response['response'] = response
+        self.response['data'] = response
 
     def get_bjson(self):
         """Get the response dictionary into JSON format
@@ -46,7 +46,7 @@ class Messenger:
             return self.utils.py_to_json(self.response).encode()
         except Exception as err:
             return self.utils.py_to_json({
-                'response': 'Internal error',
+                'data': 'Internal error',
                 'status': 'ko',
                 'msg': str(err)
             }).encode()

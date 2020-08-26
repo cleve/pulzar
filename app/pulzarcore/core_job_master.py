@@ -70,7 +70,6 @@ class Job:
     def register_job(self, path_db_jobs, node):
         """Register job in master
         """
-        print('registering job')
         job_path = self.job_params['job_path']
         job_name = self.job_params['job_name']
         parameters = self.utils.py_to_json(self.job_params['parameters'])

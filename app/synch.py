@@ -156,7 +156,7 @@ class Synchro:
         if req.response is None:
             return
         py_object = self.utils.json_to_py(req.response)
-        response = py_object['response']
+        response = py_object['data']
         # Check restore process.
         verification = self.db_backup.get_value(
             self.mark_of_local_verification)

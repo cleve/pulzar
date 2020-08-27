@@ -1,4 +1,5 @@
 from pulzarutils.utils import Utils
+from pulzarutils.stream import Config
 from pulzarutils.messenger import Messenger
 from pulzarcore.core_db import DB
 
@@ -16,6 +17,9 @@ class PutProcess:
         self.messenger = Messenger()
 
     def pick_a_volume(self):
+        # Selecting port
+        config = Config(const.CONF_PATH)
+        volume_port = config.get_config('volume', 'port')
         volumes = self.db_volumes.get_keys_values()
         current_datetime = self.utils.get_current_datetime()
         min_value = 100
@@ -33,7 +37,7 @@ class PutProcess:
             if percent < min_value:
                 min_value = percent
                 server = elem[0]
-        return server
+        return server.decode() + ':' + volume_port
 
     def process_request(self, env, start_response, url_path):
         regex_result = self.utils.get_search_regex(
@@ -61,7 +65,7 @@ class PutProcess:
                     # Populating dictionary with the info needed.
                     self.messenger.code_type = self.const.REDIRECT_PUT
                     self.messenger.http_code = '307 temporary redirect'
-                    self.messenger.volume = volume.decode()
+                    self.messenger.volume = volume
                     return self.messenger
                 # Since key was found, an element was already added before
                 # using the same key.

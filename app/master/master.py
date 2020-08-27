@@ -75,7 +75,7 @@ class Master:
             query_params = self.utils.extract_query_params(
                 'http://fakeurl.com?' + env['QUERY_STRING'])
 
-            redirect_url = 'http://' + message.volume + ':9001' + \
+            redirect_url = 'http://' + message.volume + \
                 env[self.const.PATH_INFO] + '?url=' + \
                 self.master_env[self.const.HTTP_HOST]
             for param in query_params:

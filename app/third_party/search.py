@@ -71,7 +71,7 @@ class Search:
                         continue
                 self.response.append({
                     'key': key_string,
-                    'url': val_string + '/' + key_string
+                    'url': 'http://' + val_string + key_string
                 })
 
     def get_response(self):

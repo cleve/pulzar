@@ -14,6 +14,7 @@ class Job:
         self.job_params = job_params
         self.utils = Utils()
         self.job_id = None
+        self.volume_port = None
         self.scheduler_options = [
             'minutes',
             'hours',
@@ -70,7 +71,6 @@ class Job:
     def register_job(self, path_db_jobs, node):
         """Register job in master
         """
-        print('registering job')
         job_path = self.job_params['job_path']
         job_name = self.job_params['job_name']
         parameters = self.utils.py_to_json(self.job_params['parameters'])
@@ -87,6 +87,8 @@ class Job:
     def select_node(self, const):
         """Picking a node since parameters
         """
+        node_utils = NodeUtils(const)
+        self.volume_port = node_utils.get_port()
         if 'pulzar_data' in self.job_params['parameters']:
             # Send to the node where the data is
             data_base = DB(const.DB_PATH)
@@ -99,7 +101,6 @@ class Job:
             node = composed_data.split(',')[0].split(':')[0]
             return node.encode()
         else:
-            node_utils = NodeUtils(const)
             return node_utils.pick_a_volume()
 
     def send_job(self, const):
@@ -112,6 +113,7 @@ class Job:
         if 'scheduled' in self.job_params['parameters']:
             return self.register_scheduled_job(const.DB_JOBS)
         node = self.select_node(const)
+
         print('node', node)
         if node is None:
             return False
@@ -122,7 +124,7 @@ class Job:
             return False
         self.job_params['job_id'] = self.job_id
         self.job_params['scheduled'] = 0
-        request = CoreRequest(node.decode(), '9001', '/send_job')
+        request = CoreRequest(node.decode(), self.volume_port, '/send_job')
         request.set_type(ReqType.POST)
         request.set_payload(self.job_params)
         job_response = request.make_request(json_request=True)
@@ -140,11 +142,12 @@ class Job:
         """
         node = self.select_node(const)
         print('node', node)
+        print('port', self.volume_port)
         print('parameters', parameters)
         if node is None:
             return False
         print('Sending job to node ', node)
-        request = CoreRequest(node.decode(), '9001', '/send_job')
+        request = CoreRequest(node.decode(), self.volume_port, '/send_job')
         request.set_type(ReqType.POST)
         request.set_payload(parameters)
         job_response = request.make_request(json_request=True)

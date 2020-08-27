@@ -24,14 +24,19 @@ class TemporalCheck:
 
     def retention_policy(self):
         """Delete data since the policy"""
-        # jobs
+        # Scheduled successful jobs
         date_diff = self.utils.get_date_days_diff(
             days=-1*self.days_of_retention, to_string=True)
-        sql = 'DELETE FROM job WHERE creation_time > {}'.format(
+        sql = 'DELETE FROM successful_schedule_job WHERE creation_time < {}'.format(
             date_diff)
         self.schedule_data_base.execute_sql(sql)
-        # Scheduled jobs
-        sql = 'DELETE FROM schedule_job WHERE creation_time > {}'.format(
+        # Failed jobs
+        sql = 'DELETE FROM failed_schedule_job WHERE creation_time < {}'.format(
+            date_diff)
+        self.schedule_data_base.execute_sql(sql)
+
+        # Regular jobs
+        sql = 'DELETE FROM job WHERE creation_time < {}'.format(
             date_diff)
         self.schedule_data_base.execute_sql(sql)
 
@@ -75,8 +80,8 @@ class TemporalCheck:
                     master_value.split(',')[1])
                 delta = (current_time - value_datetime).days
                 if self.const.DEBUG:
-                    print('Key {} with time alive of {} days'.format(
-                        self.utils.decode_base_64(bkey, to_str=True), delta))
+                    print('Key {} with time alive of {} days and delta is {}'.format(
+                        self.utils.decode_base_64(bkey, to_str=True), days, delta))
                 # Remove data
                 if delta > days:
                     self.delete_request(bkey)

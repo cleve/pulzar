@@ -20,24 +20,6 @@ class Scheduler():
         self.jobs_to_launch = []
         self.days_of_retention = 90
 
-    def _retention_policy(self):
-        """Delete data since the policy"""
-        # Scheduled successful jobs
-        date_diff = self.utils.get_date_days_diff(
-            days=-1*self.days_of_retention, to_string=True)
-        sql = 'DELETE FROM successful_schedule_job WHERE creation_time > {}'.format(
-            date_diff)
-        self.schedule_data_base.execute_sql(sql)
-        # Failed jobs
-        sql = 'DELETE FROM failed_schedule_job WHERE creation_time > {}'.format(
-            date_diff)
-        self.schedule_data_base.execute_sql(sql)
-
-        # Regular jobs
-        sql = 'DELETE FROM job WHERE creation_time > {}'.format(
-            date_diff)
-        self.schedule_data_base.execute_sql(sql)
-
     def init_state(self):
         """Restart schedule state at the begining
         """
@@ -160,7 +142,6 @@ class Scheduler():
             self.update_state()
             self._process_params()
             self._schedule_jobs()
-            self._retention_policy()
             schedule.run_pending()
             time.sleep(20)
 

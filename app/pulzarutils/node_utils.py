@@ -30,6 +30,13 @@ class NodeUtils:
             return None
         return keys[0].decode() + ':' + volume_port
 
+    def get_port(self):
+        """Get port number
+        """
+        server_config = Config(self.const.CONF_PATH)
+        volume_port = server_config.get_config('volume', 'port')
+        return volume_port
+
     def pick_a_volume(self):
         """Volume selection using the load
             return (byte): URL without port

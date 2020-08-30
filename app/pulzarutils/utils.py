@@ -187,10 +187,30 @@ class Utils:
         """
         return os.path.isfile(file_path)
 
+    def remove_file(self, file_path):
+        """Remove file if exists
+        """
+        if self.file_exists(file_path):
+            os.remove(file_path)
+            return True
+        print('File {} does not exist'.format(file_path))
+
     def dir_exists(self, dir_path):
         """Just a binding
         """
         return os.path.isdir(dir_path)
+
+    def remove_dir(self, dir_path):
+        """Remove dir if exists
+        """
+        if self.dir_exists(dir_path):
+            return os.rmdir(dir_path)
+
+    def get_absolute_path_of_dir(self):
+        """Get the absolute path of the
+        current location
+        """
+        return os.path.abspath(os.getcwd())
 
     # Custom methods
     def extract_query_params(self, complete_url):

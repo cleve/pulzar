@@ -23,6 +23,8 @@ class Constants:
         self.THIRD_PARTY_DIR = 'master/third_party'
         self.START_BK = 'start_backup'
         self.HOST_NAME = 'host'
+        # DEV Directory to store data
+        self.DEV_DIRECTORY = 'storage/data'
 
         # Config
         self.CONF_HOST = 'host'
@@ -36,8 +38,8 @@ class Constants:
         self.DB_BACKUP = 'storage/volume_bk.db' if self.DEBUG else '/var/lib/pulzar/dbs/volume_bk.db'
         self.DB_NOT_PERMANENT = 'storage/temporal_data.db' if self.DEBUG else '/var/lib/pulzar/dbs/temporal_data.db'
         # job DBs
-        self.DB_JOBS = 'storage/jobs.db' if self.DEBUG else '/var/lib/pulzar/dbs/jobs.db'
-        self.DB_NODE_JOBS = 'storage/node_jobs.db' if self.DEBUG else '/var/lib/pulzar/dbs/'
+        self.DB_JOBS = 'storage/dbs/jobs.db' if self.DEBUG else '/var/lib/pulzar/dbs/jobs.db'
+        self.DB_NODE_JOBS = 'storage/dbs/node_jobs.db' if self.DEBUG else '/var/lib/pulzar/dbs/'
 
         # Env
         self.REQUEST_METHOD = 'REQUEST_METHOD'

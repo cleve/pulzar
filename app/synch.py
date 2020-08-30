@@ -20,7 +20,6 @@ class Synchro:
         self.server_port = None
         self.volume_port = None
         self.backup_chunk = None
-        self.restored_ready = None
         self.mark_of_local_verification = b'varidb_execute_file_verification'
         # Init main variables
         self.get_config()
@@ -32,8 +31,6 @@ class Synchro:
         self.volume_dir = server_config.get_config('volume', 'dir')
         self.volume_host = self.db_stats.get_value(
             self.utils.encode_str_to_byte(self.const.HOST_NAME))
-        self.restored_ready = self.db_stats.get_value(
-            self.utils.encode_str_to_byte('restored'))
         self.volume_port = server_config.get_config('volume', 'port')
         # Master url
         self.server_host = server_config.get_config('server', 'host')
@@ -127,7 +124,7 @@ class Synchro:
         percent = self.utils.giga_free_space()
         # Gets load usage
         volume_load = str(self.utils.cpu_info()[2])
-        if self.volume_host is None or self.volume_port is None or self.restored_ready is None:
+        if self.volume_host is None or self.volume_port is None:
             print('No records created, auto-discovering')
             # Create backup DB once
             self.create_restore_db()

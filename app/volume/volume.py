@@ -15,13 +15,11 @@ class Volume:
         self.file_utils = FileUtils(self.const)
         self.response = ResponseClass()
         self.dispatcher = Dispatcher(self.utils)
-        self.volume_env = None
         self.master_url = None
         self.master_port = None
 
     def process_request(self, env, start_response):
         # Get request type
-        self.volume_env = self.utils.extract_host_env(env)
         message = self.dispatcher.classify_request(env, start_response)
         request_type = message.code_type
         # First the general errors

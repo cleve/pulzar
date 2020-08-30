@@ -36,7 +36,7 @@ class LaunchJobs:
         """
         # Recovering data of job
         table = 'job' if not scheduled else 'schedule_job'
-        sql = 'SELECT log, duration, state FROM {} WHERE job_id = {} AND notification = 0'.format(
+        sql = 'SELECT log, duration, state, output FROM {} WHERE job_id = {} AND notification = 0'.format(
             table, job_id)
         row = self.data_base.execute_sql_with_results(sql)[0]
 
@@ -45,6 +45,7 @@ class LaunchJobs:
             'log': row[0],
             'time': row[1],
             'state': row[2],
+            'output': row[3],
             'scheduled': scheduled
         }
         req = CoreRequest(self.server_host, self.server_port,

@@ -31,6 +31,7 @@ class Example(CoreJobs):
             r += float(number) / float(number_two)
             counter += 1
         self.pulzar_add_log('Result is: ' + str(r))
+        self.pulzar_set_output('Result is: ' + str(r))
 
 
 def execute(arguments):

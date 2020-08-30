@@ -15,7 +15,10 @@ class FileUtils():
         self.init_config()
 
     def init_config(self):
-        directory = self.config.get_config('volume', 'dir')
+        if self.const.DEBUG:
+            directory = self.utils.get_absolute_path_of_dir()
+        else:
+            directory = self.config.get_config('volume', 'dir')
         self.volume_path = directory
 
     def set_key(self, binary_key, base64_str_key):

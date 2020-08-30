@@ -37,3 +37,5 @@ class DiscoveryProcess:
             self.messenger.code_type = self.const.PULZAR_ERROR
             self.messenger.set_message = str(err)
             self.messenger.mark_as_failed()
+
+        return self.messenger

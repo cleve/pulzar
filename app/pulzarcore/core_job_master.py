@@ -141,18 +141,20 @@ class Job:
              - params: dict
         """
         node = self.select_node(const)
-        print('node', node)
-        print('port', self.volume_port)
-        print('parameters', parameters)
+        if const.DEBUG:
+            print('node', node)
+            print('port', self.volume_port)
+            print('parameters', parameters)
         if node is None:
             return False
-        print('Sending job to node ', node)
         request = CoreRequest(node.decode(), self.volume_port, '/send_job')
         request.set_type(ReqType.POST)
         request.set_payload(parameters)
         job_response = request.make_request(json_request=True)
-        print(request.response)
+        if const.DEBUG:
+            print('Sending job to node ', node)
+            print('response: ', request.response)
         if not job_response:
             # removing job
-            print('FALSE')
+            print('FALSE response')
         return job_response

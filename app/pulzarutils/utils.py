@@ -192,6 +192,12 @@ class Utils:
         """
         return os.path.isdir(dir_path)
 
+    def get_absolute_path_of_dir(self):
+        """Get the absolute path of the
+        current location
+        """
+        return os.path.abspath(os.getcwd())
+
     # Custom methods
     def extract_query_params(self, complete_url):
         query = urlsplit(complete_url).query

@@ -20,7 +20,6 @@ class AdminProcess:
             url_path, self.const.RE_ADMIN)
         if regex_result:
             try:
-                self.complex_response['action'] = self.const.ADMIN
                 call_path_list = regex_result.groups()[0].split('/')
                 call_path_list = [x for x in call_path_list if x != '']
                 # All nodes

@@ -33,10 +33,13 @@ def reset(reset):
     def delete_db(path_dir):
         data_files = utils.get_all_files(path_dir + '/**')
         for item in data_files:
+            print('Cleaning => ', item)
             if item == path_dir + '/' or item.find('gitignore') >= 0:
                 continue
             utils.remove_file(item)
-            utils.remove_dir(path_dir)
+        if path_dir.find(const.DEV_DIRECTORY) >= 0:
+            return
+        utils.remove_dir(path_dir)
 
     if reset == 'all':
         delete_db(const.DB_PATH)

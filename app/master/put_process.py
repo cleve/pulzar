@@ -18,7 +18,7 @@ class PutProcess:
 
     def pick_a_volume(self):
         # Selecting port
-        config = Config(const.CONF_PATH)
+        config = Config(self.const.CONF_PATH)
         volume_port = config.get_config('volume', 'port')
         volumes = self.db_volumes.get_keys_values()
         current_datetime = self.utils.get_current_datetime()
@@ -37,6 +37,8 @@ class PutProcess:
             if percent < min_value:
                 min_value = percent
                 server = elem[0]
+        if server is None:
+            return None
         return server.decode() + ':' + volume_port
 
     def process_request(self, env, start_response, url_path):
@@ -72,7 +74,7 @@ class PutProcess:
                 self.messenger.code_type = self.const.KEY_ALREADY_ADDED
 
             except Exception as err:
-                print('Error PUT process extracting key', err)
+                print('Error PUT process:', err)
                 self.messenger.code_type = self.const.PULZAR_ERROR
                 self.messenger.mark_as_failed()
                 self.messenger.set_message = str(err)

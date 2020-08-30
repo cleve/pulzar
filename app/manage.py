@@ -21,9 +21,10 @@ def restore(url):
     print(core_request.response)
 
 
-def reset():
+def reset(reset):
     """Delete all the data
     """
+    print('reset')
     pass
 
 
@@ -31,13 +32,13 @@ def main():
     """Entrance point
     """
     arg_parse = argparse.ArgumentParser(
-        prog='manage', description='Manage DB')
+        prog='manage', description='Manage Pulzar')
     arg_parse.add_argument(
         '--restore',
         metavar='volume URL',
         action='store',
         type=str,
-        required=True
+        required=False
     )
 
     arg_parse.add_argument(
@@ -45,15 +46,17 @@ def main():
         metavar='volume URL',
         action='store',
         type=str,
-        required=True
+        required=False
     )
-
+    # Delete DEV environment
     arg_parse.add_argument(
         '--reset',
-        metavar='',
+        metavar='all',
         action='store',
         type=str,
-        required=True
+        default='all',
+        required=False,
+        help='Restore default data for dev'
     )
 
     args = arg_parse.parse_args()
@@ -62,7 +65,7 @@ def main():
         restore(args.restore)
 
     if args.reset:
-        reset(args.restore)
+        reset(args.reset)
 
 
 if __name__ == "__main__":

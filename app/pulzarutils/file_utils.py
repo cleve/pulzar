@@ -16,7 +16,8 @@ class FileUtils():
 
     def init_config(self):
         if self.const.DEBUG:
-            directory = self.utils.get_absolute_path_of_dir()
+            directory = self.utils.get_absolute_path_of_dir() + \
+                self.const.DEV_DIRECTORY
         else:
             directory = self.config.get_config('volume', 'dir')
         self.volume_path = directory

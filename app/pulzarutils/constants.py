@@ -23,6 +23,8 @@ class Constants:
         self.THIRD_PARTY_DIR = 'master/third_party'
         self.START_BK = 'start_backup'
         self.HOST_NAME = 'host'
+        # DEV Directory to store data
+        self.DEV_DIRECTORY = 'storage/data'
 
         # Config
         self.CONF_HOST = 'host'

@@ -21,6 +21,12 @@ def restore(url):
     print(core_request.response)
 
 
+def reset():
+    """Delete all the data
+    """
+    pass
+
+
 def main():
     """Entrance point
     """
@@ -42,10 +48,21 @@ def main():
         required=True
     )
 
+    arg_parse.add_argument(
+        '--reset',
+        metavar='',
+        action='store',
+        type=str,
+        required=True
+    )
+
     args = arg_parse.parse_args()
 
     if args.restore:
         restore(args.restore)
+
+    if args.reset:
+        reset(args.restore)
 
 
 if __name__ == "__main__":

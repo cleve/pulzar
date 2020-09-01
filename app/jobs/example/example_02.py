@@ -37,7 +37,7 @@ class Example(CoreJobs):
                 line += 1
         print('saving file', temporary_file.name)
         if self._pulzar_store_file(temporary_file.name):
-            self.pulzar_add_log('Job done')
+            self.pulzar_set_output('Job done')
 
 
 def execute(arguments):

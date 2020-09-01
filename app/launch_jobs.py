@@ -38,14 +38,14 @@ class LaunchJobs:
         date_diff = self.utils.get_date_days_diff(
             days=-1*self.days_of_retention, to_string=True)
         # Failed jobs
-        sql = 'DELETE FROM failed_schedule_job WHERE creation_time < {}'.format(
+        sql = 'DELETE FROM schedule_job WHERE creation_time < {}'.format(
             date_diff)
-        self.schedule_data_base.execute_sql(sql)
+        self.data_base.execute_sql(sql)
 
         # Regular jobs
         sql = 'DELETE FROM job WHERE creation_time < {}'.format(
             date_diff)
-        self.schedule_data_base.execute_sql(sql)
+        self.data_base.execute_sql(sql)
 
     def notify_to_master(self, job_id, scheduled=False):
         """Sending the signal to master

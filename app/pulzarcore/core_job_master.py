@@ -15,12 +15,13 @@ class Job:
         self.utils = Utils()
         self.job_id = None
         self.volume_port = None
-        self.scheduler_options = [
-            'minutes',
-            'hours',
-            'days',
-            'weeks'
-        ]
+        self.error_msg = ''
+        self.scheduler_checker = {
+            'minutes': (5, 59),
+            'hours': (1, 23),
+            'days': (1, 31),
+            'weeks': (1, 4)
+        }
 
     def unregister_job(self, path_db_jobs):
         """Mark as failed job in master
@@ -44,7 +45,14 @@ class Job:
         scheduler_object = self.job_params['parameters']['scheduled']
 
         # Checking scheduler options
-        if scheduler_object['interval'] not in self.scheduler_options:
+        if scheduler_object['interval'] not in self.scheduler_checker:
+            return False
+
+        # Other parameters
+        interval = scheduler_object['interval']
+        time_unit = int(scheduler_object['time_unit'])
+        if time_unit < self.scheduler_checker[interval][0] or time_unit > self.scheduler_checker[interval][1]:
+            self.error_msg = 'interval not allowed for the time_unit'
             return False
 
         # Removing extra params

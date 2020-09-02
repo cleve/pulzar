@@ -22,6 +22,7 @@ class LaunchJobs:
         self.server_port = None
         self.get_config()
         self.search_pending_jobs()
+        self.days_of_retention = 90
 
     def get_config(self):
         """Configuration from ini file
@@ -31,12 +32,27 @@ class LaunchJobs:
         self.server_host = server_config.get_config('server', 'host')
         self.server_port = server_config.get_config('server', 'port')
 
+    def _retention_policy(self):
+        """Delete data since the policy"""
+        # Scheduled successful jobs
+        date_diff = self.utils.get_date_days_diff(
+            days=-1*self.days_of_retention, to_string=True)
+        # Failed jobs
+        sql = 'DELETE FROM schedule_job WHERE creation_time < {}'.format(
+            date_diff)
+        self.data_base.execute_sql(sql)
+
+        # Regular jobs
+        sql = 'DELETE FROM job WHERE creation_time < {}'.format(
+            date_diff)
+        self.data_base.execute_sql(sql)
+
     def notify_to_master(self, job_id, scheduled=False):
         """Sending the signal to master
         """
         # Recovering data of job
         table = 'job' if not scheduled else 'schedule_job'
-        sql = 'SELECT log, duration, state FROM {} WHERE job_id = {} AND notification = 0'.format(
+        sql = 'SELECT log, duration, state, output FROM {} WHERE job_id = {} AND notification = 0'.format(
             table, job_id)
         row = self.data_base.execute_sql_with_results(sql)[0]
 
@@ -45,6 +61,7 @@ class LaunchJobs:
             'log': row[0],
             'time': row[1],
             'state': row[2],
+            'output': row[3],
             'scheduled': scheduled
         }
         req = CoreRequest(self.server_host, self.server_port,
@@ -134,6 +151,8 @@ def main():
     launcher.search_jobs()
     launcher.process_params()
     launcher.execute_jobs()
+    # Retention
+    launcher._retention_policy()
 
 
 if __name__ == "__main__":

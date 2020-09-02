@@ -26,12 +26,21 @@ class CoreJobs:
         self._start_time = self.utils.get_current_datetime()
         self._log = []
         self._failed_job = False
+        self._pulzar_job_output = []
         self._pulzar_data_file_path = None
         self._pulzar_config = parameters['_pulzar_config']
 
         # log
         self._pulzar_register_parameters()
         self._pulzar_get_data()
+
+    def pulzar_set_output(self, output_str):
+        """Write output
+
+        Parameters
+            - output_str: String
+        """
+        self._pulzar_job_output.append(output_str)
 
     def _pulzar_store_file(self, file_name):
         """Store some results
@@ -134,10 +143,11 @@ class CoreJobs:
         delta = end_time - self._start_time
         # Saving logs
         final_log = '\n'.join(self._log)
-        sql = 'UPDATE {} SET log = ?, duration = ? WHERE job_id = {}'.format(
+        final_output = '\n'.join(self._pulzar_job_output)
+        sql = 'UPDATE {} SET log = ?, duration = ?, output = ? WHERE job_id = {}'.format(
             job_table, self._job_id)
         self.database.execute_sql_insert(
-            sql, (final_log, delta.total_seconds()))
+            sql, (final_log, delta.total_seconds(), final_output))
 
         # Notifications
         if self._notification_enabled:

@@ -46,11 +46,14 @@ class JobProcess:
                 table = 'failed_job'
                 if job_params['scheduled']:
                     table = 'failed_schedule_job'
-            sql = 'INSERT INTO {} (job_id, log, time) VALUES (?, ?, ?)'.format(
+            sql = 'INSERT INTO {} (job_id, log, time, output) VALUES (?, ?, ?, ?)'.format(
                 table)
             insert_rows_affected = self.data_base.execute_sql_insert(
                 sql, (job_params['job_id'],
-                      job_params['log'], job_params['time'])
+                      job_params['log'],
+                      job_params['time'],
+                      job_params['output']
+                      )
             )
             if insert_rows_affected > 0:
                 self.messenger.code_type = self.const.JOB_RESPONSE
@@ -92,6 +95,7 @@ class JobProcess:
                     str(job_object.job_id)
 
             else:
+                self.messenger.set_message = job_object.error_msg
                 self.messenger.code_type = self.const.JOB_ERROR
                 self.messenger.mark_as_failed()
 

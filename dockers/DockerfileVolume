@@ -15,4 +15,5 @@ COPY app /usr/local/bin/pulzar
 COPY dockers/requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt
 WORKDIR /usr/local/bin/pulzar
+RUN pip3 install .
 CMD [ "uwsgi", "-i", "config/volume.ini" ]

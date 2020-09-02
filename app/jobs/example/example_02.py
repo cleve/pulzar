@@ -36,7 +36,8 @@ class Example(CoreJobs):
                 f.write(str(random.randint(0, 1000)) + '\n')
                 line += 1
         print('saving file', temporary_file.name)
-        self._pulzar_store_file(temporary_file.name)
+        if self._pulzar_store_file(temporary_file.name):
+            self.pulzar_set_output('Job done')
 
 
 def execute(arguments):

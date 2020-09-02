@@ -95,6 +95,7 @@ class JobProcess:
                     str(job_object.job_id)
 
             else:
+                self.messenger.set_message = job_object.error_msg
                 self.messenger.code_type = self.const.JOB_ERROR
                 self.messenger.mark_as_failed()
 

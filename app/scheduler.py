@@ -26,7 +26,7 @@ class Scheduler():
         sql = 'UPDATE schedule_job SET scheduled = 0 WHERE scheduled = 1'
         self.schedule_data_base.execute_sql(sql)
 
-    def update_state(self):
+    def _update_state(self):
         """Update next iteration
         """
         sql = 'SELECT job_id FROM schedule_job'
@@ -38,6 +38,15 @@ class Scheduler():
                         row[0])
                     self.schedule_data_base.execute_sql_update(
                         sql, (job.next_run,))
+
+    def _resume_jobs(self):
+        """Resume the jobs when the app crashes,
+        is updated or rebooted"""
+        sql = 'SELECT * FROM schedule_job WHERE next_execution > CURRENT_TIME'
+        pending_jobs = self.schedule_data_base.execute_sql_with_results(sql)
+        for row in pending_jobs:
+            print(row)
+        # TODO: re-schedule
 
     def _process_params(self):
         """JSON to python objects
@@ -138,8 +147,8 @@ class Scheduler():
 
     def run_forever(self):
         while True:
-            self._search_jobs()
-            self.update_state()
+            self._resume_jobs()
+            self._update_state()
             self._process_params()
             self._schedule_jobs()
             schedule.run_pending()

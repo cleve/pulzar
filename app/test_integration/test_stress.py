@@ -11,35 +11,52 @@ VOLUME_URL = 'http://mauricio-ksrd:9001/'
 
 keys = []
 
+# Binary files to upload tests
+binary_data = {
+    '_img.jpg': 'data/wallpaper.jpg',
+    '_medals.csv': 'data/downloaded_medals.csv',
+    '_text_file.txt': None
+}
+
 
 def get_random_text(string_lenght):
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=string_lenght))
 
 
 def start_write_test():
-    print('====== Write tests ======')
+    print('====== Writing tests ======')
     time_request = []
     time_register = []
     time_errors = []
     for _ in range(TEST_CASES):
         # key creation
         key = get_random_text(10)
-        # File creation
-        with tempfile.TemporaryFile() as tmp:
-            tmp.write(get_random_text(1000).encode())
-            tmp.seek(0)
+        # key name
+        dict_key = random.choice(list(binary_data))
+        if dict_key == '_text_file.txt':
+            # File creation or binary selection
+            with tempfile.TemporaryFile() as tmp:
+                tmp.write(get_random_text(1000).encode())
+                tmp.seek(0)
+                start = timer()
+                req = requests.put(
+                    url=MASTER_URL + 'add_key/' + key + dict_key,
+                    data=tmp,
+                )
+        else:
             start = timer()
             req = requests.put(
-                url=MASTER_URL + 'add_key/' + key,
-                data=tmp,
-
+                url=MASTER_URL + 'add_key/' + key + dict_key,
+                data=open(binary_data[dict_key], 'rb'),
+                headers={'Content-Type': 'application/octet-stream'}
             )
-            if req.status_code == 201:
-                time_register.append(timer() - start)
-                time_request.append(req.elapsed.total_seconds())
-                keys.append(key)
-            else:
-                time_errors.append(timer() - start)
+
+        if req.status_code == 201:
+            time_register.append(timer() - start)
+            time_request.append(req.elapsed.total_seconds())
+            keys.append(key + dict_key)
+        else:
+            time_errors.append(timer() - start)
 
     if len(time_request) > 0:
         print('Good cases {} request time with average of {}'.format(

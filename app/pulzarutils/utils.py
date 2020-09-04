@@ -24,8 +24,15 @@ class Utils:
         self.const = Constants()
 
     # Datetime options
-    def get_current_datetime_str(self):
+    def get_current_datetime_str(self, db_format=False):
+        if db_format:
+            return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         return datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+
+    def datetime_to_string(self, datetime_object, db_format=False):
+        if db_format:
+            return datetime_object.strftime("%Y-%m-%d %H:%M:%S")
+        return datetime_object.strftime("%Y-%m-%d-%H-%M-%S")
 
     def get_current_datetime(self):
         return datetime.datetime.now()

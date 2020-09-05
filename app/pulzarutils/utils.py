@@ -65,6 +65,11 @@ class Utils:
             return datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S.%f")
         return datetime.datetime.strptime(datetime_str, "%Y-%m-%d-%H-%M-%S")
 
+    def get_standard_datetime_from_string(self, datetime_str, full=False):
+        if full:
+            return datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S.%f")
+        return datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S")
+
     def get_time_it(self):
         return timer()
 

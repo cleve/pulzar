@@ -39,18 +39,21 @@ class Scheduler():
                     self.schedule_data_base.execute_sql_update(
                         sql, (self.utils.datetime_to_string(job.next_run, db_format=True),))
 
-    def schedule_job(self):
-        pass
+    def _schedule_job(self, parameters):
+        self._notify_to_node(parameters)
+        sql = 'UPDATE schedule_job SET scheduled = 0 WHERE job_id = {}'.format(
+            parameters['job_id']
+        )
+        self.schedule_data_base.execute_sql(sql)
 
-    def resume_jobs(self):
+    def _resume_jobs(self):
         """Resume the jobs when the app crashes,
         is updated or rebooted
         """
         print('Resume jobs')
-        sql = 'SELECT job_id, job_name, job_path, parameters, interval, time_unit, next_execution FROM schedule_job WHERE scheduled = -1 AND repeat = 1'
+        sql = 'SELECT job_id, job_name, job_path, parameters, interval, time_unit, next_execution, repeat FROM schedule_job WHERE scheduled = -1 AND repeat = 1'
         pending_jobs = self.schedule_data_base.execute_sql_with_results(sql)
         for row in pending_jobs:
-            print(row)
             job_id = row[0]
             job_name = row[1]
             job_path = row[2]
@@ -58,27 +61,38 @@ class Scheduler():
             interval = row[4]
             time_unit = row[5]
             next_execution = row[6]
+            repeat = row[7]
             # Calculation of time
             current_datetime = self.utils.get_current_datetime()
             next_execution_datetime = self.utils.get_standard_datetime_from_string(
                 next_execution)
             # Delta
             delta = current_datetime - next_execution_datetime
-            print('********', delta)
             # Time unit
             if interval == 'minutes':
+                minutes_convertion = delta.seconds / 60
                 # Not yet. This is the future
-                if delta.days < 0:
-                    minutes_convertion = delta.seconds / 60
-                    if minutes_convertion >= 0:
-                        # Launch job
-                        print('Launching jobs')
+                if delta.days < 0 and minutes_convertion >= 0 and minutes_convertion < 1:
+                    # Launch job
+                    self.schedule_job()
                 # Verify if were pendings
-                else:
-                    minutes_convertion = delta.seconds / 60
-                    if minutes_convertion < int(time_unit):
-                        # launch job
-                        print('Launch pending job')
+                elif minutes_convertion < int(time_unit):
+                    # launch job
+                    self._schedule_job({
+                        'job_id': job_id,
+                        'job_name': job_name,
+                        'job_path': job_path,
+                        'parameters': self.utils.json_to_py(parameters),
+                        'job_interval': interval,
+                        'job_time_unit': time_unit,
+                        'job_repeat': repeat,
+                        'scheduled': 1
+                    })
+                elif delta.days > 0 and minutes_convertion > int(time_unit):
+                    sql = 'UPDATE schedule_job SET scheduled = 0 WHERE job_id = {}'.format(
+                        job_id
+                    )
+                    self.schedule_data_base.execute_sql(sql)
 
     def _process_params(self):
         """JSON to python objects
@@ -180,6 +194,7 @@ class Scheduler():
 
     def run_forever(self):
         while True:
+            self._resume_jobs()
             self._search_jobs()
             self._update_state()
             self._process_params()
@@ -193,7 +208,6 @@ def main():
     """
     scheduler_object = Scheduler()
     scheduler_object.init_state()
-    scheduler_object.resume_jobs()
     scheduler_object.run_forever()
 
 

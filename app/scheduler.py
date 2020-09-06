@@ -68,15 +68,39 @@ class Scheduler():
                 next_execution)
             # Delta
             delta = current_datetime - next_execution_datetime
-            # Time unit
+            # Not yet. This is the future
+            if delta.days < 0:
+                continue
+            # Time units
+            if interval == 'days':
+                print(delta, current_datetime, next_execution_datetime)
+                minutes_convertion = delta.seconds / 60
+                # To minutes
+                time_unit = 1440 * time_unit
+                print(minutes_convertion, time_unit)
+                # Pendings
+                if minutes_convertion < int(time_unit):
+                    # launch job
+                    self._schedule_job({
+                        'job_id': job_id,
+                        'job_name': job_name,
+                        'job_path': job_path,
+                        'parameters': self.utils.json_to_py(parameters),
+                        'job_interval': interval,
+                        'job_time_unit': time_unit,
+                        'job_repeat': repeat,
+                        'scheduled': 1
+                    })
+                elif delta.days > 0 and minutes_convertion > int(time_unit):
+                    sql = 'UPDATE schedule_job SET scheduled = 0 WHERE job_id = {}'.format(
+                        job_id
+                    )
+                    self.schedule_data_base.execute_sql(sql)
+
             if interval == 'minutes':
                 minutes_convertion = delta.seconds / 60
-                # Not yet. This is the future
-                if delta.days < 0 and minutes_convertion >= 0 and minutes_convertion < 1:
-                    # Launch job
-                    self.schedule_job()
-                # Verify if were pendings
-                elif minutes_convertion < int(time_unit):
+                # Pendings
+                if minutes_convertion < int(time_unit):
                     # launch job
                     self._schedule_job({
                         'job_id': job_id,

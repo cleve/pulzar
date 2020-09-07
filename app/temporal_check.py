@@ -24,6 +24,12 @@ class TemporalCheck:
 
     def retention_policy(self):
         """Delete data since the policy"""
+        # Canceled schedule jobs
+        date_diff = self.utils.get_date_days_diff(
+            days=-1*self.days_of_retention, to_string=True)
+        sql = 'DELETE FROM schedule_job WHERE next_execution < {} AND scheduled = -2'.format(
+            date_diff)
+        self.schedule_data_base.execute_sql(sql)
         # Scheduled successful jobs
         date_diff = self.utils.get_date_days_diff(
             days=-1*self.days_of_retention, to_string=True)

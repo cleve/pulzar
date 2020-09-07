@@ -26,6 +26,14 @@ class Scheduler():
         sql = 'UPDATE schedule_job SET scheduled = -1 WHERE scheduled = 1'
         self.schedule_data_base.execute_sql(sql)
 
+    def _check_for_cancel(self):
+        sql = 'SELECT job_id FROM schedule_job WHERE scheduled = -2 AND repeat = 1'
+        canceled_jobs = self.schedule_data_base.execute_sql_with_results(sql)
+        for row in canceled_jobs:
+            for job in schedule.jobs:
+                if row[0] in job.tags:
+                    schedule.clear(row[0])
+
     def _update_state(self):
         """Update next iteration
         """

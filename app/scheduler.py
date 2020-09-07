@@ -23,10 +23,18 @@ class Scheduler():
     def init_state(self):
         """Restart schedule state at the begining
         """
-        sql = 'UPDATE schedule_job SET scheduled = 0 WHERE scheduled = 1'
+        sql = 'UPDATE schedule_job SET scheduled = -1 WHERE scheduled = 1'
         self.schedule_data_base.execute_sql(sql)
 
-    def update_state(self):
+    def _check_for_cancel(self):
+        sql = 'SELECT job_id FROM schedule_job WHERE scheduled = -2 AND repeat = 1'
+        canceled_jobs = self.schedule_data_base.execute_sql_with_results(sql)
+        for row in canceled_jobs:
+            for job in schedule.jobs:
+                if row[0] in job.tags:
+                    schedule.clear(row[0])
+
+    def _update_state(self):
         """Update next iteration
         """
         sql = 'SELECT job_id FROM schedule_job'
@@ -37,7 +45,138 @@ class Scheduler():
                     sql = 'UPDATE schedule_job SET next_execution = ? WHERE job_id = {}'.format(
                         row[0])
                     self.schedule_data_base.execute_sql_update(
-                        sql, (job.next_run,))
+                        sql, (self.utils.datetime_to_string(job.next_run, db_format=True),))
+
+    def _schedule_job(self, parameters):
+        self._notify_to_node(parameters)
+        sql = 'UPDATE schedule_job SET scheduled = 0 WHERE job_id = {}'.format(
+            parameters['job_id']
+        )
+        self.schedule_data_base.execute_sql(sql)
+
+    def _resume_jobs(self):
+        """Resume the jobs when the app crashes,
+        is updated or rebooted
+        """
+        print('Resume jobs')
+        sql = 'SELECT job_id, job_name, job_path, parameters, interval, time_unit, next_execution, repeat FROM schedule_job WHERE scheduled = -1 AND repeat = 1'
+        pending_jobs = self.schedule_data_base.execute_sql_with_results(sql)
+        for row in pending_jobs:
+            job_id = row[0]
+            job_name = row[1]
+            job_path = row[2]
+            parameters = row[3]
+            interval = row[4]
+            time_unit = row[5]
+            next_execution = row[6]
+            repeat = row[7]
+            # Calculation of time
+            current_datetime = self.utils.get_current_datetime()
+            next_execution_datetime = self.utils.get_standard_datetime_from_string(
+                next_execution)
+            # Delta
+            delta = current_datetime - next_execution_datetime
+            # Not yet. This is the future
+            print('INTERVAL: ', interval)
+            if delta.days < 0:
+                print('negative', delta)
+                print('minutes', 10080 * time_unit)
+                continue
+            # Time units
+            if interval == 'weeks':
+                print(delta, current_datetime, next_execution_datetime)
+                minutes_convertion = delta.seconds / 60
+                # To minutes
+                time_unit_to_minutes = 10080 * time_unit
+                print(minutes_convertion, time_unit_to_minutes)
+                # Pendings
+                if minutes_convertion < int(time_unit_to_minutes):
+                    # launch job
+                    self._schedule_job({
+                        'job_id': job_id,
+                        'job_name': job_name,
+                        'job_path': job_path,
+                        'parameters': self.utils.json_to_py(parameters),
+                        'job_interval': interval,
+                        'job_time_unit': time_unit,
+                        'job_repeat': repeat,
+                        'scheduled': 1
+                    })
+                elif delta.days > 0 and minutes_convertion > int(time_unit):
+                    sql = 'UPDATE schedule_job SET scheduled = 0 WHERE job_id = {}'.format(
+                        job_id
+                    )
+                    self.schedule_data_base.execute_sql(sql)
+            if interval == 'days':
+                print(delta, current_datetime, next_execution_datetime)
+                minutes_convertion = delta.seconds / 60
+                # To minutes
+                time_unit_to_minutes = 1440 * time_unit
+                print(minutes_convertion, time_unit_to_minutes)
+                # Pendings
+                if minutes_convertion < int(time_unit_to_minutes):
+                    # launch job
+                    self._schedule_job({
+                        'job_id': job_id,
+                        'job_name': job_name,
+                        'job_path': job_path,
+                        'parameters': self.utils.json_to_py(parameters),
+                        'job_interval': interval,
+                        'job_time_unit': time_unit,
+                        'job_repeat': repeat,
+                        'scheduled': 1
+                    })
+                elif delta.days > 0 and minutes_convertion > int(time_unit):
+                    sql = 'UPDATE schedule_job SET scheduled = 0 WHERE job_id = {}'.format(
+                        job_id
+                    )
+                    self.schedule_data_base.execute_sql(sql)
+
+            if interval == 'hours':
+                print(delta, current_datetime, next_execution_datetime)
+                minutes_convertion = delta.seconds / 60
+                # To minutes
+                time_unit_to_minutes = 60 * time_unit
+                print(minutes_convertion, time_unit_to_minutes)
+                # Pendings
+                if minutes_convertion < int(time_unit_to_minutes):
+                    # launch job
+                    self._schedule_job({
+                        'job_id': job_id,
+                        'job_name': job_name,
+                        'job_path': job_path,
+                        'parameters': self.utils.json_to_py(parameters),
+                        'job_interval': interval,
+                        'job_time_unit': time_unit,
+                        'job_repeat': repeat,
+                        'scheduled': 1
+                    })
+                elif delta.days > 0 and minutes_convertion > int(time_unit):
+                    sql = 'UPDATE schedule_job SET scheduled = 0 WHERE job_id = {}'.format(
+                        job_id
+                    )
+                    self.schedule_data_base.execute_sql(sql)
+
+            if interval == 'minutes':
+                minutes_convertion = delta.seconds / 60
+                # Pendings
+                if minutes_convertion < int(time_unit):
+                    # launch job
+                    self._schedule_job({
+                        'job_id': job_id,
+                        'job_name': job_name,
+                        'job_path': job_path,
+                        'parameters': self.utils.json_to_py(parameters),
+                        'job_interval': interval,
+                        'job_time_unit': time_unit,
+                        'job_repeat': repeat,
+                        'scheduled': 1
+                    })
+                elif delta.days >= 0 and minutes_convertion > int(time_unit):
+                    sql = 'UPDATE schedule_job SET scheduled = 0 WHERE job_id = {}'.format(
+                        job_id
+                    )
+                    self.schedule_data_base.execute_sql(sql)
 
     def _process_params(self):
         """JSON to python objects
@@ -48,7 +187,7 @@ class Scheduler():
                 job['parameters'] = self.utils.json_to_py(args)
 
     def _search_jobs(self):
-        """Search job scheduled
+        """Search for new jobs scheduled
         """
         limit = self.max_jobs_running - len(self.jobs_to_launch)
         sql = 'SELECT job_id, job_name, job_path, parameters, interval, time_unit, repeat FROM schedule_job WHERE scheduled = 0 LIMIT {}'.format(
@@ -108,7 +247,7 @@ class Scheduler():
                 sql = 'UPDATE schedule_job SET next_execution = ? WHERE job_id = {}'.format(
                     job_id)
                 self.schedule_data_base.execute_sql_update(
-                    sql, (job.next_run,))
+                    sql, (self.utils.datetime_to_string(job.next_run, db_format=True),))
 
     def _schedule_jobs(self):
         """Execute jobs selected
@@ -127,7 +266,8 @@ class Scheduler():
                     continue
                 # Tagging the job with the ID
                 new_object = new_object.tag(job['job_id'])
-                next_execution = new_object.next_run
+                next_execution = self.utils.datetime_to_string(
+                    new_object.next_run, db_format=True)
                 # mark as scheduled
                 sql = 'UPDATE schedule_job SET scheduled = 1 , next_execution = ? WHERE job_id = {}'.format(
                     job['job_id'])
@@ -138,8 +278,9 @@ class Scheduler():
 
     def run_forever(self):
         while True:
+            self._resume_jobs()
             self._search_jobs()
-            self.update_state()
+            self._update_state()
             self._process_params()
             self._schedule_jobs()
             schedule.run_pending()

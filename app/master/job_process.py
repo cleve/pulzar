@@ -73,6 +73,28 @@ class JobProcess:
         """Processing job request
         """
         try:
+            # Add or cancel
+            # cancel
+            job_path = self.utils.get_search_regex(
+                url_path,
+                self.const.RE_CANCEL_JOB
+            )
+            if job_path is not None:
+                # Canceling job
+                job_id = job_path.groups()[0]
+                sql = 'UPDATE schedule_job SET scheduled = -2 WHERE job_id = {}'.format(
+                    job_id
+                )
+                update_rows_affected = self.data_base.execute_sql(sql)
+                if update_rows_affected == 0:
+                    self.messenger.code_type = self.const.JOB_ERROR
+                    self.messenger.mark_as_failed()
+                    return self.messenger
+                self.messenger.code_type = self.const.JOB_RESPONSE
+                self.messenger.set_message = 'Job canceled with id ' + \
+                    str(job_id)
+                return self.messenger
+
             job_path = self.utils.get_search_regex(
                 url_path,
                 self.const.RE_LAUNCH_JOB

@@ -48,7 +48,7 @@ class Dispatcher:
                 return messenger
 
         # Jobs
-        elif self.utils.match_regex(url_path, self.const.RE_LAUNCH_JOB):
+        elif self.utils.match_regex(url_path, self.const.RE_LAUNCH_JOB) or self.utils.match_regex(url_path, self.const.RE_CANCEL_JOB):
             if method == self.const.POST:
                 job_process = JobProcess(self.const)
                 query_string = env['QUERY_STRING']
@@ -58,7 +58,7 @@ class Dispatcher:
                 messenger = Messenger()
                 messenger.code_type = self.const.USER_ERROR
                 messenger.mark_as_failed()
-                messenger.set_message = 'Method used does not match'
+                messenger.set_message = 'Method used does not match, try with POST'
                 return messenger
 
         elif self.utils.match_regex(url_path, self.const.RE_NOTIFICATION_JOB):

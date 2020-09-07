@@ -17,13 +17,13 @@ class CoreJobs:
             arguments:
              - parameters (dict)
         """
-        self.utils = Utils()
-        self.const = Constants()
-        self.database = RDB(self.const.DB_NODE_JOBS)
-        self.parameters = parameters
+        self._pulzar_utils = Utils()
+        self._pulzar_const = Constants()
+        self._pulzar_database = RDB(self._pulzar_const.DB_NODE_JOBS)
+        self._pulzar_parameters = parameters
         self._notification_enabled = notification
         self._job_id = parameters['job_id']
-        self._start_time = self.utils.get_current_datetime()
+        self._start_time = self._pulzar_utils.get_current_datetime()
         self._log = []
         self._failed_job = False
         self._pulzar_job_output = []
@@ -46,9 +46,9 @@ class CoreJobs:
         """Store some results
             Using varidb system
         """
-        file_utils = FileUtils(self.const)
-        server_config = Config(self.const.CONF_PATH)
-        node_utils = NodeUtils(self.const)
+        file_utils = FileUtils(self._pulzar_const)
+        server_config = Config(self._pulzar_const.CONF_PATH)
+        node_utils = NodeUtils(self._pulzar_const)
         node = node_utils.discover_volume()
         # Master url
         server_host = server_config.get_config('server', 'host')
@@ -60,18 +60,18 @@ class CoreJobs:
             base_dir += '/regular/' + str(self._job_id)
         file_utils.set_path(base_dir)
         full_key = base_dir + '/' + \
-            self.utils.get_base_name_from_file(file_name)
+            self._pulzar_utils.get_base_name_from_file(file_name)
         # File creation
-        base64_str = self.utils.encode_base_64(
+        base64_str = self._pulzar_utils.encode_base_64(
             full_key, True)
         # Trying to create the key-value
-        key_to_binary = self.utils.encode_str_to_byte(base64_str)
+        key_to_binary = self._pulzar_utils.encode_str_to_byte(base64_str)
         file_utils.set_key(key_to_binary, base64_str)
         file_utils.read_binary_local_file(file_name)
         request_object = CoreRequest(
-            server_host, server_port, self.const.ADD_RECORD)
+            server_host, server_port, self._pulzar_const.ADD_RECORD)
         request_object.set_type(ReqType.POST)
-        request_object.set_path(self.const.ADD_RECORD)
+        request_object.set_path(self._pulzar_const.ADD_RECORD)
         # We have to send the key, volume and port.
         request_object.set_payload({
             'key': file_utils.get_key(),
@@ -88,11 +88,11 @@ class CoreJobs:
     def _pulzar_get_data(self):
         """Check file/config and assign it
         """
-        if 'pulzar_data' in self.parameters:
-            file_path = self.parameters['pulzar_data']
-            abs_path = '/var/lib/pulzar/data/' + self.utils.encode_base_64(
+        if 'pulzar_data' in self._pulzar_parameters:
+            file_path = self._pulzar_parameters['pulzar_data']
+            abs_path = '/var/lib/pulzar/data/' + self._pulzar_utils.encode_base_64(
                 file_path, to_str=True)
-            if self.utils.file_exists(abs_path):
+            if self._pulzar_utils.file_exists(abs_path):
                 self._pulzar_data_file_path = abs_path
         print(self._pulzar_data_file_path)
 
@@ -102,9 +102,9 @@ class CoreJobs:
         return self._pulzar_data_file_path
 
     def _pulzar_register_parameters(self):
-        if self.parameters:
+        if self._pulzar_parameters:
             self.pulzar_add_log(
-                self.utils.py_to_json(self.parameters)
+                self._pulzar_utils.py_to_json(self._pulzar_parameters)
             )
 
     def _pulzar_run_job(executor):
@@ -139,14 +139,14 @@ class CoreJobs:
         job_table = 'job'
         if self._pulzar_config['scheduled']:
             job_table = 'schedule_job'
-        end_time = self.utils.get_current_datetime()
+        end_time = self._pulzar_utils.get_current_datetime()
         delta = end_time - self._start_time
         # Saving logs
         final_log = '\n'.join(self._log)
         final_output = '\n'.join(self._pulzar_job_output)
         sql = 'UPDATE {} SET log = ?, duration = ?, output = ? WHERE job_id = {}'.format(
             job_table, self._job_id)
-        self.database.execute_sql_insert(
+        self._pulzar_database.execute_sql_insert(
             sql, (final_log, delta.total_seconds(), final_output))
 
         # Notifications

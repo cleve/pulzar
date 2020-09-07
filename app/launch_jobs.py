@@ -54,7 +54,10 @@ class LaunchJobs:
         table = 'job' if not scheduled else 'schedule_job'
         sql = 'SELECT log, duration, state, output FROM {} WHERE job_id = {} AND notification = 0'.format(
             table, job_id)
-        row = self.data_base.execute_sql_with_results(sql)[0]
+        row = self.data_base.execute_sql_with_results(sql)
+        if len(row) == 0:
+            return
+        row = row[0]
 
         payload = {
             'job_id': job_id,
@@ -70,8 +73,8 @@ class LaunchJobs:
         req.set_payload(payload)
         if req.make_request(json_request=True):
             # Update the state
-            sql = 'UPDATE job SET notification = 1 WHERE job_id = {}'.format(
-                job_id)
+            sql = 'UPDATE {} SET notification = 1 WHERE job_id = {}'.format(
+                table, job_id)
             self.data_base.execute_sql(sql)
 
     def process_params(self):
@@ -138,10 +141,14 @@ class LaunchJobs:
     def search_pending_jobs(self):
         """Search job scheduled
         """
-        sql = 'SELECT * FROM job WHERE state <> 0 AND notification = 0'
-        rows = self.data_base.execute_sql_with_results(sql)
-        for row in rows:
-            self.notify_to_master(row[0])
+        tables = ['job', 'schedule_job']
+        for table in tables:
+            sql = 'SELECT * FROM {} WHERE state <> 0 AND notification = 0'.format(
+                table)
+            rows = self.data_base.execute_sql_with_results(sql)
+            for row in rows:
+                self.notify_to_master(
+                    row[0], True if table == 'schedule_job' else False)
 
 
 def main():

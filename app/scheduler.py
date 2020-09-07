@@ -69,15 +69,66 @@ class Scheduler():
             # Delta
             delta = current_datetime - next_execution_datetime
             # Not yet. This is the future
+            print('INTERVAL: ', interval)
             if delta.days < 0:
                 print('negative', delta)
+                print('minutes', 10080 * time_unit)
                 continue
             # Time units
+            if interval == 'weeks':
+                print(delta, current_datetime, next_execution_datetime)
+                minutes_convertion = delta.seconds / 60
+                # To minutes
+                time_unit_to_minutes = 10080 * time_unit
+                print(minutes_convertion, time_unit_to_minutes)
+                # Pendings
+                if minutes_convertion < int(time_unit_to_minutes):
+                    # launch job
+                    self._schedule_job({
+                        'job_id': job_id,
+                        'job_name': job_name,
+                        'job_path': job_path,
+                        'parameters': self.utils.json_to_py(parameters),
+                        'job_interval': interval,
+                        'job_time_unit': time_unit,
+                        'job_repeat': repeat,
+                        'scheduled': 1
+                    })
+                elif delta.days > 0 and minutes_convertion > int(time_unit):
+                    sql = 'UPDATE schedule_job SET scheduled = 0 WHERE job_id = {}'.format(
+                        job_id
+                    )
+                    self.schedule_data_base.execute_sql(sql)
             if interval == 'days':
                 print(delta, current_datetime, next_execution_datetime)
                 minutes_convertion = delta.seconds / 60
                 # To minutes
                 time_unit_to_minutes = 1440 * time_unit
+                print(minutes_convertion, time_unit_to_minutes)
+                # Pendings
+                if minutes_convertion < int(time_unit_to_minutes):
+                    # launch job
+                    self._schedule_job({
+                        'job_id': job_id,
+                        'job_name': job_name,
+                        'job_path': job_path,
+                        'parameters': self.utils.json_to_py(parameters),
+                        'job_interval': interval,
+                        'job_time_unit': time_unit,
+                        'job_repeat': repeat,
+                        'scheduled': 1
+                    })
+                elif delta.days > 0 and minutes_convertion > int(time_unit):
+                    sql = 'UPDATE schedule_job SET scheduled = 0 WHERE job_id = {}'.format(
+                        job_id
+                    )
+                    self.schedule_data_base.execute_sql(sql)
+
+            if interval == 'hours':
+                print(delta, current_datetime, next_execution_datetime)
+                minutes_convertion = delta.seconds / 60
+                # To minutes
+                time_unit_to_minutes = 60 * time_unit
                 print(minutes_convertion, time_unit_to_minutes)
                 # Pendings
                 if minutes_convertion < int(time_unit_to_minutes):

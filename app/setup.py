@@ -4,7 +4,7 @@ from setuptools import setup
 #    long_description = fh.read()
 
 setup(name='pulzar-pkg',
-      version='0.0.1',
+      version='1.0.0',
       author='Mauricio Cleveland',
       author_email='mauricio.cleveland@gmail.com',
       description='Distributed database and jobs',

@@ -3,8 +3,14 @@ FROM ubuntu:20.04
 LABEL Mauricio Cleveland "mauricio.cleveland@gmail.com"
 
 EXPOSE 9000
-
-RUN apt update && apt -y install build-essential python3-pip libffi-dev nano
+ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
+RUN apt update && apt -y install build-essential python3-pip libffi-dev nano unixodbc-dev curl
+# MSSQL
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+RUN curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list > /etc/apt/sources.list.d/mssql-release.list
+RUN apt update
+RUN ACCEPT_EULA=Y apt -y install msodbcsql17
+RUN pip3 install pyodbc
 
 RUN mkdir /var/lib/pulzar
 RUN mkdir /var/lib/pulzar/data

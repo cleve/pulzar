@@ -20,7 +20,7 @@ class CoreJobs:
         self._pulzar_utils = Utils()
         self._pulzar_const = Constants()
         self._pulzar_database = RDB(self._pulzar_const.DB_NODE_JOBS)
-        self._pulzar_parameters = parameters
+        self.pulzar_parameters = parameters
         self._notification_enabled = notification
         self._job_id = parameters['job_id']
         self._start_time = self._pulzar_utils.get_current_datetime()
@@ -88,8 +88,8 @@ class CoreJobs:
     def _pulzar_get_data(self):
         """Check file/config and assign it
         """
-        if 'pulzar_data' in self._pulzar_parameters:
-            file_path = self._pulzar_parameters['pulzar_data']
+        if 'pulzar_data' in self.pulzar_parameters:
+            file_path = self.pulzar_parameters['pulzar_data']
             abs_path = '/var/lib/pulzar/data/' + self._pulzar_utils.encode_base_64(
                 file_path, to_str=True)
             if self._pulzar_utils.file_exists(abs_path):
@@ -102,9 +102,9 @@ class CoreJobs:
         return self._pulzar_data_file_path
 
     def _pulzar_register_parameters(self):
-        if self._pulzar_parameters:
+        if self.pulzar_parameters:
             self.pulzar_add_log(
-                self._pulzar_utils.py_to_json(self._pulzar_parameters)
+                self._pulzar_utils.py_to_json(self.pulzar_parameters)
             )
 
     def _pulzar_run_job(executor):

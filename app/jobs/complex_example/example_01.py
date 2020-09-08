@@ -14,7 +14,7 @@ class Example(CoreJobs):
 
     @CoreJobs._pulzar_run_job
     def run_my_code(self):
-        print('Parameters: ', self.parameters)
+        print('Parameters: ', self.pulzar_parameters)
         query = self.database.execute_query('SELECT * FROM DB')
         self.pulzar_add_log(query)
         self.pulzar_set_output('Result is: ' + query)

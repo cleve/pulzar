@@ -58,7 +58,6 @@ class LaunchJobs:
         if len(row) == 0:
             return
         row = row[0]
-
         payload = {
             'job_id': job_id,
             'log': row[0],

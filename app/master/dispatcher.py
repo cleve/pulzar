@@ -6,7 +6,7 @@ from master.post_process import PostProcess
 from master.job_process import JobProcess
 from master.put_process import PutProcess
 from master.delete_process import DeleteProcess
-from master.third_party_process import TPProcess
+from master.extension_process import ExtensionProcess
 from master.admin_process import AdminProcess
 
 
@@ -75,11 +75,11 @@ class Dispatcher:
                 return messenger
 
         # Third party
-        elif self.utils.match_regex(url_path, self.const.RE_THIRD_PARTY):
+        elif self.utils.match_regex(url_path, self.const.RE_EXTENSION):
             if method == self.const.GET:
-                third_party = TPProcess(self.const)
+                extension = ExtensionProcess(self.const)
                 query_string = env['QUERY_STRING']
-                return third_party.process_request(
+                return extension.process_request(
                     url_path, query_string)
             else:
                 messenger = Messenger()

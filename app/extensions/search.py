@@ -15,7 +15,7 @@ class Search:
         - dates
 
         Use:
-            server/third_party/[key_to_search]?eq=mm-dd-yyyy&lt=mm-dd-yyyy&gt=mm-dd-yyyy
+            server/extension/[key_to_search]?eq=mm-dd-yyyy&lt=mm-dd-yyyy&gt=mm-dd-yyyy
 
         eq has precedence.
     """

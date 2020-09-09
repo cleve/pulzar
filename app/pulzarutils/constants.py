@@ -16,7 +16,7 @@ class ReqType(Enum):
 class Constants:
     def __init__(self):
         # General
-        self.DEBUG = True
+        self.DEBUG = False
         self.VERSION = '0.1'
         self.PASS = 'admin'
         self.PASSPORT = 'passport'
@@ -39,7 +39,7 @@ class Constants:
         self.DB_NOT_PERMANENT = 'storage/temporal_data.db' if self.DEBUG else '/var/lib/pulzar/dbs/temporal_data.db'
         # job DBs
         self.DB_JOBS = 'storage/dbs/jobs.db' if self.DEBUG else '/var/lib/pulzar/dbs/jobs.db'
-        self.DB_NODE_JOBS = 'storage/dbs/node_jobs.db' if self.DEBUG else '/var/lib/pulzar/dbs/'
+        self.DB_NODE_JOBS = 'storage/dbs/node_jobs.db' if self.DEBUG else '/var/lib/pulzar/dbs/node_jobs.db'
 
         # Env
         self.REQUEST_METHOD = 'REQUEST_METHOD'

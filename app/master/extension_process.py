@@ -5,8 +5,8 @@ from pulzarcore.core_db import DB
 from pulzarutils.messenger import Messenger
 
 
-class TPProcess:
-    """Process Third party calls
+class ExtensionProcess:
+    """Process extension calls
     """
 
     def __init__(self, constants):
@@ -22,19 +22,19 @@ class TPProcess:
             'http://fakeurl.com?' + query_string)
         # Get request type, checking for key value.
         regex_result = self.utils.get_search_regex(
-            url_path, self.const.RE_THIRD_PARTY)
+            url_path, self.const.RE_EXTENSION)
         if regex_result:
             try:
                 call_path_list = regex_result.groups()[0][1:].split('/')
                 file_name = call_path_list[0]
                 args = call_path_list[1:]
                 modules = self.utils.read_file_name_from_dir(
-                    'third_party/', 'py')
+                    'extensions/', 'py')
                 if file_name + '.py' in modules:
                     import_fly = importlib.import_module(
-                        'third_party.' + file_name)
+                        'extensions.' + file_name)
                     j_byte = import_fly.execute(args, query_params)
-                    self.messenger.code_type = self.const.TP_RESPONSE
+                    self.messenger.code_type = self.const.EXTENSION_RESPONSE
                     self.messenger.set_response(j_byte)
                 else:
                     self.messenger.code_type = self.const.USER_ERROR
@@ -42,7 +42,7 @@ class TPProcess:
                     self.messenger.set_message = 'Wrong query, extension not found'
 
             except Exception as err:
-                print('Error third party', err)
+                print('Error extension', err)
                 self.messenger.code_type = self.const.PULZAR_ERROR
                 self.messenger.mark_as_failed()
                 self.messenger.set_message = str(msg)

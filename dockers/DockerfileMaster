@@ -1,18 +1,11 @@
-FROM ubuntu:20.04
+FROM mauriciocleveland/pulzar:1.0.0
 
 LABEL Mauricio Cleveland "mauricio.cleveland@gmail.com"
 
-EXPOSE 9000
-
-RUN apt update && apt -y install build-essential python3-pip libffi-dev nano
-
-RUN mkdir /var/lib/pulzar
-RUN mkdir /var/lib/pulzar/data
-RUN mkdir /var/lib/pulzar/dbs
-RUN mkdir /usr/local/bin/pulzar
+EXPOSE 31414
 
 COPY app /usr/local/bin/pulzar
 COPY dockers/requirements.txt requirements.txt
-RUN pip3 install -r requirements.txt
+COPY app/storage/dbs /var/lib/pulzar/dbs
 WORKDIR /usr/local/bin/pulzar
 CMD [ "uwsgi", "-i", "config/master.ini" ]

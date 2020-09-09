@@ -84,7 +84,7 @@ class Master:
             self.response.set_redirection(redirect_url)
             self.response.set_message(message.get_bjson())
 
-        elif request_type == self.const.TP_RESPONSE:
+        elif request_type == self.const.EXTENSION_RESPONSE:
             self.response.set_response(message.http_code)
             self.response.set_message(message.get_bjson())
 

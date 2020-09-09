@@ -16,11 +16,11 @@ class ReqType(Enum):
 class Constants:
     def __init__(self):
         # General
-        self.DEBUG = True
+        self.DEBUG = False
         self.VERSION = '0.1'
         self.PASS = 'admin'
         self.PASSPORT = 'passport'
-        self.THIRD_PARTY_DIR = 'master/third_party'
+        self.EXTENSIONS_DIR = 'master/extensions'
         self.START_BK = 'start_backup'
         self.HOST_NAME = 'host'
         # DEV Directory to store data
@@ -39,7 +39,7 @@ class Constants:
         self.DB_NOT_PERMANENT = 'storage/temporal_data.db' if self.DEBUG else '/var/lib/pulzar/dbs/temporal_data.db'
         # job DBs
         self.DB_JOBS = 'storage/dbs/jobs.db' if self.DEBUG else '/var/lib/pulzar/dbs/jobs.db'
-        self.DB_NODE_JOBS = 'storage/dbs/node_jobs.db' if self.DEBUG else '/var/lib/pulzar/dbs/'
+        self.DB_NODE_JOBS = 'storage/dbs/node_jobs.db' if self.DEBUG else '/var/lib/pulzar/dbs/node_jobs.db'
 
         # Env
         self.REQUEST_METHOD = 'REQUEST_METHOD'
@@ -75,7 +75,7 @@ class Constants:
         self.RE_GET_VALUE = r'\/get_key([\w+|\/{1}]+)?\/([\w|\.]+)$'
         self.RE_DELETE_VALUE = r'\/delete_key([\w+|\/{1}]+)?\/([\w|\.]+)$'
         self.RE_PUT_VALUE = r'\/add_key([\w+|\/{1}]+)?\/([\w|\.]+)$'
-        self.RE_THIRD_PARTY = r'/third_party((/\w+)+)'
+        self.RE_EXTENSION = r'/extension((/\w+)+)'
         self.RE_LAUNCH_JOB = r'\/launch_job([\/\w\d]+)\/([\w\d]+)'
         self.RE_CANCEL_JOB = r'\/cancel_job\/([\d]+)$'
         self.RE_NOTIFICATION_JOB = r'\/notification_job$'
@@ -88,7 +88,7 @@ class Constants:
         self.AUTODISCOVERY = 'autodiscovery'
         self.REGULAR_GET = 'regular'
         self.REGULAR_PUT = 'put'
-        self.TP_RESPONSE = 'third_party_response'
+        self.EXTENSION_RESPONSE = 'extension_response'
         self.REDIRECT_POST = 'redirect_post'
         self.REDIRECT_PUT = 'redirect_put'
         self.NOTIFY_KEY_TO_MASTER = 'notify2master'

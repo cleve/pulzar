@@ -22,6 +22,8 @@ class Example(CoreJobs):
 
 def execute(arguments):
     """Point of entrance
+
+        Parameters description
     """
     example = Example(arguments)
     example.run_my_code()

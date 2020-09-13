@@ -12,11 +12,22 @@ class JobDiscovery:
 
     def __init__(self):
         self.utils = Utils()
+        self.dir_path = 'jobs'
 
     def _get_directories(self):
         """Only one level
         """
-        pass
+        with os.scandir(self.dir_path) as it:
+            for entry in it:
+                # Directories
+                if not entry.name.startswith('.'):
+                    complete_path = os.path.join(self.dir_path, entry.name)
+                    with os.scandir(complete_path) as file_it:
+                        for file_entry in file_it:
+                            # Directories
+                            if file_entry.name.endswith('.py') and file_entry.is_file():
+                                print(complete_path)
+                                print(file_entry.name)
 
     def _get_entrance_point(self, directory):
         """Get the main app and extract
@@ -32,4 +43,4 @@ class JobDiscovery:
     def discover(self):
         """Start the catalog process
         """
-        pass
+        self._get_directories()

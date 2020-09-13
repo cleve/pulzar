@@ -178,6 +178,9 @@ class Utils:
             file_list.append(os.path.basename(raw_path))
         return file_list
 
+    def get_sub_directories(self, dir_path):
+        return os.scandir(dir_path)
+
     def get_base_name_from_file(self, path_name):
         """Get file name only
         """

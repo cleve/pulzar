@@ -15,11 +15,12 @@ RUN pip3 install pyodbc
 
 COPY app /usr/local/bin/pulzar
 COPY app/storage/dbs /var/lib/pulzar/dbs
+COPY app/config/mssql_directory.ini /var/lib/pulzar/config/mssql_directory.ini
 
 WORKDIR /usr/local/bin/pulzar
 RUN pip3 install .
 
 # Configuring MSSQL directory
-RUN odbcinst -i -s -f config/mssql_directory.ini -l
+RUN odbcinst -i -s -f /var/lib/pulzar/config/mssql_directory.ini -l
 
 CMD [ "uwsgi", "-i", "config/volume.ini" ]

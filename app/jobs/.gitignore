@@ -1,0 +1,7 @@
+# Ignore everything in this directory
+*
+# Except relational databases
+!complex_example/*
+!example/*
+# Except this file
+!.gitignore

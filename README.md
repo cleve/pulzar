@@ -35,16 +35,24 @@ The configuration is pretty simple:
 
 ```ini
 [server]
-host=127.0.0.1
-port=9000
+host=localhost
+port=31414
 
 [volume]
 # Where to store files
-dir=/tmp/volume
-port=9001
-```
+dir=/var/lib/pulzar/data
+port=31415
 
-Where *backup_chunk* is the amount of register to be synchronized in the backup mode.
+[general]
+retention_policy=90
+
+[backup]
+active=False
+type=None
+address=None
+user=None
+psw=None
+```
 
 ### Start system
 
@@ -100,27 +108,27 @@ or even a totally new kind of process. This feature is intended to execute proce
 during the request operation.
 
 In order to do this, you can add a module into the
-***app/third_party/*** directory. There is only one mandatory function to be added:
+***app/extensions/*** directory. There is only one mandatory function to be added:
 
 ```py
-def execute(arguments):
+def execute(arguments, params):
     example = Example(arguments[0])
     example.hello()
-    return json.dumps([])
+    return []
 ```
 
 where the *arguments* parameter is a string list provided in the URL.
 
-Also a **return** is required as JSON response.
+Also a **return** is required as python list or dictionary.
 
 To call the custom function you can use:
 
 ```sh
-master:[port]/third_party/{app_id}/{args}
-curl -X GET -L http://master:[port]/third_party/{app_id}/{arg1}/{arg2}/{arg_n}
+master:[port]/extension/{app_id}/{args}
+curl -X GET -L http://master:[port]/extension/{app_id}/{arg1}/{arg2}/{arg_n}
 ```
 
-Where **app_id** is the script added into the *third_party* directory and the **arg1, arg2,...,arg_n**
+Where **app_id** is the script added into the *extensions* directory and the **arg1, arg2,...,arg_n**
 is a string list of type:
 
 ```py
@@ -129,26 +137,25 @@ is a string list of type:
 
 #### Example
 
-You can find an example in the **third_party** directory:
+You can find an example in the **extensions** directory:
 
 ```py
 # File: example.py
-import json
-
 class Example:
     def __init__(self, arg1):
         self.arg1 = arg1
-    
+
     def hello(self):
         print('Hello example with arg ', self.arg1)
-    
-    def json_return(self):
-        return json.dumps({'my_arg': self.arg1})
 
-def execute(arguments):
+    def method_return(self):
+        return {'my_arg': self.arg1}
+
+
+def execute(arguments, params):
     example = Example(arguments[0])
     example.hello()
-    return example.json_return()
+    return example.method_return()
 ```
 
 #### Search extension
@@ -159,13 +166,13 @@ You can search values using dates, the format is: *mm-dd-yyyy*
 
 ```sh
 # Search a key
-master:[port]/third_party/search/[key]
+master:[port]/extension/search/[key]
 
 # Search a key in a specific date
-master:[port]/third_party/search/[key]?eq=[date]
+master:[port]/extension/search/[key]?eq=[date]
 
 # Search a key lower and greater than
-master:[port]/third_party/search/[key]?lt=[date]&gt=[date]
+master:[port]/extension/search/[key]?lt=[date]&gt=[date]
 ```
 
 ## Jobs

@@ -64,9 +64,9 @@ class TemporalCheck:
         print('deleting...', req.status_code)
         if req.status_code >= 200 and req.status_code < 300:
             message = req.json()
-            if message['status'] == 'ko':
-                return
-            self.temporal_files.delete_value(bkey)
+            print(message)
+            if message['status'] == 'ok':
+                self.temporal_files.delete_value(bkey)
 
     def start_process(self):
         """Review files and delete it if match with the criteria

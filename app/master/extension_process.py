@@ -45,7 +45,7 @@ class ExtensionProcess:
                 print('Error extension', err)
                 self.messenger.code_type = self.const.PULZAR_ERROR
                 self.messenger.mark_as_failed()
-                self.messenger.set_message = str(msg)
+                self.messenger.set_message = str(err)
 
         else:
             self.messenger.code_type = self.const.USER_ERROR

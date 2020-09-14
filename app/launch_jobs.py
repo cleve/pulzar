@@ -28,6 +28,9 @@ class LaunchJobs:
         """Configuration from ini file
         """
         server_config = Config(self.const.CONF_PATH)
+        # Retention
+        self.days_of_retention = int(server_config.get_config(
+            'general', 'retention_policy'))
         # Master url
         self.server_host = server_config.get_config('server', 'host')
         self.server_port = server_config.get_config('server', 'port')

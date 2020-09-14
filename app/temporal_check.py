@@ -23,7 +23,12 @@ class TemporalCheck:
         self.init_config()
 
     def retention_policy(self):
-        """Delete data since the policy"""
+        """Delete data since the policy
+        """
+        # Get retention policy from configuration
+        server_config = Config(self.const.CONF_PATH)
+        self.days_of_retention = int(server_config.get_config(
+            'general', 'retention_policy'))
         # Canceled schedule jobs
         date_diff = self.utils.get_date_days_diff(
             days=-1*self.days_of_retention, to_string=True)

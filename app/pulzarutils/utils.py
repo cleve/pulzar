@@ -6,6 +6,7 @@ import tempfile
 from urllib.parse import urlparse
 import glob
 import os
+import platform
 import datetime
 from timeit import default_timer as timer
 from urllib.parse import urlsplit
@@ -23,6 +24,13 @@ class Utils:
     def __init__(self):
         self.const = Constants()
 
+    # System
+    def is_unix(self):
+        """Getting True or False for
+        plattform
+        """
+        return platform.system() == 'Linux'
+    
     # Datetime options
     def get_current_datetime_str(self, db_format=False):
         if db_format:

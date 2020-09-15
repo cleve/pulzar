@@ -92,6 +92,10 @@ class Master:
             self.response.set_response(message.http_code)
             self.response.set_message(message.get_bjson())
 
+        elif request_type == self.const.JOB_DETAILS:
+            self.response.set_response(message.http_code)
+            self.response.set_message(message.get_bjson())
+
         elif request_type == self.const.JOB_ERROR:
             self.response.set_response(message.http_code)
             self.response.set_message(message.get_bjson())

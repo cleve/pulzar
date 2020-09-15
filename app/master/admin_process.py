@@ -152,6 +152,49 @@ class AdminProcess:
                     }
                     self.messenger.set_response(result)
 
+                # scheduled job details
+                elif len(call_path_list) == 2 and call_path_list[0] == 'scheduled_jobs':
+                    data_base = RDB(self.const.DB_JOBS)
+                    job_id = call_path_list[1]
+                    # Search job
+                    sql = 'SELECT job_id, job_path, job_name, next_execution, creation_time FROM schedule_job WHERE job_id = {}'.format(
+                        job_id)
+
+                    job_row = data_base.execute_sql_with_results(sql)
+                    if len(job_row) == 0:
+                        self.messenger.code_type = self.const.KEY_NOT_FOUND
+                        self.messenger.set_message = 'job id not found'
+                        return self.messenger
+                    result = {
+                        'job': job_id,
+                        'job_path': job_row[0][1],
+                        'job_name': job_row[0][2],
+                        'next_execution': job_row[0][3],
+                        'state': 'ok',
+                        'log': None,
+                        'output': None,
+                        'creation': job_row[0][4],
+                    }
+                    self.messenger.code_type = self.const.JOB_DETAILS
+                    # Getting details
+                    sql = 'SELECT log, output FROM successful_schedule_job WHERE job_id = {}'.format(
+                        job_id)
+                    rows = data_base.execute_sql_with_results(sql)
+                    # Job executed correctly
+                    if len(rows) > 0:
+                        result['log'] = rows[0][0]
+                        result['output'] = rows[0][1]
+                    else:
+                        sql = 'SELECT log, output FROM failed_schedule_job WHERE job_id = {}'.format(
+                            job_id)
+                        rows = data_base.execute_sql_with_results(sql)
+                        if len(rows) > 0:
+                            result['log'] = rows[0][0]
+                            result['output'] = rows[0][1]
+
+                    self.messenger.set_response(result)
+                    return self.messenger
+
                 elif len(call_path_list) == 1 and call_path_list[0] == 'status':
                     db_master = DB(self.const.DB_PATH)
                     self.messenger.set_response(db_master.get_stats())

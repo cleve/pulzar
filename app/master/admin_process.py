@@ -170,7 +170,7 @@ class AdminProcess:
                         'job_path': job_row[0][1],
                         'job_name': job_row[0][2],
                         'next_execution': job_row[0][3],
-                        'state': 'ok',
+                        'state': None,
                         'log': None,
                         'output': None,
                         'creation': job_row[0][4],
@@ -182,6 +182,7 @@ class AdminProcess:
                     rows = data_base.execute_sql_with_results(sql)
                     # Job executed correctly
                     if len(rows) > 0:
+                        result['state'] = 'ok'
                         result['log'] = rows[0][0]
                         result['output'] = rows[0][1]
                     else:
@@ -189,6 +190,7 @@ class AdminProcess:
                             job_id)
                         rows = data_base.execute_sql_with_results(sql)
                         if len(rows) > 0:
+                            result['state'] = 'failed'
                             result['log'] = rows[0][0]
                             result['output'] = rows[0][1]
 

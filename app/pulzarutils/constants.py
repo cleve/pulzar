@@ -110,3 +110,4 @@ class Constants:
         self.JOB_RESPONSE = 'job_response'
         self.JOB_ERROR = 'job_error'
         self.JOB_OK = 'job_ok'
+        self.JOB_DETAILS = 'job_details'

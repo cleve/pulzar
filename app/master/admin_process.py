@@ -177,22 +177,24 @@ class AdminProcess:
                     }
                     self.messenger.code_type = self.const.JOB_DETAILS
                     # Getting details
-                    sql = 'SELECT log, output FROM successful_schedule_job WHERE job_id = {}'.format(
+                    sql = 'SELECT id, log, output, date_time FROM successful_schedule_job WHERE job_id = {} ORDER BY id DESC'.format(
                         job_id)
                     rows = data_base.execute_sql_with_results(sql)
                     # Job executed correctly
                     if len(rows) > 0:
                         result['state'] = 'ok'
-                        result['log'] = rows[0][0]
-                        result['output'] = rows[0][1]
+                        result['log'] = rows[0][1]
+                        result['output'] = rows[0][2]
+                        result['datetime'] = rows[0][3]
                     else:
-                        sql = 'SELECT log, output FROM failed_schedule_job WHERE job_id = {}'.format(
+                        sql = 'SELECT id, log, output, date_time FROM failed_schedule_job WHERE job_id = {} ORDER BY id DESC'.format(
                             job_id)
                         rows = data_base.execute_sql_with_results(sql)
                         if len(rows) > 0:
                             result['state'] = 'failed'
-                            result['log'] = rows[0][0]
-                            result['output'] = rows[0][1]
+                            result['log'] = rows[0][1]
+                            result['output'] = rows[0][2]
+                            result['datetime'] = rows[0][3]
 
                     self.messenger.set_response(result)
                     return self.messenger

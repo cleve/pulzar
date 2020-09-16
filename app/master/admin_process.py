@@ -107,7 +107,7 @@ class AdminProcess:
                             'creation_time': failed[5]
                         })
                     # Get scheduled jobs
-                    sql = 'SELECT job_id, job_name, parameters, creation_time, interval, time_unit, repeat, next_execution FROM schedule_job'
+                    sql = 'SELECT job_id, job_name, parameters, creation_time, interval, time_unit, repeat, next_execution, scheduled FROM schedule_job'
                     rows = data_base.execute_sql_with_results(sql)
                     for schedule in rows:
                         scheduled_job.append({
@@ -118,7 +118,8 @@ class AdminProcess:
                             'interval': schedule[4],
                             'time_unit': schedule[5],
                             'repeat': schedule[6],
-                            'next_execution': schedule[7]
+                            'next_execution': schedule[7],
+                            'state': 'canceled' if schedule[8] == -2 else 'scheduled'
                         })
                     result = {
                         'pendings': pendings_jobs,
@@ -157,7 +158,7 @@ class AdminProcess:
                     data_base = RDB(self.const.DB_JOBS)
                     job_id = call_path_list[1]
                     # Search job
-                    sql = 'SELECT job_id, job_path, job_name, next_execution, creation_time FROM schedule_job WHERE job_id = {}'.format(
+                    sql = 'SELECT job_id, job_path, job_name, next_execution, creation_time, scheduled FROM schedule_job WHERE job_id = {}'.format(
                         job_id)
 
                     job_row = data_base.execute_sql_with_results(sql)
@@ -170,12 +171,16 @@ class AdminProcess:
                         'job_path': job_row[0][1],
                         'job_name': job_row[0][2],
                         'next_execution': job_row[0][3],
-                        'state': None,
+                        'state': 'canceled' if job_row[0][5] == -2 else None,
                         'log': None,
                         'output': None,
-                        'creation': job_row[0][4],
+                        'creation': job_row[0][5],
                     }
                     self.messenger.code_type = self.const.JOB_DETAILS
+                    # Canceled, return
+                    if job_row[0][4] == -2:
+                        self.messenger.set_response(result)
+                        return self.messenger
                     # Getting details
                     sql = 'SELECT id, log, output, date_time FROM successful_schedule_job WHERE job_id = {} ORDER BY id DESC'.format(
                         job_id)

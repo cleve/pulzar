@@ -174,7 +174,7 @@ class AdminProcess:
                         'state': 'canceled' if job_row[0][5] == -2 else None,
                         'log': None,
                         'output': None,
-                        'creation': job_row[0][5],
+                        'creation': job_row[0][4],
                     }
                     self.messenger.code_type = self.const.JOB_DETAILS
                     # Canceled, return

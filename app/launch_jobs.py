@@ -20,6 +20,8 @@ class LaunchJobs:
         # Master configuration
         self.server_host = None
         self.server_port = None
+        # Where the jobs will be placed
+        self.job_directory = None
         self.get_config()
         self.search_pending_jobs()
         self.days_of_retention = 90
@@ -34,6 +36,8 @@ class LaunchJobs:
         # Master url
         self.server_host = server_config.get_config('server', 'host')
         self.server_port = server_config.get_config('server', 'port')
+        # Set job directory
+        self.job_directory = server_config.get_config('jobs', 'dir')
 
     def _retention_policy(self):
         """Delete data since the policy"""
@@ -99,15 +103,21 @@ class LaunchJobs:
     def execute_jobs(self):
         """Execute jobs selected
         """
+        if self.job_directory is None:
+            print('First you need to set/create the job directory')
+            return
         for job in self.jobs_to_launch:
             try:
+                # Rebuild the real path
+                complete_path = self.job_directory + job['job_path']
                 print('Launching', job['job_id'],
-                      'located in ', job['job_path'])
-                custom_module = os.path.splitext(job['job_path'])[
+                      'located in ', complete_path)
+                custom_module = os.path.splitext(complete_path)[
                     0].replace('/', '.')
                 job['job_args']['job_id'] = job['job_id']
                 job['job_args']['_pulzar_config'] = {
-                    'scheduled': job['scheduled']}
+                    'scheduled': job['scheduled']
+                }
                 import_fly = importlib.import_module(custom_module)
                 status = import_fly.execute(job['job_args'])
                 # Report to master

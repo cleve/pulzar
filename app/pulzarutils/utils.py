@@ -30,7 +30,7 @@ class Utils:
         plattform
         """
         return platform.system() == 'Linux'
-    
+
     # Datetime options
     def get_current_datetime_str(self, db_format=False):
         if db_format:
@@ -234,6 +234,11 @@ class Utils:
         current location
         """
         return os.path.abspath(os.getcwd())
+
+    def join_path(self, base_path, child_path):
+        """Just a binding
+        """
+        return os.path.join(base_path, child_path)
 
     # Custom methods
     def extract_query_params(self, complete_url):

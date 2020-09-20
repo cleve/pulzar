@@ -8,6 +8,7 @@ from master.put_process import PutProcess
 from master.delete_process import DeleteProcess
 from master.extension_process import ExtensionProcess
 from master.admin_process import AdminProcess
+from master.admin_jobs import AdminJobs
 
 
 class Dispatcher:
@@ -22,8 +23,9 @@ class Dispatcher:
         self.const = Constants()
 
         # reg strings
-        self.re_admin = r'/admin/\w'
-        self.re_skynet = r'/skynet/\w'
+        self.re_job_admin = r'\/admin\/(scheduled_jobs|jobs){1}.*'
+        self.re_admin = r'\/admin\/\w'
+        self.re_skynet = r'\/skynet\/\w'
 
     def classify_request(self, essential_env, env, start_response):
         """Return dictionary complex_response {action, parameters}
@@ -34,6 +36,18 @@ class Dispatcher:
         if self.utils.match_regex(url_path, self.re_skynet):
             skynet = Skynet(env)
             return skynet.process_request(url_path, method)
+
+        # Job Admin
+        elif self.utils.match_regex(url_path, self.re_job_admin):
+            if method == self.const.GET:
+                admin_process = AdminJobs(self.const)
+                return admin_process.process_request(url_path)
+            else:
+                messenger = Messenger()
+                messenger.code_type = self.const.USER_ERROR
+                messenger.mark_as_failed()
+                messenger.set_message = 'Method used does not match'
+                return messenger
 
         # Admin
         elif self.utils.match_regex(url_path, self.re_admin):

@@ -40,8 +40,9 @@ class Dispatcher:
         # Job Admin
         elif self.utils.match_regex(url_path, self.re_job_admin):
             if method == self.const.GET:
+                query_string = env['QUERY_STRING']
                 admin_process = AdminJobs(self.const)
-                return admin_process.process_request(url_path)
+                return admin_process.process_request(url_path + '?' + query_string)
             else:
                 messenger = Messenger()
                 messenger.code_type = self.const.USER_ERROR

@@ -42,7 +42,9 @@ class Dispatcher:
             if method == self.const.GET:
                 query_string = env['QUERY_STRING']
                 admin_process = AdminJobs(self.const)
-                return admin_process.process_request(url_path + '?' + query_string)
+                if query_string.strip() != '':
+                    url_path += '?' + query_string
+                return admin_process.process_request(url_path)
             else:
                 messenger = Messenger()
                 messenger.code_type = self.const.USER_ERROR

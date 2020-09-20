@@ -179,4 +179,8 @@ class AdminJobs:
                 self.messenger.code_type = self.const.PULZAR_ERROR
                 self.messenger.mark_as_failed()
                 self.messenger.set_message = str(err)
+        else:
+            self.messenger.code_type = self.const.KEY_NOT_FOUND
+            self.messenger.mark_as_failed()
+            self.messenger.set_message = 'bad query'
         return self.messenger

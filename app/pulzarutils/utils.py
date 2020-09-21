@@ -32,6 +32,14 @@ class Utils:
         return platform.system() == 'Linux'
 
     # Datetime options
+    def get_current_datetime_utc(self, to_string=False, db_format=True):
+        """Get datetime in UTC
+        """
+        datetime_object = datetime.datetime.utcnow()
+        if to_string:
+            return self.datetime_to_string(datetime_object, db_format)
+        return datetime_object
+
     def get_current_datetime_str(self, db_format=False):
         if db_format:
             return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")

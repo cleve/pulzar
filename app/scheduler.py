@@ -45,7 +45,7 @@ class Scheduler():
                     sql = 'UPDATE schedule_job SET next_execution = ? WHERE job_id = {}'.format(
                         row[0])
                     self.schedule_data_base.execute_sql_update(
-                        sql, (self.utils.datetime_to_string(job.next_run, db_format=True),))
+                        sql, (self.utils.datetime_to_utc_string(job.next_run, db_format=True),))
 
     def _schedule_job(self, parameters):
         self._notify_to_node(parameters)
@@ -71,9 +71,11 @@ class Scheduler():
             next_execution = row[6]
             repeat = row[7]
             # Calculation of time
-            current_datetime = self.utils.get_current_datetime()
-            next_execution_datetime = self.utils.get_standard_datetime_from_string(
-                next_execution)
+            current_datetime = self.utils.get_current_datetime_utc()
+            next_execution_datetime_object = self.utils.get_standard_datetime_from_string(
+                next_execution, True, True)
+            next_execution_datetime = self.utils.datetime_to_utc(
+                next_execution_datetime_object)
             # Delta
             delta = current_datetime - next_execution_datetime
             # Not yet. This is the future
@@ -247,7 +249,7 @@ class Scheduler():
                 sql = 'UPDATE schedule_job SET next_execution = ? WHERE job_id = {}'.format(
                     job_id)
                 self.schedule_data_base.execute_sql_update(
-                    sql, (self.utils.datetime_to_string(job.next_run, db_format=True),))
+                    sql, (self.utils.datetime_to_utc_string(job.next_run, db_format=True),))
 
     def _schedule_jobs(self):
         """Execute jobs selected
@@ -266,7 +268,8 @@ class Scheduler():
                     continue
                 # Tagging the job with the ID
                 new_object = new_object.tag(job['job_id'])
-                next_execution = self.utils.datetime_to_string(
+
+                next_execution = self.utils.datetime_to_utc_string(
                     new_object.next_run, db_format=True)
                 # mark as scheduled
                 sql = 'UPDATE schedule_job SET scheduled = 1 , next_execution = ? WHERE job_id = {}'.format(

@@ -8,6 +8,7 @@ import glob
 import os
 import platform
 import datetime
+import time
 from timeit import default_timer as timer
 from urllib.parse import urlsplit
 from urllib.parse import parse_qs
@@ -35,19 +36,29 @@ class Utils:
     def get_current_datetime_utc(self, to_string=False, db_format=True):
         """Get datetime in UTC
         """
-        datetime_object = datetime.datetime.utcnow()
+        datetime_object = datetime.datetime.now(tz=datetime.timezone.utc)
         if to_string:
             return self.datetime_to_string(datetime_object, db_format)
         return datetime_object
 
     def get_current_datetime_str(self, db_format=False):
         if db_format:
-            return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S%z")
         return datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+
+    def datetime_to_utc_string(self, datetime_object, db_format=False):
+        utc_dt = datetime.datetime.fromtimestamp(
+            datetime_object.timestamp(), tz=datetime.timezone.utc)
+        return self.datetime_to_string(utc_dt, db_format)
+
+    def datetime_to_utc(self, datetime_object, db_format=False):
+        utc_dt = datetime.datetime.fromtimestamp(
+            datetime_object.timestamp(), tz=datetime.timezone.utc)
+        return utc_dt
 
     def datetime_to_string(self, datetime_object, db_format=False):
         if db_format:
-            return datetime_object.strftime("%Y-%m-%d %H:%M:%S")
+            return datetime_object.strftime("%Y-%m-%d %H:%M:%S%z")
         return datetime_object.strftime("%Y-%m-%d-%H-%M-%S")
 
     def get_current_datetime(self):
@@ -81,8 +92,10 @@ class Utils:
             return datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S.%f")
         return datetime.datetime.strptime(datetime_str, "%Y-%m-%d-%H-%M-%S")
 
-    def get_standard_datetime_from_string(self, datetime_str, full=False):
+    def get_standard_datetime_from_string(self, datetime_str, full=False, data_base=False):
         if full:
+            if data_base:
+                return datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S%z")
             return datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S.%f")
         return datetime.datetime.strptime(datetime_str, "%Y-%m-%d %H:%M:%S")
 

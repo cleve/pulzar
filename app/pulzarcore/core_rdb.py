@@ -22,6 +22,8 @@ class RDB:
         """
         if param is None:
             self.cursor.execute(query)
+        else:
+            self.cursor.execute(query, param)
         return self.cursor.fetchall()
 
     def execute_sql_insert(self, query, param):

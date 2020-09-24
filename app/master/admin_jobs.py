@@ -9,12 +9,74 @@ class AdminJobs:
         self.utils = Utils()
         self.messenger = Messenger()
 
-    def _scheduled_job_response(self, job_id, limit):
+    def _scheduled_job_type(self, job_type, limit):
+        data_base = RDB(self.const.DB_JOBS)
+        result = []
+        if job_type == 'failed':
+            sql = """\
+                SELECT 
+                    sj.job_id,
+                    sj.job_name,
+                    sj.parameters,
+                    sj.creation_time,
+                    sj.interval,
+                    sj.time_unit,
+                    fsj.log,
+                    fsj.output,
+                    fsj.date_time,
+                    sj.next_execution
+                FROM schedule_job as sj
+                INNER JOIN failed_schedule_job as fsj ON sj.job_id = fsj.job_id
+                WHERE scheduled <> -2 ORDER BY sj.job_id DESC"""
+        elif job_type == 'ok':
+            sql = """\
+                SELECT 
+                    sj.job_id,
+                    sj.job_name,
+                    sj.parameters,
+                    sj.creation_time,
+                    sj.interval,
+                    sj.time_unit,
+                    ssj.log,
+                    ssj.output,
+                    ssj.date_time,
+                    sj.next_execution
+                FROM schedule_job as sj
+                INNER JOIN successful_schedule_job as ssj ON sj.job_id = ssj.job_id
+                WHERE scheduled <> -2 ORDER BY sj.job_id DESC"""
+
+        if limit is not None:
+            sql += ' LIMIT ' + str(limit)
+
+        rows = data_base.execute_sql_with_results(sql)
+        if len(rows) == 0:
+            return result
+        # Job executed correctly
+        if len(rows) > 0:
+            for row in rows:
+                result.append({
+                    'job_id': row[0],
+                    'job_name': row[1],
+                    'parameters': row[2],
+                    'creation': row[3],
+                    'interval': row[4],
+                    'time_unit': row[5],
+                    'log': row[6],
+                    'output': row[7],
+                    'datetime': row[8],
+                    'next_execution': row[9]
+                })
+        return result
+
+    def _scheduled_job_response(self, job_id, job_type, limit):
         """Get scheduled job information since all parameters
         """
         scheduled_job = []
         data_base = RDB(self.const.DB_JOBS)
         if job_id is None:
+            # Only job list
+            if job_type is not None:
+                return self._scheduled_job_type(job_type, limit)
             # Get scheduled jobs
             sql = 'SELECT job_id, job_name, parameters, creation_time, interval, time_unit, repeat, next_execution, scheduled FROM schedule_job'
             if limit is not None:
@@ -90,7 +152,7 @@ class AdminJobs:
                     })
         return result
 
-    def _job_response(self, job_id, limit):
+    def _job_response(self, job_id, job_type, limit):
         data_base = RDB(self.const.DB_JOBS)
         pendings_jobs = []
         ready_jobs = []
@@ -166,14 +228,15 @@ class AdminJobs:
             try:
                 self.messenger.code_type = self.const.JOB_DETAILS
                 # Type of request
-                request_type, _, _, request_id, _, limit = regex_result.groups()
+                request_type, _, _, job_type, _, _, request_id, _, limit = regex_result.groups()
                 # Filter request
+
                 if request_type == 'scheduled_jobs':
                     self.messenger.set_response(
-                        self._scheduled_job_response(request_id, limit))
+                        self._scheduled_job_response(request_id, job_type, limit))
                 elif request_type == 'jobs':
                     self.messenger.set_response(
-                        self._job_response(request_id, limit))
+                        self._job_response(request_id, job_type, limit))
                 return self.messenger
             except Exception as err:
                 self.messenger.code_type = self.const.PULZAR_ERROR

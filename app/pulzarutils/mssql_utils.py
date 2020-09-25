@@ -27,7 +27,7 @@ class MSSQL:
         conn.autocommit = True
         self.cursor = conn.cursor()
 
-    def init_windows_cursor(self, conn_string):
+    def init_windows_cursor(self):
         """Windows connection string compatible
         """
         conn = pyodbc.connect(self.server_config['win_conn_string'])

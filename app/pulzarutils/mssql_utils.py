@@ -8,7 +8,7 @@ class MSSQL:
         self.server_config = server_config
         # Init
         self._init_cursor()
-    
+
     def _init_cursor(self):
         if self.utils.is_unix():
             self.init_unix_cursor()
@@ -22,21 +22,11 @@ class MSSQL:
         conn = pyodbc.connect(self.server_config['conn_string'])
         conn.autocommit = True
         self.cursor = conn.cursor()
-    
-    def init_windows_cursor(self):
-        conn = pyodbc.connect(
-            'Driver={{SQL Server}};'
-            'Server={};'
-            'Database={};'
-            'UID={};'
-            'PWD={};'
-            'Trusted_Connection=no'.format(
-                self.server_config['server_name'],
-                self.server_config.server_config['database'],
-                self.server_config.server_config['usr'],
-                self.server_config.server_config['psw']
-            ) 
-        )
+
+    def init_windows_cursor(self, conn_string):
+        """Windows connection string compatible
+        """
+        conn = pyodbc.connect(conn_string)
         conn.autocommit = True
         self.cursor = conn.cursor()
 
@@ -47,4 +37,3 @@ class MSSQL:
     def query(self, query):
         self.cursor.execute(query)
         return self.cursor.fetchall()
-        

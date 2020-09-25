@@ -3,9 +3,12 @@ from pulzarutils.utils import Utils
 
 
 class MSSQL:
-    def __init__(self, server_config):
+    def __init__(self, unix_string=None, windows_string=None):
+        """Init config strings
+        """
         self.utils = Utils()
         self.server_config = server_config
+        self.windows_string = windows_string
         # Init
         self._init_cursor()
 
@@ -26,7 +29,7 @@ class MSSQL:
     def init_windows_cursor(self, conn_string):
         """Windows connection string compatible
         """
-        conn = pyodbc.connect(conn_string)
+        conn = pyodbc.connect(self.windows_string)
         conn.autocommit = True
         self.cursor = conn.cursor()
 

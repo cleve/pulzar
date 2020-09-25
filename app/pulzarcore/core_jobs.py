@@ -12,14 +12,17 @@ class CoreJobs:
     """Base class for job implementation
     """
 
-    def __init__(self, parameters, notification=False):
+    def __init__(self, parameters, notification=False, local_exec=False):
         """Constructor
             arguments:
              - parameters (dict)
         """
+        # Allows to execute the job locally
+        self.local_exec = local_exec
         self._pulzar_utils = Utils()
         self._pulzar_const = Constants()
-        self._pulzar_database = RDB(self._pulzar_const.DB_NODE_JOBS)
+        self._pulzar_database = RDB(
+            self._pulzar_const.DB_NODE_JOBS) if local_exec is False else None
         self.pulzar_parameters = parameters
         self._notification_enabled = notification
         self._job_id = parameters['job_id']
@@ -136,6 +139,8 @@ class CoreJobs:
     def _pulzar_notification(self):
         """Notify to master
         """
+        if self.local_exec:
+            return
         job_table = 'job'
         if self._pulzar_config['scheduled']:
             job_table = 'schedule_job'

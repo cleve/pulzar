@@ -5,6 +5,9 @@ from pulzarutils.utils import Utils
 class MSSQL:
     def __init__(self, server_config=None):
         """Init config strings
+            unix:
+                DSN=MSSQLDescriptor;UID=myuid;PWD=mypwd
+            windows: connection string
         """
         self.utils = Utils()
         self.server_config = server_config
@@ -12,6 +15,8 @@ class MSSQL:
         self._init_cursor()
 
     def _init_cursor(self):
+        """Global configuration
+        """
         if self.server_config is None:
             return
         if self.utils.is_unix():
@@ -20,8 +25,7 @@ class MSSQL:
             self.init_windows_cursor()
 
     def init_unix_cursor(self):
-        """Use:
-            DSN=MSSQLServerDatabase;UID=myuid;PWD=mypwd
+        """Unix connection string compatible
         """
         conn = pyodbc.connect(self.server_config['conn_string'])
         conn.autocommit = True

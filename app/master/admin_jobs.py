@@ -27,7 +27,7 @@ class AdminJobs:
                     sj.next_execution
                 FROM schedule_job as sj
                 INNER JOIN failed_schedule_job as fsj ON sj.job_id = fsj.job_id
-                WHERE scheduled <> -2 ORDER BY sj.job_id DESC"""
+                WHERE scheduled <> -2 ORDER BY fsj.date_time DESC"""
         elif job_type == 'ok':
             sql = """\
                 SELECT 
@@ -43,7 +43,7 @@ class AdminJobs:
                     sj.next_execution
                 FROM schedule_job as sj
                 INNER JOIN successful_schedule_job as ssj ON sj.job_id = ssj.job_id
-                WHERE scheduled <> -2 ORDER BY sj.job_id DESC"""
+                WHERE scheduled <> -2 ORDER BY ssj.date_time DESC"""
 
         if limit is not None:
             sql += ' LIMIT ' + str(limit)

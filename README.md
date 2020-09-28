@@ -430,14 +430,20 @@ Keys will be encoded in base64, only ASCII chars are allowed.
 
 ```sh
 # From the root directory
-docker build --rm -f dockers/DockerfileMaster -t varidb_master:latest .
+docker build --rm -f dockers/Dockerfile.main -t pulzar-master:latest .
+
+# Run it
+docker run --hostname [host] --name [name] --rm -d -p 31414:31414 pulzar-master:latest
 ```
 
 ### Volume
 
 ```sh
 # From the root directory
-docker build --rm -f dockers/DockerfileVolume -t varidb_volume:latest .
+docker build --rm -f dockers/Dockerfile.node -t pulzar-node:latest .
+
+# Run it
+docker run --hostname [host] --name [name] --rm -d -p 31415:31415 pulzar-node:latest
 ```
 
 # Test

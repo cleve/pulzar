@@ -133,7 +133,11 @@ class CoreJobs:
     def _mark_as_failed(self):
         self._failed_job = True
 
-    def pulzar_add_log(self, message):
+    def pulzar_add_log(self, message, bulk=False):
+        """With bulk=True, a list of string is allowed
+        """
+        if bulk and isinstance(message, list):
+            self._log += message
         self._log.append(message)
 
     def _pulzar_notification(self):

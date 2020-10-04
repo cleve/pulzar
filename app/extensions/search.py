@@ -58,21 +58,35 @@ class Search:
                 date_string = val_decoded[1]
                 datetime_object = self.get_key_date(date_string)
                 if self.less_than is not None and self.greater_than is not None:
-                    if datetime_object > self.less_than and datetime_object < self.greater_than:
-                        continue
-                if self.less_than is not None and self.greater_than is None:
-                    if datetime_object >= self.less_than:
-                        continue
-                if self.less_than is None and self.greater_than is not None:
-                    if datetime_object <= self.greater_than:
-                        continue
-                if self.equal is not None:
-                    if datetime_object != self.equal:
-                        continue
-                self.response.append({
-                    'key': key_string,
-                    'url': 'http://' + val_string + '/get_key' + key_string
-                })
+                    if datetime_object > self.greater_than and datetime_object < self.less_than:
+                        self.response.append({
+                            'key': key_string,
+                            'url': 'http://' + val_string + '/get_key' + key_string
+                        })
+
+                elif self.less_than is not None and self.greater_than is None:
+                    if datetime_object <= self.less_than:
+                        self.response.append({
+                            'key': key_string,
+                            'url': 'http://' + val_string + '/get_key' + key_string
+                        })
+                elif self.less_than is None and self.greater_than is not None:
+                    if datetime_object >= self.greater_than:
+                        self.response.append({
+                            'key': key_string,
+                            'url': 'http://' + val_string + '/get_key' + key_string
+                        })
+                elif self.equal is not None:
+                    if datetime_object == self.equal:
+                        self.response.append({
+                            'key': key_string,
+                            'url': 'http://' + val_string + '/get_key' + key_string
+                        })
+                else:
+                    self.response.append({
+                        'key': key_string,
+                        'url': 'http://' + val_string + '/get_key' + key_string
+                    })
 
     def get_response(self):
         """Get the final object

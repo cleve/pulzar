@@ -20,18 +20,19 @@ class Example(CoreJobs):
 
     @CoreJobs._pulzar_run_job
     def run_my_code(self):
-        print('Parameters: ', self.parameters)
-        number = self.parameters['arg1']
-        number_two = self.parameters['arg2']
-
+        number = 15.0
+        number_two = 42000.0
+        self.pulzar_add_log(
+            'Number 1 = {}, Number 2 {}'.format(number, number_two))
         self.process_data()
         r = 0
         counter = 0
-        while counter < 1000:
+        while counter < 100:
             r += float(number) / float(number_two)
+            self.pulzar_add_log('Current r={}'.format(r))
             counter += 1
-        self.pulzar_add_log('Result is: ' + str(r))
         self.pulzar_set_output('Result is: ' + str(r))
+        self.pulzar_set_output('Job done')
 
 
 def execute(arguments):

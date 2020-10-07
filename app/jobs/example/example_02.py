@@ -24,9 +24,7 @@ class Example(CoreJobs):
 
     @CoreJobs._pulzar_run_job
     def run_my_code(self):
-        print('Parameters', self.parameters)
-        total_lines = self.parameters['arg1']
-
+        print('Parameters', self.pulzar_parameters)
         # Generating temporary file
         temporary_file = tempfile.NamedTemporaryFile(delete=False)
         print('opening file')

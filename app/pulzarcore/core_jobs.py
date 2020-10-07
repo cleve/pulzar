@@ -27,7 +27,7 @@ class CoreJobs:
         self._pulzar_utils = Utils()
         self._pulzar_const = Constants()
         self._pulzar_database = RDB(
-            self._pulzar_const.DB_NODE_JOBS) if local_exec is False else None
+            self._pulzar_const.DB_NODE_JOBS) if self.local_exec is False else None
         self.pulzar_parameters = parameters
         self._notification_enabled = notification
         self._job_id = parameters['job_id']

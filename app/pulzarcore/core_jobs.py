@@ -12,13 +12,18 @@ class CoreJobs:
     """Base class for job implementation
     """
 
-    def __init__(self, parameters, notification=False, local_exec=False):
+    def __init__(self, parameters, notification=False):
         """Constructor
+
+            To test locally, set the attribute local_exec = True
+
             arguments:
              - parameters (dict)
+             - notification (bool)
+
         """
         # Allows to execute the job locally
-        self.local_exec = local_exec
+        self.local_exec = False
         self._pulzar_utils = Utils()
         self._pulzar_const = Constants()
         self._pulzar_database = RDB(

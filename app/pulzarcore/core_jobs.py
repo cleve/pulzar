@@ -26,8 +26,6 @@ class CoreJobs:
         self.local_exec = False
         self._pulzar_utils = Utils()
         self._pulzar_const = Constants()
-        self._pulzar_database = RDB(
-            self._pulzar_const.DB_NODE_JOBS) if self.local_exec is False else None
         self.pulzar_parameters = parameters
         self._notification_enabled = notification
         self._job_id = parameters['job_id']
@@ -150,6 +148,8 @@ class CoreJobs:
         """
         if self.local_exec:
             return
+        # Only on nodes.
+        self._pulzar_database = RDB(self._pulzar_const.DB_NODE_JOBS)
         job_table = 'job'
         if self._pulzar_config['scheduled']:
             job_table = 'schedule_job'

@@ -21,9 +21,11 @@ class Example(CoreJobs):
 
 
 def execute(arguments):
-    """Point of entrance
-
-        Parameters description
+    """
+    Description: Testing with arguments
+    Arguments: arg_1: int, arg_2: dictionary 
+    Category: Examples
+    Author: Mauricio Cleveland
     """
     example = Example(arguments)
     example.run_my_code()

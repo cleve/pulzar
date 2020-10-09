@@ -39,7 +39,11 @@ class Example(CoreJobs):
 
 
 def execute(arguments):
-    """Point of entrance
+    """
+    Description: Testing job without arguments
+    Arguments: No args
+    Category: Examples
+    Author: Mauricio Cleveland
     """
     example = Example(arguments)
     example.run_my_code()

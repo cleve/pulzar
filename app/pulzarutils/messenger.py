@@ -46,7 +46,7 @@ class Messenger:
             return self.utils.py_to_json(self.response).encode()
         except Exception as err:
             return self.utils.py_to_json({
-                'data': 'Internal error',
+                'data': 'Messenger::Internal error',
                 'status': 'ko',
                 'msg': str(err)
             }).encode()

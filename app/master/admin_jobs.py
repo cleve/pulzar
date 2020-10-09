@@ -9,6 +9,55 @@ class AdminJobs:
         self.utils = Utils()
         self.messenger = Messenger()
 
+    def process_request(self, url_path):
+        """Entrance for AdminJobs
+        :param url_path:
+        """
+        # Get scheduled jobs.
+        regex_result = self.utils.get_search_regex(
+            url_path, self.const.RE_SCHED_JOB_INF)
+        if regex_result:
+            try:
+                self.messenger.code_type = self.const.JOB_DETAILS
+                # Type of request
+                request_type, _, _, job_type, _, _, request_id, _, limit = regex_result.groups()
+                # Filter request
+
+                if request_type == 'scheduled_jobs':
+                    self.messenger.set_response(
+                        self._scheduled_job_response(request_id, job_type, limit))
+                elif request_type == 'jobs':
+                    self.messenger.set_response(
+                        self._job_response(request_id, job_type, limit))
+                elif request_type == 'job_catalog':
+                    self.messenger.set_response(
+                        self._job_catalog_response())
+                return self.messenger
+            except Exception as err:
+                self.messenger.code_type = self.const.PULZAR_ERROR
+                self.messenger.mark_as_failed()
+                self.messenger.set_message = str(err)
+        else:
+            self.messenger.code_type = self.const.KEY_NOT_FOUND
+            self.messenger.mark_as_failed()
+            self.messenger.set_message = 'bad query'
+        return self.messenger
+
+    def _job_catalog_response(self):
+        result = []
+        data_base = RDB(self.const.DB_JOBS)
+        query = 'SELECT path, description, args, category, author FROM job_catalog'
+        catalog = data_base.execute_sql_with_results(query)
+        for job in catalog:
+            result.append({
+                'path': job[0],
+                'description': job[1],
+                'args': job[2],
+                'category': job[3],
+                'author': job[4]
+            })
+        return result
+
     def _scheduled_job_type(self, job_type, limit):
         data_base = RDB(self.const.DB_JOBS)
         result = []
@@ -216,34 +265,3 @@ class AdminJobs:
             'log': job_details[0][0],
             'time': job_details[0][1]
         }
-
-    def process_request(self, url_path):
-        """Entrance for AdminJobs
-        :param url_path:
-        """
-        # Get scheduled jobs.
-        regex_result = self.utils.get_search_regex(
-            url_path, self.const.RE_SCHED_JOB_INF)
-        if regex_result:
-            try:
-                self.messenger.code_type = self.const.JOB_DETAILS
-                # Type of request
-                request_type, _, _, job_type, _, _, request_id, _, limit = regex_result.groups()
-                # Filter request
-
-                if request_type == 'scheduled_jobs':
-                    self.messenger.set_response(
-                        self._scheduled_job_response(request_id, job_type, limit))
-                elif request_type == 'jobs':
-                    self.messenger.set_response(
-                        self._job_response(request_id, job_type, limit))
-                return self.messenger
-            except Exception as err:
-                self.messenger.code_type = self.const.PULZAR_ERROR
-                self.messenger.mark_as_failed()
-                self.messenger.set_message = str(err)
-        else:
-            self.messenger.code_type = self.const.KEY_NOT_FOUND
-            self.messenger.mark_as_failed()
-            self.messenger.set_message = 'bad query'
-        return self.messenger

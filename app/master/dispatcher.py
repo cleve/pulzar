@@ -23,7 +23,7 @@ class Dispatcher:
         self.const = Constants()
 
         # reg strings
-        self.re_job_admin = r'\/admin\/(scheduled_jobs|jobs){1}.*'
+        self.re_job_admin = r'\/admin\/(scheduled_jobs|jobs|job_catalog){1}.*'
         self.re_admin = r'\/admin\/\w'
         self.re_skynet = r'\/skynet\/\w'
 
@@ -49,7 +49,7 @@ class Dispatcher:
                 messenger = Messenger()
                 messenger.code_type = self.const.USER_ERROR
                 messenger.mark_as_failed()
-                messenger.set_message = 'Method used does not match'
+                messenger.set_message = 'Method used does not match, try GET'
                 return messenger
 
         # Admin

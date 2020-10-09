@@ -78,7 +78,7 @@ class Constants:
         self.RE_EXTENSION = r'/extension((/\w+)+)'
         self.RE_LAUNCH_JOB = r'\/launch_job([\/\w\d]+)\/([\w\d]+)'
         self.RE_CANCEL_JOB = r'\/cancel_job\/([\d]+)$'
-        self.RE_SCHED_JOB_INF = r'\/admin\/(scheduled_jobs|jobs){1}((\/)(failed|ok)){0,1}((\/){1}(\d+)){0,1}(\?limit=(\d+)){0,1}$'
+        self.RE_SCHED_JOB_INF = r'\/admin\/(scheduled_jobs|jobs|job_catalog){1}((\/)(failed|ok)){0,1}((\/){1}(\d+)){0,1}(\?limit=(\d+)){0,1}$'
         self.RE_NOTIFICATION_JOB = r'\/notification_job$'
         self.RE_ADMIN = r'/admin((/[\w-]+){1,2})'
 

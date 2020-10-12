@@ -23,7 +23,7 @@ class Example(CoreJobs):
 def execute(arguments):
     """
     Description: Testing with arguments
-    Arguments: {"arg_1": int, "arg_2": str} 
+    Arguments: {"arg_1": "int", "arg_2": "str"} 
     Category: Examples
     Author: Mauricio Cleveland
     """

@@ -20,6 +20,7 @@ class JobDiscovery:
         self.rdb = RDB(self.const.DB_JOBS)
         server_config = Config(self.const.CONF_PATH)
         self.job_directory = server_config.get_config('jobs', 'dir')
+        self._clean_repository()
 
     def _get_directories(self):
         """Only one level
@@ -34,16 +35,17 @@ class JobDiscovery:
                         for file_entry in file_it:
                             # Directories
                             if file_entry.name.endswith('.py') and file_entry.is_file():
-                                relative_path = os.path.join(
-                                    complete_path, file_entry.name)
-                                self._get_entrance_point(relative_path)
+                                url_path = os.path.join(
+                                    entry.name, file_entry.name)
+                                self._get_entrance_point(url_path)
 
-    def _get_entrance_point(self, relative_path):
+    def _get_entrance_point(self, url_path):
         """Get the main app and extract
         documentation
         """
-        no_extension = os.path.splitext(relative_path)[0]
-        to_module_notation = no_extension.replace('/', '.')
+        no_extension = os.path.splitext(url_path)[0]
+        relative_path = os.path.join(self.job_directory, no_extension)
+        to_module_notation = relative_path.replace('/', '.')
         import_fly = importlib.import_module(to_module_notation)
         dictionary = self._parse_doc(import_fly.execute.__doc__)
 
@@ -74,10 +76,11 @@ class JobDiscovery:
 
         return config
 
-    def _clean_repository(self, job_path):
-        """Clean catalog if a job is not in the directory
+    def _clean_repository(self):
+        """Clean catalog
         """
-        pass
+        sql = 'DROP TABLE [IF EXISTS] job_catalog'
+        # self.rdb.execute_sql(sql)
 
     def _create_or_update_catalog(self, job_path, dictionary):
         """To DB

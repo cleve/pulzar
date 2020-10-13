@@ -20,8 +20,9 @@ class Body:
         if request_body_size == 0:
             return None
         request_body = env[self.const.WSGI_INPUT].read(request_body_size)
-        # JSON type
-        if env[self.const.CONTENT_TYPE] == self.const.JSON_REQUEST:
+        # JSON type. Added find() because some clients add
+        # 'application/json' or 'application/json;charset=UTF-8'
+        if env[self.const.CONTENT_TYPE].find(self.const.JSON_REQUEST) >= 0:
             return self.utils.json_to_py(request_body)
         return parse_qs(request_body)
 

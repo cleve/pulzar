@@ -5,6 +5,10 @@ class ResponseClass:
     def __init__(self):
         self.JSON = ('Content-Type', 'application/json')
         self.CORS = ('Access-Control-Allow-Origin', '*')
+        self.METHODS = ('Access-Control-Allow-Methods',
+                        'GET,HEAD,OPTIONS,POST,PUT')
+        self.OPTIONS = ('Access-Control-Allow-Headers',
+                        'Origin, X-Requested-With, Content-Type, Accept')
         self.headers = []
         self.message = b''
         self.response_code = None
@@ -31,12 +35,14 @@ class ResponseClass:
         """
         self.headers.append(header)
 
-    def get_response(self, start_response, type=Response.JSON):
+    def get_response(self, start_response, request_type=Response.JSON):
         # Cors enabled
         self.headers.append(self.CORS)
-        if type == Response.JSON:
+        self.headers.append(self.METHODS)
+        if request_type == Response.OPTIONS:
+            self.headers.append(self.OPTIONS)
+        if request_type == Response.JSON:
             self.headers.append(self.JSON)
-            pass
         start_response(
             self.response_code, self.headers)
         return[self.message]

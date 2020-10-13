@@ -1,4 +1,5 @@
 from pulzarutils.constants import Constants
+from pulzarutils.constants import Response
 from pulzarutils.utils import Utils
 from master.dispatcher import Dispatcher
 from pulzarcore.core_response import ResponseClass
@@ -20,6 +21,11 @@ class Master:
         # Get the code already included in the object
         request_type = message.code_type
 
+        # OPTIONS requests
+        if request_type == self.const.OPTIONS:
+            self.response.set_response(message.http_code)
+            self.response.set_message(message.get_bjson())
+            return self.response.get_response(start_response, Response.OPTIONS)
         # Handle general errors
         if request_type == self.const.USER_ERROR or request_type == self.const.PULZAR_ERROR:
             self.response.set_response(message.http_code)

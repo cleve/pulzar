@@ -108,7 +108,6 @@ class JobProcess:
             params['job_name'] = job_name
             params['job_id'] = None
             params['parameters'] = job_params
-            print('params:', params)
 
             job_object = Job(params)
             if job_object.send_job(self.const):

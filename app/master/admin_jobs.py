@@ -22,13 +22,15 @@ class AdminJobs:
                 # Type of request
                 request_type, _, _, job_type, _, _, request_id, _, limit = regex_result.groups()
                 # Filter request
-
                 if request_type == 'scheduled_jobs':
                     self.messenger.set_response(
                         self._scheduled_job_response(request_id, job_type, limit))
                 elif request_type == 'jobs':
                     self.messenger.set_response(
                         self._job_response(request_id, job_type, limit))
+                elif request_type == 'all_jobs':
+                    self.messenger.set_response(
+                        self._all_job_response(request_id, limit))
                 elif request_type == 'job_catalog':
                     self.messenger.set_response(
                         self._job_catalog_response())
@@ -201,8 +203,32 @@ class AdminJobs:
                     })
         return result
 
-    def _job_response(self, job_id, job_type, limit):
+    def _all_job_response(self, request_id, limit):
         data_base = RDB(self.const.DB_JOBS)
+        results = []
+        sql = 'SELECT id, job_name, parameters, node, creation_time, state FROM job ORDER BY creation_time DESC'
+        if limit is not None:
+            sql += ' LIMIT ' + str(limit)
+        rows = data_base.execute_sql_with_results(sql)
+        for job in rows:
+            # Job classification
+            if job[5] == 0:
+                status = 'pending'
+            elif job[5] == 1:
+                status = 'completed'
+            else:
+                status = 'failed'
+            results.append({
+                'job_id': job[0],
+                'job_name': job[1],
+                'parameters': job[2],
+                'node': job[3],
+                'creation_time': job[4],
+                'status': status
+            })
+        return results
+
+    def _job_response(self, job_id, job_type, limit):
         pendings_jobs = []
         ready_jobs = []
         failed_jobs = []
@@ -217,7 +243,7 @@ class AdminJobs:
                     'job_name': pending[1],
                     'parameters': pending[2],
                     'node': pending[3],
-                    'creation_time': pending[5]
+                    'status': pending[5]
                 })
             # Get ready jobs
             sql = 'SELECT id, job_name, parameters, node, creation_time, state FROM job WHERE state = 1'
@@ -228,7 +254,7 @@ class AdminJobs:
                     'job_name': ready[1],
                     'parameters': ready[2],
                     'node': ready[3],
-                    'creation_time': ready[5]
+                    'status': ready[5]
                 })
             # Get failed jobs
             sql = 'SELECT id, job_name, parameters, node, creation_time, state FROM job WHERE state = 2'
@@ -239,7 +265,7 @@ class AdminJobs:
                     'job_name': failed[1],
                     'parameters': failed[2],
                     'node': failed[3],
-                    'creation_time': failed[5]
+                    'status': failed[5]
                 })
             return {
                 'pendings': pendings_jobs,

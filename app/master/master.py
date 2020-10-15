@@ -59,6 +59,10 @@ class Master:
             self.response.set_message(message.get_bjson())
 
         # If not Skynet or administrative tasks
+        elif request_type == self.const.GET_NODE:
+            self.response.set_response(message.http_code)
+            self.response.set_message(message.get_bjson())
+
         elif request_type == self.const.KEY_NOT_FOUND:
             self.response.set_response(message.http_code)
             self.response.set_message(message.get_bjson())

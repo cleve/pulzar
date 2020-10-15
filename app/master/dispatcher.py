@@ -5,6 +5,7 @@ from master.get_process import GetProcess
 from master.post_process import PostProcess
 from master.job_process import JobProcess
 from master.put_process import PutProcess
+from master.get_node_process import GetNodeProcess
 from master.delete_process import DeleteProcess
 from master.extension_process import ExtensionProcess
 from master.admin_process import AdminProcess
@@ -110,6 +111,13 @@ class Dispatcher:
                 messenger.mark_as_failed()
                 messenger.set_message = 'Method used does not match'
                 return messenger
+
+        # Request storage
+        elif self.utils.match_regex(url_path, self.const.RE_GET_STORAGE):
+            if method == self.const.GET:
+                get_node_request = GetNodeProcess(self.const)
+                return get_node_request.process_request(
+                    env, start_response, url_path)
 
         # General requests
         else:

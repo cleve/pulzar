@@ -73,6 +73,7 @@ class Constants:
         self.RE_URL_OPTION_ORDER = r'([\w]+)*\/([\w]+)+$'
 
         # API calls
+        self.RE_GET_STORAGE = r'\/get_node([\w+|\/{1}]+)?\/([\w|\.]+)$'
         self.RE_GET_VALUE = r'\/get_key([\w+|\/{1}]+)?\/([\w|\.]+)$'
         self.RE_DELETE_VALUE = r'\/delete_key([\w+|\/{1}]+)?\/([\w|\.]+)$'
         self.RE_PUT_VALUE = r'\/add_key([\w+|\/{1}]+)?\/([\w|\.]+)$'
@@ -93,6 +94,7 @@ class Constants:
         self.REGULAR_PUT = 'put'
         self.EXTENSION_RESPONSE = 'extension_response'
         self.REDIRECT_POST = 'redirect_post'
+        self.GET_NODE = 'get_node'
         self.REDIRECT_PUT = 'redirect_put'
         self.NOTIFY_KEY_TO_MASTER = 'notify2master'
         self.KEY_ALREADY_ADDED = 'duplicated'

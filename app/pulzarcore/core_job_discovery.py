@@ -31,8 +31,13 @@ class JobDiscovery:
                 if not entry.name.startswith('.'):
                     complete_path = os.path.join(
                         self.job_directory, entry.name)
+                    if not self.utils.dir_exists(complete_path):
+                        continue
                     with os.scandir(complete_path) as file_it:
                         for file_entry in file_it:
+                            # Avoid package file
+                            if file_entry.name.find('__init__.py') >= 0:
+                                continue
                             # Directories
                             if file_entry.name.endswith('.py') and file_entry.is_file():
                                 url_path = os.path.join(

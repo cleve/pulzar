@@ -1,17 +1,16 @@
-FROM mauriciocleveland/pulzar:1.0.0
+FROM mauriciocleveland/pulzar:1.0.1
 
 LABEL Mauricio Cleveland "mauricio.cleveland@gmail.com"
 
 EXPOSE 31415
 ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
-RUN apt -y install unixodbc-dev curl
 
 # MSSQL
+RUN apt -y install curl
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 RUN curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list > /etc/apt/sources.list.d/mssql-release.list
 RUN apt update
 RUN ACCEPT_EULA=Y apt -y install msodbcsql17
-RUN pip3 install pyodbc
 
 COPY app /usr/local/bin/pulzar
 COPY app/storage/dbs /var/lib/pulzar/dbs

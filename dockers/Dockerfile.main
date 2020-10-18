@@ -1,11 +1,10 @@
-FROM mauriciocleveland/pulzar:1.0.0
+FROM mauriciocleveland/pulzar:1.0.1
 
 LABEL Mauricio Cleveland "mauricio.cleveland@gmail.com"
-
 EXPOSE 31414
 
 COPY app /usr/local/bin/pulzar
-COPY dockers/requirements.txt requirements.txt
 COPY app/storage/dbs /var/lib/pulzar/dbs
 WORKDIR /usr/local/bin/pulzar
-CMD [ "uwsgi", "-i", "config/master.ini" ]
+COPY dockers/start_master.sh start_master.sh
+CMD [ "sh", "start_master.sh" ]

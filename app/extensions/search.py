@@ -58,7 +58,7 @@ class Search:
                 date_string = val_decoded[1]
                 datetime_object = self.get_key_date(date_string)
                 if self.less_than is not None and self.greater_than is not None:
-                    if datetime_object > self.greater_than and datetime_object < self.less_than:
+                    if datetime_object >= self.greater_than and datetime_object <= self.less_than:
                         self.response.append({
                             'key': key_string,
                             'url': 'http://' + val_string + '/get_key' + key_string
@@ -94,7 +94,7 @@ class Search:
         return self.response
 
 
-def execute(arguments, params):
+def execute(arguments, params, file_path=None):
     """Entrance point
     """
     datetime_expression = r'^(\d{1,2}-\d{1,2}-\d{4})$'

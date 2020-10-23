@@ -17,7 +17,7 @@ class ReqType(Enum):
 class Constants:
     def __init__(self):
         # General
-        self.DEBUG = True
+        self.DEBUG = False
         self.VERSION = '0.1'
         self.PASS = 'admin'
         self.PASSPORT = 'passport'

@@ -98,13 +98,20 @@ class Dispatcher:
                 messenger.set_message = 'Method used does not match'
                 return messenger
 
-        # Third party
+        # Extensions
         elif self.utils.match_regex(url_path, self.const.RE_EXTENSION):
             if method == self.const.GET:
                 extension = ExtensionProcess(self.const)
                 query_string = env['QUERY_STRING']
                 return extension.process_request(
                     url_path, query_string)
+
+            elif method == self.const.PUT:
+                extension = ExtensionProcess(self.const)
+                query_string = env['QUERY_STRING']
+                return extension.process_request(
+                    url_path, query_string, env)
+
             else:
                 messenger = Messenger()
                 messenger.code_type = self.const.USER_ERROR

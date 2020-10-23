@@ -1,4 +1,6 @@
 import re
+import random
+import string
 import shutil
 import json
 import base64
@@ -31,6 +33,9 @@ class Utils:
         plattform
         """
         return platform.system() == 'Linux'
+
+    def get_random_string(self, n):
+        return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(n))
 
     # Datetime options
     def get_current_datetime_utc(self, to_string=False, db_format=True):

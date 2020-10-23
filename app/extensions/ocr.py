@@ -44,6 +44,8 @@ def execute(arguments, params, file_path=None):
     """Entrance point
     """
     search = None
+    percent = None
+    invert = None
     # Check arguments
     if file_path is None:
         raise ValueError('file path empty')
@@ -54,6 +56,16 @@ def execute(arguments, params, file_path=None):
                 search = params['search'][0]
                 if not isinstance(search, str):
                     search = None
+            # Percent
+            if 'percent' in params:
+                percent = params['percent'][0]
+                if not isinstance(percent, int):
+                    percent = None
+            # Invert
+            if 'invert' in params:
+                invert = params['invert'][0]
+                if not isinstance(invert, int):
+                    invert = None
         except Exception as err:
             print(err)
 

@@ -66,6 +66,7 @@ class AdminJobs:
         if job_type == 'failed':
             sql = """\
                 SELECT 
+                    fsj.id,
                     sj.job_id,
                     sj.job_name,
                     sj.parameters,
@@ -82,6 +83,7 @@ class AdminJobs:
         elif job_type == 'ok':
             sql = """\
                 SELECT 
+                    ssj.id,
                     sj.job_id,
                     sj.job_name,
                     sj.parameters,
@@ -106,16 +108,17 @@ class AdminJobs:
         if len(rows) > 0:
             for row in rows:
                 result.append({
-                    'job_id': row[0],
-                    'job_name': row[1],
-                    'parameters': row[2],
-                    'creation': row[3],
-                    'interval': row[4],
-                    'time_unit': row[5],
-                    'log': row[6],
-                    'output': row[7],
-                    'datetime': row[8],
-                    'next_execution': row[9]
+                    'exec_id': row[0],
+                    'job_id': row[1],
+                    'job_name': row[2],
+                    'parameters': row[3],
+                    'creation': row[4],
+                    'interval': row[5],
+                    'time_unit': row[6],
+                    'log': row[7],
+                    'output': row[8],
+                    'datetime': row[9],
+                    'next_execution': row[10]
                 })
         return result
 
@@ -182,6 +185,7 @@ class AdminJobs:
         if len(rows) > 0:
             for row in rows:
                 result['last_executions'].append({
+                    'exec_id': row[0],
                     'state': 'ok',
                     'log': row[1],
                     'output': row[2],
@@ -196,7 +200,8 @@ class AdminJobs:
             if len(rows) > 0:
                 for row in rows:
                     result['last_executions'].append({
-                        'state': 'ok',
+                        'exec_id': row[0],
+                        'state': 'failed',
                         'log': row[1],
                         'output': row[2],
                         'datetime': row[3]
@@ -229,6 +234,8 @@ class AdminJobs:
         return results
 
     def _job_response(self, job_id, job_type, limit):
+        """General job info
+        """
         pendings_jobs = []
         ready_jobs = []
         failed_jobs = []

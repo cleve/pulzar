@@ -54,10 +54,12 @@ user=None
 psw=None
 ```
 
-### Start system
+### Start system DEV
 
 If you are in Ubuntu, remove the default **uwsgi** package installed, and use 
 **pip** to get the proper one.
+
+Make sure to run in DEBUG mode. Under utils/constants.py
 
 ```sh
 cd app
@@ -106,6 +108,13 @@ curl -X DELETE -L http://master:[port]/delete_key/{key}
 Sometimes you would like to add your own code, like some analysis over the data
 or even a totally new kind of process. This feature is intended to execute process 
 during the request operation.
+
+By default the next libaries are ready to go:
+
+- pyodbc
+- pytesseract
+- Pillow
+- psycopg2
 
 In order to do this, you can add a module into the
 ***app/extensions/*** directory. There is only one mandatory function to be added:
@@ -180,8 +189,11 @@ master:[port]/extension/search/[key]?lt=[date]&gt=[date]
 You can launch jobs using the nodes. Similarly to third party, there is a directory 
 used to store the scripts.
 
+The job directory can be changed into the configuration file. By default 
+the system is set to the **jobs** directory. 
+
 ```
-app/jobs/[custom_directory]/[your_script].py
+app/launch_job/[custom_directory]/[your_script].py
 ```
 
 The API 
@@ -242,6 +254,24 @@ Launch a job every day
 
 ## System information
 
+All the API responses are formed as:
+
+```json
+{
+    "data": {
+        "my_data_0": 0,
+        "my_data_1": 1,
+        "my_data_2": "2",
+        "my_data_n": [1,2]
+    },
+    "msg": "",
+    "status": "ok",
+}
+```
+
+Where the **data** key, can contain any JSON.
+
+
 ### Get master status
 
 ```sh
@@ -252,7 +282,7 @@ curl -X GET -L http://master:[port]/admin/status
 The response is a binding from LMDB info.
 
 ```json
-{
+data: {
     "psize": 4096,
     "depth": 2,
     "branch_pages": 1,
@@ -272,7 +302,7 @@ curl -X GET -L http://master:[port]/admin/network
 A JSON list will be sent, of type:
 
 ```json
-[
+data: [
     {
         "node": "node_name",
         "percent": 13,
@@ -291,7 +321,7 @@ curl -X GET -L http://master:[port]/admin/network/{node_id}
 A JSON will be sent, of type:
 
 ```json
-{
+data: {
     "node": "node_name",
     "percent": 13,
     "synch": true
@@ -308,7 +338,7 @@ curl -X GET -L http://master:[port]/admin/jobs
 A JSON will be sent, of type:
 
 ```json
-{
+data: {
     "pendings": [
         {
             "job_id": 21,

@@ -46,6 +46,9 @@ port=31415
 [general]
 retention_policy=90
 
+[jobs]
+dir=jobs
+
 [backup]
 active=False
 type=None

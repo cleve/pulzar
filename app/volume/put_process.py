@@ -14,6 +14,13 @@ class PutProcess:
         self.file_utils = FileUtils(self.const)
         self.messenger = Messenger()
 
+    def build_node_response(self, env, root_path, base_name):
+        """Build response on where the data was loaded
+        """
+        url = env[self.const.HTTP_HOST]
+        base_url_path = '/get_key'
+        return 'http://' + url + base_url_path + root_path + '/' + base_name
+
     def notify_record_to_master(self, env):
         """Report the register creation.
         """
@@ -48,7 +55,7 @@ class PutProcess:
                 self.file_utils.key.encode(),
                 b'1'
             )
-        except Exception as err:
+        except BaseException as err:
             print('notify_record_to_master', err)
             self.messenger.code_type = self.const.PULZAR_ERROR
             self.messenger.set_message = str(err)
@@ -57,6 +64,8 @@ class PutProcess:
         return True
 
     def process_request(self, env, start_response, url_path):
+        """Entry point to the PUT method
+        """
         regex_result = self.utils.get_search_regex(
             url_path, self.const.RE_PUT_VALUE)
         if regex_result:
@@ -67,6 +76,10 @@ class PutProcess:
 
                 base64_str = self.utils.encode_base_64(
                     root_path + '/' + base_name, True)
+
+                # Url to get the data
+                data_url = self.build_node_response(
+                    env, root_path, base_name)
                 # Trying to create the key-value
                 key_to_binary = self.utils.encode_str_to_byte(base64_str)
                 self.file_utils.set_key(key_to_binary, base64_str)
@@ -75,10 +88,11 @@ class PutProcess:
                 # Try to reach to master.
                 if self.notify_record_to_master(env):
                     self.messenger.code_type = self.const.KEY_ADDED
+                    self.messenger.set_response({'url': data_url})
                     self.messenger.http_code = '201 CREATED'
                     self.messenger.set_message = 'key added'
 
-            except Exception as err:
+            except BaseException as err:
                 self.messenger.code_type = self.const.USER_ERROR
                 self.messenger.set_message = str(err)
                 self.messenger.mark_as_failed()

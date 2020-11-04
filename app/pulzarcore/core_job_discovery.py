@@ -51,11 +51,14 @@ class JobDiscovery:
         no_extension = os.path.splitext(url_path)[0]
         relative_path = os.path.join(self.job_directory, no_extension)
         to_module_notation = relative_path.replace('/', '.')
-        import_fly = importlib.import_module(to_module_notation)
-        dictionary = self._parse_doc(import_fly.execute.__doc__)
+        try:
+            import_fly = importlib.import_module(to_module_notation)
+            dictionary = self._parse_doc(import_fly.execute.__doc__)
 
-        # Storing results
-        self._create_or_update_catalog(no_extension, dictionary)
+            # Storing results
+            self._create_or_update_catalog(no_extension, dictionary)
+        except BaseException as err:
+            print('_get_entrance_point', err)
 
     def _parse_doc(self, raw_text):
         config = {

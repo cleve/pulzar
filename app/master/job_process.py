@@ -29,15 +29,27 @@ class JobProcess:
             # Main table
             table, id_table = ('job', 'id') if not job_params['scheduled'] else (
                 'schedule_job', 'job_id')
-            sql = 'UPDATE {} SET state = {} WHERE {} = {}'.format(
-                table, job_params['state'], id_table, job_params['job_id'])
-            update_rows_affected = self.data_base.execute_sql(sql)
+            if table == 'job':
+                current_datetime_utc = self.utils.get_current_datetime_utc(
+                    to_string=True, db_format=True)
+                sql = 'UPDATE {} SET state = {}, creation_time = ? WHERE {} = {}'.format(
+                    table, job_params['state'], id_table, job_params['job_id'])
+                update_rows_affected = self.data_base.execute_sql_update(
+                    sql, (current_datetime_utc,))
+            else:
+                sql = 'UPDATE {} SET state = {} WHERE {} = {}'.format(
+                    table, job_params['state'], id_table, job_params['job_id'])
+                update_rows_affected = self.data_base.execute_sql(sql)
+
             if update_rows_affected == 0:
                 self.messenger.code_type = self.const.JOB_ERROR
                 self.messenger.mark_as_failed()
                 return self.messenger
             # Store log and time
             state = job_params['state']
+            # Datetime in UTC
+            current_datetime_utc = self.utils.get_current_datetime_utc(
+                to_string=True, db_format=True)
             if int(state) == 1:
                 table = 'successful_job'
                 if job_params['scheduled']:
@@ -46,13 +58,14 @@ class JobProcess:
                 table = 'failed_job'
                 if job_params['scheduled']:
                     table = 'failed_schedule_job'
-            sql = 'INSERT INTO {} (job_id, log, time, output) VALUES (?, ?, ?, ?)'.format(
+            sql = 'INSERT INTO {} (job_id, log, time, output, date_time) VALUES (?, ?, ?, ?, ?)'.format(
                 table)
             insert_rows_affected = self.data_base.execute_sql_insert(
                 sql, (job_params['job_id'],
                       job_params['log'],
                       job_params['time'],
-                      job_params['output']
+                      job_params['output'],
+                      current_datetime_utc
                       )
             )
             if insert_rows_affected > 0:

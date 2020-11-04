@@ -84,11 +84,16 @@ class Job:
         parameters = self.utils.py_to_json(self.job_params['parameters'])
         # Master job database
         data_base = RDB(path_db_jobs)
-        sql = 'INSERT INTO job (job_name, job_path, parameters, node, state) values (?, ?, ?, ?, ?)'
+        sql = 'INSERT INTO job (job_name, job_path, parameters, creation_time, node, state) values (?, ?, ?, ?, ?, ?)'
         self.job_id = data_base.execute_sql_insert(
-            sql,
-            (
-                job_name, job_path, parameters, node, 0
+            sql, (
+                job_name,
+                job_path,
+                parameters,
+                self.utils.get_current_datetime_utc(
+                    to_string=True, db_format=True),
+                node,
+                0
             )
         )
 
@@ -121,7 +126,6 @@ class Job:
         if 'scheduled' in self.job_params['parameters']:
             return self.register_scheduled_job(const.DB_JOBS)
         node = self.select_node(const)
-
         print('node', node)
         if node is None:
             return False

@@ -115,6 +115,7 @@ during the request operation.
 By default the next libaries are ready to go:
 
 - pyodbc
+- opencv
 - pytesseract
 - Pillow
 - psycopg2
@@ -185,6 +186,54 @@ master:[port]/extension/search/[key]?eq=[date]
 
 # Search a key lower and greater than
 master:[port]/extension/search/[key]?lt=[date]&gt=[date]
+```
+
+#### OCR extension
+
+Text detection and search feature
+
+```sh
+# Get text
+master:[port]/extension/ocr/[image_name]
+curl -X PUT -L -T /path/to/file http://master:[port]/extension/ocr/[image_name]
+
+# Search text into the image
+master:[port]/extension/ocr/[image_name]?search=text&invert=[0|1]
+curl -X PUT -L -T /path/to/file http://master:[port]/extension/ocr/[image_name]?search=text&invert=[0|1]
+```
+
+#### Image Match extension
+
+Search a sub-image into a base image
+
+```sh
+# Search a sub-image
+master:[port]/extension/image/[matching.png]?image_url=[URI]
+curl -X PUT -L -T /path/to/file http://master:[port]/extension/image/[matching.png]?image_url=[URI]
+
+# Search a sub-image with percent
+master:[port]/extension/image/[matching.png]?image_url=[URI]&percent=90
+curl -X PUT -L -T /path/to/file http://master:[port]/extension/image/[matching.png]?image_url=[URI]&percent=90
+```
+
+Response
+
+```json
+{
+    "data": {
+        "found": true,
+        "percent_of_match": 0.9,
+        "coordinates": {
+            "x": 242,
+            "y": 32,
+            "w": 800,
+            "h": 409
+        },
+        "msg": null
+    },
+    "status": "ok",
+    "msg": ""
+}
 ```
 
 ## Jobs

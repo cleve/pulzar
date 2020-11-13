@@ -15,6 +15,7 @@ from timeit import default_timer as timer
 from urllib.parse import urlsplit
 from urllib.parse import parse_qs
 import psutil
+import requests
 
 # Internal
 from pulzarutils.constants import Constants
@@ -282,3 +283,18 @@ class Utils:
             data['host'] = split_data[0]
             data['port'] = split_data[1]
         return data
+
+    @staticmethod
+    def download_file(url):
+        '''Download file from http
+        '''
+        try:
+            temporary_file = tempfile.NamedTemporaryFile(delete=False)
+            # Open in binary mode
+            with open(temporary_file.name, 'wb') as file:
+                response = requests.get(url, stream=True)
+                file.write(response.content)
+            return temporary_file
+        except Exception as err:
+            print(err)
+            return None

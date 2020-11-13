@@ -1,6 +1,3 @@
-import json
-import base64
-import re
 try:
     from PIL import Image
     from PIL import ImageOps

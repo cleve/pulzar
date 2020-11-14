@@ -19,7 +19,8 @@ class ExtensionProcess:
 
     def read_in_chunks(self, file_object, chunk_size=1024):
         """Lazy function (generator) to read a file piece by piece.
-        Default chunk size: 1k."""
+        Default chunk size: 1k.
+        """
         while True:
             data = file_object.read(chunk_size)
             if not data:
@@ -27,6 +28,11 @@ class ExtensionProcess:
             yield data
 
     def read_binary_file(self, env, url_path):
+        """Read binary file into env and rename it as 
+        url_path
+
+        return: path_string
+        """
         try:
             request_body_size = int(env[self.const.CONTENT_LENGTH])
         except (ValueError):

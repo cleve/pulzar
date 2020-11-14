@@ -208,12 +208,12 @@ Search a sub-image into a base image
 
 ```sh
 # Search a sub-image
-master:[port]/extension/image/[matching.png]?image_url=[URI]
-curl -X PUT -L -T /path/to/file http://master:[port]/extension/image/[matching.png]?image_url=[URI]
+master:[port]/extension/image/[image_name.extension]?image_url=[URI]
+curl -X PUT -L -T /path/to/file http://master:[port]/extension/image/matching.png?image_url=[URI]
 
 # Search a sub-image with percent
-master:[port]/extension/image/[matching.png]?image_url=[URI]&percent=90
-curl -X PUT -L -T /path/to/file http://master:[port]/extension/image/[matching.png]?image_url=[URI]&percent=90
+master:[port]/extension/image/[image_name.extension]?image_url=[URI]&percent=90
+curl -X PUT -L -T /path/to/file http://master:[port]/extension/image/matching.png?image_url=[URI]&percent=90
 ```
 
 Response

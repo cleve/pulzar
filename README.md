@@ -92,6 +92,39 @@ curl -X PUT -L -T /path/to/file http://master:[port]/add_key/{key}?temporal={int
 
 Where the int value indicates the amount of days than the file will be available.
 
+For large files, you can use an efficient way:
+
+1. Request the node URL for your key
+2. Use the URL in 1 for upload the file
+
+Example:
+
+```sh
+# Request the url
+master:[port]/get_node/{key}
+curl -X GET -L http://master:[port]/get_node/my_key.txt
+```
+
+Response:
+
+```json
+{
+    "data": 
+        {
+            "node": "http://node:port/add_key/my_key.txt?url=master:port"
+        },
+    "status": "ok",
+    "msg": "ok"
+}
+```
+
+Use the node URL to storage the file
+
+```sh
+# Upload the file
+curl -X PUT -T /path/to/file/my_key.txt -L http://master:[port]/get_node/my_key.txt
+```
+
 ### Read key value
 ```sh
 master:[port]/get_key/{key}

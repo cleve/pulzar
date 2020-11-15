@@ -118,7 +118,7 @@ Response:
 }
 ```
 
-Use the node URL to storage the file
+Use the **node** URL to storage the file
 
 ```sh
 # Upload the file

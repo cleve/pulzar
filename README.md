@@ -235,6 +235,18 @@ master:[port]/extension/ocr/[image_name]?search=text&invert=[0|1]
 curl -X PUT -L -T /path/to/file http://master:[port]/extension/ocr/[image_name]?search=text&invert=[0|1]
 ```
 
+Response
+
+```json
+{
+    "data": {
+        "text": "ubuntu\n\f"
+    },
+    "status": "ok",
+    "msg": ""
+}
+```
+
 #### Image Match extension
 
 Search a sub-image into a base image

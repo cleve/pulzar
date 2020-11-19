@@ -286,9 +286,11 @@ class AdminJobs:
             self.messenger.code_type = self.const.KEY_NOT_FOUND
             self.messenger.set_message = 'job id not found'
             return None
-        if rows[0][0] == 1:
+        # 0 => pending
+        int_state = rows[0][0]
+        if int_state == 1:
             table = 'successful_job'
-        elif rows[0][0] == 2:
+        elif int_state == 2:
             table = 'failed_job'
         sql = 'SELECT log, time, output FROM {} WHERE job_id = {}'.format(
             table, job_id)
@@ -296,5 +298,6 @@ class AdminJobs:
         return {
             'job': job_id,
             'log': job_details[0][0],
-            'time': job_details[0][1]
+            'time': job_details[0][1],
+            'status': 'pending' if int_state == 0 else 'finished'
         }

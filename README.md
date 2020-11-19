@@ -118,6 +118,28 @@ Response:
 }
 ```
 
+### Snippets ###
+
+#### c# ####
+```csharp
+// Upload the file
+using (WebClient wc = new WebClient())
+    {
+        try
+        {
+            wc.Headers.Add("Content-Type", "application/octet-stream");
+            wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:29.0) Gecko/20100101 Firefox/29.0");
+            byte[] result = wc.UploadFile(apiUrl, "PUT", filePath);
+            // Get string response, you should serialize it.
+            string strResult = Encoding.UTF8.GetString(result);
+        }
+        catch (Exception ex)
+        {
+            // Handle ex.
+        }
+    }
+```
+
 Use the **node** URL to storage the file
 
 ```sh

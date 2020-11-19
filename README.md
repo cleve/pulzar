@@ -118,9 +118,9 @@ Response:
 }
 ```
 
-### Snippets ###
+#### Snippets ####
 
-#### c# ####
+##### c# #####
 ```csharp
 // Upload the file
 using (WebClient wc = new WebClient())

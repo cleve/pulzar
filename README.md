@@ -118,6 +118,13 @@ Response:
 }
 ```
 
+Use the **node** URL to storage the file
+
+```sh
+# Upload the file
+curl -X PUT -T /path/to/file/my_key.txt -L http://master:[port]/get_node/my_key.txt
+```
+
 #### Snippets ####
 
 ##### c# #####
@@ -138,13 +145,6 @@ using (WebClient wc = new WebClient())
             // Handle ex.
         }
     }
-```
-
-Use the **node** URL to storage the file
-
-```sh
-# Upload the file
-curl -X PUT -T /path/to/file/my_key.txt -L http://master:[port]/get_node/my_key.txt
 ```
 
 ### Read key value

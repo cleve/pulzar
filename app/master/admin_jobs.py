@@ -288,6 +288,13 @@ class AdminJobs:
             return None
         # 0 => pending
         int_state = rows[0][0]
+        if int_state == 0:
+            return {
+                'job': job_id,
+                'log': 'na',
+                'time': 'na',
+                'status': 'pending'
+            }
         if int_state == 1:
             table = 'successful_job'
         elif int_state == 2:
@@ -299,5 +306,5 @@ class AdminJobs:
             'job': job_id,
             'log': job_details[0][0],
             'time': job_details[0][1],
-            'status': 'pending' if int_state == 0 else 'finished'
+            'status': 'completed' if int_state == 1 else 'finished'
         }

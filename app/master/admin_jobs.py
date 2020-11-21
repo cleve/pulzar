@@ -20,14 +20,14 @@ class AdminJobs:
             try:
                 self.messenger.code_type = self.const.JOB_DETAILS
                 # Type of request
-                request_type, _, _, job_type, _, _, request_id, _, limit = regex_result.groups()
+                request_type, _, _, job_type, _, _, request_id, _, limit, _, filter_w = regex_result.groups()
                 # Filter request
                 if request_type == 'scheduled_jobs':
                     self.messenger.set_response(
                         self._scheduled_job_response(request_id, job_type, limit))
                 elif request_type == 'jobs':
                     self.messenger.set_response(
-                        self._job_response(request_id, job_type, limit))
+                        self._job_response(request_id, job_type, filter_w, limit))
                 elif request_type == 'all_jobs':
                     self.messenger.set_response(
                         self._all_job_response(request_id, limit))
@@ -233,7 +233,7 @@ class AdminJobs:
             })
         return results
 
-    def _job_response(self, job_id, job_type, limit):
+    def _job_response(self, job_id, job_type, filter_w, limit):
         """General job info
         """
         pendings_jobs = []
@@ -280,6 +280,18 @@ class AdminJobs:
                 'failed': failed_jobs
             }
 
+        # Filtering response only for job table.
+        if filter_w is not None:
+            sql = 'SELECT {} FROM job where id = {}'.format(filter_w, job_id)
+            row = data_base.execute_sql_with_results(sql)
+            if len(row) == 0:
+                result = 'na'
+            else:
+                result = row[0][0]
+            return {
+                'job': job_id,
+                filter_w: result
+            }
         sql = 'SELECT state FROM job WHERE id = {}'.format(job_id)
         rows = data_base.execute_sql_with_results(sql)
         if len(rows) == 0:

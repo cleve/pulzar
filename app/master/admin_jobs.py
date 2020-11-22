@@ -282,15 +282,23 @@ class AdminJobs:
 
         # Filtering response only for job table.
         if filter_w is not None:
+            filter_response = None
             sql = 'SELECT {} FROM job where id = {}'.format(filter_w, job_id)
             row = data_base.execute_sql_with_results(sql)
             if len(row) == 0:
                 result = 'na'
             else:
                 result = row[0][0]
+                if result == 0:
+                    filter_response = 'pending'
+                elif result == 1:
+                    filter_response = 'completed'
+                elif result == 2:
+                    filter_response = 'failed'
+
             return {
                 'job': job_id,
-                filter_w: result
+                'status': filter_response
             }
         sql = 'SELECT state FROM job WHERE id = {}'.format(job_id)
         rows = data_base.execute_sql_with_results(sql)
@@ -318,5 +326,5 @@ class AdminJobs:
             'job': job_id,
             'log': job_details[0][0],
             'time': job_details[0][1],
-            'status': 'completed' if int_state == 1 else 'finished'
+            'status': 'completed' if int_state == 1 else 'failed'
         }

@@ -27,15 +27,17 @@ class Example(CoreJobs):
         print('Parameters', self.pulzar_parameters)
         # Generating temporary file
         temporary_file = tempfile.NamedTemporaryFile(delete=False)
-        print('opening file')
+        total_lines = 20
+        self.pulzar_add_log('opening file')
         with open(temporary_file.name, 'w') as f:
             line = 0
             while line < total_lines:
                 f.write(str(random.randint(0, 1000)) + '\n')
                 line += 1
-        print('saving file', temporary_file.name)
+        self.pulzar_add_log('saving file', temporary_file.name)
         if self._pulzar_store_file(temporary_file.name):
-            self.pulzar_set_output('Job done')
+            self.pulzar_set_output(
+                'Job done with {} lines created'.format(total_lines))
 
 
 def execute(arguments):

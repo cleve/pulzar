@@ -17,7 +17,6 @@ class Example(CoreJobs):
         print('Parameters: ', self.pulzar_parameters)
         query = self.database.execute_query('SELECT * FROM DB')
         self.pulzar_add_log(query)
-        self.pulzar_set_output('Result is: ' + query)
 
 
 def execute(arguments):

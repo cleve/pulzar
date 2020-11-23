@@ -6,8 +6,8 @@ from timeit import default_timer as timer
 
 TEST_CASES = 100
 THREAD = 1
-MASTER_URL = 'http://mauricio-ksrd:9000/'
-VOLUME_URL = 'http://mauricio-ksrd:9001/'
+MASTER_URL = 'http://mauricio-ksrd:31414/'
+VOLUME_URL = 'http://mauricio-ksrd:31415/'
 
 keys = []
 

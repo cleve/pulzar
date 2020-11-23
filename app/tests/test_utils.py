@@ -1,5 +1,6 @@
 import unittest
-from utils.utils import Utils
+import math
+from pulzarutils.utils import Utils
 
 
 class TestUtilsMethods(unittest.TestCase):
@@ -8,6 +9,12 @@ class TestUtilsMethods(unittest.TestCase):
 
     def setUp(self):
         self.utils = Utils()
+
+    def test_bytesto(self):
+        self.assertAlmostEqual(
+            1,
+            math.ceil(self.utils.bytesto(1000000, 'm'))
+        )
 
     def test_encode_base64(self):
         self.assertEqual(self.utils.encode_base_64(

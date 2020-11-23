@@ -284,6 +284,13 @@ class Utils:
             data['port'] = split_data[1]
         return data
 
+    def bytesto(self, bytes, to, bsize=1024):
+        '''Convert units
+        '''
+        a = {'k': 1, 'm': 2, 'g': 3, 't': 4, 'p': 5, 'e': 6}
+        r = float(bytes)
+        return bytes / (bsize ** a[to])
+
     @staticmethod
     def download_file(url):
         '''Download file from http

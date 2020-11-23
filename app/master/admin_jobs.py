@@ -326,5 +326,6 @@ class AdminJobs:
             'job': job_id,
             'log': job_details[0][0],
             'time': job_details[0][1],
-            'status': 'completed' if int_state == 1 else 'failed'
+            'status': 'completed' if int_state == 1 else 'failed',
+            'output': job_details[0][2]
         }

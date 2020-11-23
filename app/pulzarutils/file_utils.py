@@ -12,6 +12,8 @@ class FileUtils():
         self.key = ''
         self.base_dir = None
         self.volume_path = ''
+        # Max size allowed to store
+        self.max_size = 1000
         self.init_config()
 
     def init_config(self):
@@ -22,6 +24,7 @@ class FileUtils():
             )
         else:
             directory = self.config.get_config('volume', 'dir')
+        self.max_size = int(self.config.get_config('general', 'maxsize'))
         self.volume_path = directory
 
     def set_key(self, binary_key, base64_str_key):
@@ -110,6 +113,11 @@ class FileUtils():
         except (ValueError):
             request_body_size = 0
         if request_body_size > 0:
+            # Checking max size
+            to_mb = self.utils.bytesto(request_body_size, 'm')
+            if to_mb > self.max_size:
+                raise Exception(
+                    'max size allowed is {}MB'.format(self.max_size))
             destiny_path = self.volume_path + '/' + self.key
             temp_file = self.utils.get_tmp_file()
             # Read binary file sent.

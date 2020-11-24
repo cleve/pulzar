@@ -16,9 +16,19 @@ class PutProcess:
         self.db_volumes = DB(self.const.DB_VOLUME)
         self.messenger = Messenger()
 
-    def pick_a_volume(self):
-        # Selecting port
+    def pick_a_volume(self, env):
         config = Config(self.const.CONF_PATH)
+        # First checking the size allowed.
+        try:
+            request_body_size = int(env[self.const.CONTENT_LENGTH])
+        except (ValueError):
+            request_body_size = 0
+        max_size = int(config.get_config('general', 'maxsize'))
+        to_mb = self.utils.bytesto(request_body_size, 'm')
+        if to_mb > max_size:
+            raise Exception(
+                'max size allowed is {}MB'.format(max_size))
+        # Selecting port
         volume_port = config.get_config('volume', 'port')
         volumes = self.db_volumes.get_keys_values()
         current_datetime = self.utils.get_current_datetime()
@@ -58,7 +68,7 @@ class PutProcess:
                 value = self.db_values.get_value(key_to_binary)
                 # If not, we will try to create the entry process.
                 if value is None:
-                    volume = self.pick_a_volume()
+                    volume = self.pick_a_volume(env)
                     if volume is None:
                         self.messenger.code_type = self.const.PULZAR_ERROR
                         self.messenger.mark_as_failed()

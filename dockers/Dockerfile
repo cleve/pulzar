@@ -3,7 +3,6 @@ FROM ubuntu:20.04
 LABEL maintainer="mcleveland@comscore.com"
 LABEL build_date="2020-11-13"
 
-EXPOSE 31415
 ENV DEBIAN_FRONTEND=nonintercative
 ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 RUN apt update && apt -y upgrade && \

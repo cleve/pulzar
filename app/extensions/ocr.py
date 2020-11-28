@@ -5,11 +5,12 @@ except ImportError:
     import Image
 import pytesseract
 
-# Public library from Vari
+from pulzarutils.extension import Extension
+# Public library
 from pulzarutils.public import Public
 
 
-class Ocr:
+class Ocr(Extension):
     """OCR third party app:
         This class allow us to get and search by text
 

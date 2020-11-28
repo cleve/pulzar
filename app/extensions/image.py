@@ -1,8 +1,9 @@
 import cv2
 from pulzarutils.utils import Utils
+from pulzarutils.extension import Extension
 
 
-class ImageUtils:
+class ImageUtils(Extension):
     def __init__(self, arg1, filename_template, file_name_source, percent=80):
         self.arg1 = arg1
         self.method = cv2.TM_CCOEFF_NORMED

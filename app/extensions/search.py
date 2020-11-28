@@ -2,12 +2,13 @@ import json
 import base64
 import re
 import datetime
+from pulzarutils.extension import Extension
 
-# Public library from Vari
+# Public library
 from pulzarutils.public import Public
 
 
-class Search:
+class Search(Extension):
     """Search third party app:
         This class allow us to search by
 

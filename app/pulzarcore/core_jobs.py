@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from pulzarutils.utils import Utils
 from pulzarutils.utils import Constants
 from pulzarutils.file_utils import FileUtils
@@ -39,6 +40,12 @@ class CoreJobs:
         # log
         self._pulzar_register_parameters()
         self._pulzar_get_data()
+
+    @abstractmethod
+    def execute(self, params, file_path=None):
+        '''Entrance for extensios
+        '''
+        return
 
     def pulzar_set_output(self, output_str):
         """Write output

@@ -642,6 +642,8 @@ After, install **uwsgi** with pip3
 
 # Test docker in local
 
+You can try with the public repo on dockerhub:
+
 ```sh
 # Run UI
 docker run -it --name pulzar-ui -d --rm -p 80:80 mauriciocleveland/pulzar-ui:1.0.1

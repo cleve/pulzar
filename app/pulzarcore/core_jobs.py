@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from abc import ABCMeta
 from pulzarutils.utils import Utils
 from pulzarutils.utils import Constants
 from pulzarutils.file_utils import FileUtils
@@ -9,7 +10,7 @@ from pulzarcore.core_request import CoreRequest
 from pulzarutils.node_utils import NodeUtils
 
 
-class CoreJobs:
+class CoreJobs(metaclass=ABCMeta):
     """Base class for job implementation
     """
 

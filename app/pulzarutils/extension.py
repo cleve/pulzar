@@ -1,7 +1,8 @@
 from abc import abstractmethod
+from abc import ABCMeta
 
 
-class Extension:
+class Extension(metaclass=ABCMeta):
     '''Base class to implement extensions
     '''
 

@@ -13,6 +13,7 @@ class LaunchJobs:
     """
 
     def __init__(self):
+        self.TAG = self.__class__.__name__
         self.const = Constants()
         self.utils = Utils()
         self.data_base = RDB(self.const.DB_NODE_JOBS)
@@ -114,17 +115,21 @@ class LaunchJobs:
                       'located in ', complete_path)
                 custom_module = os.path.splitext(complete_path)[
                     0].replace('/', '.')
+                class_name = custom_module.split('.')[-1].capitalize()
                 job['job_args']['job_id'] = job['job_id']
                 job['job_args']['_pulzar_config'] = {
                     'scheduled': job['scheduled']
                 }
+                # Import module and method execute.
                 import_fly = importlib.import_module(custom_module)
-                status = import_fly.execute(job['job_args'])
+                job_class = getattr(import_fly, class_name)
+                job_object = job_class(job['job_args'])
+                status = job_object.execute()
                 # Report to master
                 if self.mark_job(job['job_id'], status, job['scheduled']):
                     self.notify_to_master(job['job_id'], job['scheduled'])
             except Exception as err:
-                print('Error executing the job: ', err)
+                print(self.TAG + '::Error executing the job: ', err)
 
     def search_jobs(self):
         """Search job scheduled

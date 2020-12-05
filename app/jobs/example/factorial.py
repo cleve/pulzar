@@ -43,14 +43,12 @@ class Factorial(CoreJobs):
             self.factorial_while(number)
         ))
 
-
-def execute(arguments):
-    """
-    Description: Factorial number using recursion and while
-    Arguments: {"number": "str"}
-    Category: Examples
-    Author: Mauricio Cleveland
-    """
-    example = Factorial(arguments)
-    example.run_my_code()
-    return example.is_the_job_ok()
+    def execute(self):
+        '''
+        Description: Factorial number using recursion and while
+        Arguments: {"number": "str"}
+        Category: Examples
+        Author: Mauricio Cleveland
+        '''
+        self.run_my_code()
+        return self.is_the_job_ok()

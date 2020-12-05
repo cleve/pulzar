@@ -71,14 +71,12 @@ class Fibonacci(CoreJobs):
             self.fib_for(number)
         ))
 
-
-def execute(arguments):
-    """
-    Description: Fibonacci number using recursion and while
-    Arguments: {"number": "int"}
-    Category: Examples
-    Author: Mauricio Cleveland
-    """
-    example = Fibonacci(arguments)
-    example.run_my_code()
-    return example.is_the_job_ok()
+    def execute(self.arguments):
+        '''
+        Description: Fibonacci number using recursion and while
+        Arguments: {"number": "int"}
+        Category: Examples
+        Author: Mauricio Cleveland
+        '''
+        self.run_my_code()
+        return self.is_the_job_ok()

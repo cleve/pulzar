@@ -5,7 +5,7 @@ from pulzarutils.public import Public
 from pulzarcore.core_jobs import CoreJobs
 
 
-class CleanFiles(CoreJobs):
+class Cleanfiles(CoreJobs):
     """Clean files
 
     Delete key values
@@ -37,14 +37,12 @@ class CleanFiles(CoreJobs):
         """
         return not self._failed_job
 
-
-def execute(arguments):
-    """
-    Description: Delete files uploaded using the API
-    Arguments: No args
-    Category: Examples
-    Author: Mauricio Cleveland
-    """
-    cleaner = CleanFiles(arguments)
-    cleaner.run_my_code()
-    return cleaner.is_the_job_ok()
+    def execute(arguments):
+        '''
+        Description: Delete files uploaded using the API
+        Arguments: No args
+        Category: Examples
+        Author: Mauricio Cleveland
+        '''
+        self.run_my_code()
+        return cleaner.is_the_job_ok()

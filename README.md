@@ -369,6 +369,14 @@ Launch a job every 5 minutes
 
 Launch a job every day
 
+
+#### Cancel jobs
+
+```sh
+# POST
+master:[port]/cancel_job/job_id
+```
+
 # Maintenance
 
 ## System information

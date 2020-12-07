@@ -2,17 +2,17 @@ from pulzarutils.extension import Extension
 
 
 class Example(Extension):
-    def __init__(self, arg1):
-        self.arg1 = arg1
+    def __init__(self, arguments, params, file_path=None):
+        self.args = arguments
+        self.params = params
 
     def hello(self):
-        print('Hello example with arg ', self.arg1)
+        if len(self.args) > 0:
+            print('Hello example with arg ', self.args)
 
     def method_return(self):
-        return {'my_arg': self.arg1}
+        return {'my_arg': self.args, 'my_params': self.params}
 
-
-def execute(arguments, params):
-    example = Example(arguments[0])
-    example.hello()
-    return example.method_return()
+    def execute(self):
+        self.hello()
+        return self.method_return()

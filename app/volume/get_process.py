@@ -27,6 +27,7 @@ class GetProcess:
                     self.utils.decode_byte_to_str(key_to_binary)
                 value = self.file_utils.is_value_present(full_path)
                 if not value:
+                    self.messenger.http_code = '404 not found'
                     self.messenger.code_type = self.const.KEY_NOT_FOUND
                     self.messenger.set_message = 'key not found'
                     self.messenger.mark_as_failed()

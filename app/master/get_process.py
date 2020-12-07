@@ -31,6 +31,7 @@ class GetProcess:
                 composed_value = self.db_values.get_value(
                     key_to_binary, to_str=True)
                 if composed_value is None:
+                    self.messenger.http_code = '404 not found'
                     self.messenger.code_type = self.const.KEY_NOT_FOUND
                     self.messenger.mark_as_failed()
                     self.messenger.set_message = 'Volume not found'

@@ -3,15 +3,16 @@ from pulzarutils.utils import Utils
 from pulzarutils.extension import Extension
 
 
-class ImageUtils(Extension):
-    def __init__(self, arg1, filename_template, file_name_source, percent=80):
-        self.arg1 = arg1
+class Imagematching(Extension):
+    def __init__(self, arguments, params, template_image=None):
+        self.args = arguments
+        self.params = params
         self.method = cv2.TM_CCOEFF_NORMED
         self.percent = 0.8
 
         # Images
-        self.file_path_template = filename_template
-        self.filename_source = file_name_source.name
+        self.file_path_template = template_image
+        self.filename_source = None
         # Response
         self.response = {
             'found': False,
@@ -20,6 +21,30 @@ class ImageUtils(Extension):
             'msg': None
         }
 
+    def set_up(self):
+        '''Setting extra parameters
+        '''
+        percent = None
+        # Check arguments
+        if self.file_path_template is None:
+            raise ValueError('image file empty')
+        # Check parameters
+        if self.params:
+            # Checking params
+            if 'percent' in self.params:
+                int_percent = int(self.params['percent'][0])
+                if int_percent >= 10 and int_percent <= 100:
+                    percent = int_percent
+            if 'image_url' in self.params:
+                # Download image
+                base_image = Utils.download_file(self.params['image_url'][0])
+                if base_image is not None:
+                    self.filename_source = base_image.name
+                else:
+                    raise Exception(
+                        'Imagematching::Could not download the image, verify the source URL')
+            else:
+                raise Exception("you must provide an url for the base image")
         # Set percent
         self.set_percent(percent)
 
@@ -66,30 +91,9 @@ class ImageUtils(Extension):
         """
         return self.response
 
-
-def execute(arguments, params, template_image=None):
-    """Entrance point
-    """
-    percent = None
-    # Check arguments
-    if template_image is None:
-        raise ValueError('image file empty')
-    if len(arguments) == 0:
-        raise Exception('no args detected')
-    # Check parameters
-    if params:
-        # Checking params
-        if 'percent' in params:
-            int_percent = int(params['percent'][0])
-            if int_percent >= 10 and int_percent <= 100:
-                percent = int_percent
-        if 'image_url' in params:
-            # Download image
-            base_image = Utils.download_file(params['image_url'][0])
-        else:
-            raise Exception("you must provide an url for the base image")
-
-    image_matching = ImageUtils(
-        arguments[0], template_image, base_image, percent)
-    image_matching.do_the_work()
-    return image_matching.get_response()
+    def execute(self):
+        """Entrance point
+        """
+        self.set_up()
+        self.do_the_work()
+        return self.get_response()

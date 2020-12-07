@@ -299,7 +299,9 @@ class Utils:
             temporary_file = tempfile.NamedTemporaryFile(delete=False)
             # Open in binary mode
             with open(temporary_file.name, 'wb') as file:
-                response = requests.get(url, stream=True)
+                response = requests.get(url, stream=True, timeout=20)
+                if response.status_code >= 400:
+                    raise Exception('The server response has errors')
                 file.write(response.content)
             return temporary_file
         except Exception as err:

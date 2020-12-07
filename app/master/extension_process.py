@@ -74,9 +74,14 @@ class ExtensionProcess:
                 modules = self.utils.read_file_name_from_dir(
                     'extensions/', 'py')
                 if file_name + '.py' in modules:
+                    # Import module and method execute.
                     import_fly = importlib.import_module(
                         'extensions.' + file_name)
-                    j_byte = import_fly.execute(args, query_params, file_path)
+                    extension_class = getattr(
+                        import_fly, file_name.capitalize())
+                    extension_object = extension_class(
+                        args, query_params, file_path)
+                    j_byte = extension_object.execute()
                     self.messenger.code_type = self.const.EXTENSION_RESPONSE
                     self.messenger.set_response(j_byte)
                 else:

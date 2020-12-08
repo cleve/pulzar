@@ -26,7 +26,7 @@ class Example(Extension):
         return {'my_arg': self.args, 'my_params': self.params}
 
     def execute(self):
-        '''Mandatory name
+        '''Mandatory method
         '''
         self.hello()
         return self.method_return()

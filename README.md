@@ -191,13 +191,44 @@ By default the next libaries are ready to go:
 - psycopg2
 
 In order to do this, you can add a module into the
-***app/extensions/*** directory. There is only one mandatory function to be added:
+***app/extensions/*** directory. The extension must have a class with the
+name of the file **capitalized**.
+
+If the extension is:
+
+```app/extensions/mysuperextension```
+
+The class has to be named **Mysuperextension**
+
+The template of the file:
 
 ```py
-def execute(arguments, params):
-    example = Example(arguments[0])
-    example.hello()
-    return []
+from pulzarutils.extension import Extension
+
+
+class Mysuperextension(Extension):
+    def __init__(self, arguments, params, file_path=None):
+        '''Receiving values
+            URL: http://master:[port]/extension/arg_1/arg_2/arg_n?param_1=1&param_2=2&param_n=n
+
+        arguments
+        ---------
+        arguments = ['arg_1', 'arg_2', 'arg_n']
+
+        parameters
+        ----------
+        params = {'param_1': [1], 'param_2': [2], 'param_n': [n]}
+        '''
+        pass
+
+    def execute(self):
+        '''Mandatory method
+
+        Return
+        ------
+        Python serializable: list or dictionary
+        '''
+        return []
 ```
 
 where the *arguments* parameter is a string list provided in the URL.
@@ -224,21 +255,38 @@ You can find an example in the **extensions** directory:
 
 ```py
 # File: example.py
-class Example:
-    def __init__(self, arg1):
-        self.arg1 = arg1
+from pulzarutils.extension import Extension
+
+
+class Example(Extension):
+    def __init__(self, arguments, params, file_path=None):
+        '''Receiving values
+            URL: http://master:[port]/extension/arg_1/arg_2/arg_n?param_1=1&param_2=2&param_n=n
+
+        arguments
+        ---------
+        arguments = ['arg_1', 'arg_2', 'arg_n']
+
+        parameters
+        ----------
+        params = {'param_1': [1], 'param_2': [2], 'param_n': [n]}
+        '''
+
+        self.args = arguments
+        self.params = params
 
     def hello(self):
-        print('Hello example with arg ', self.arg1)
+        if len(self.args) > 0:
+            print('Hello example with arg ', self.args)
 
     def method_return(self):
-        return {'my_arg': self.arg1}
+        return {'my_arg': self.args, 'my_params': self.params}
 
-
-def execute(arguments, params):
-    example = Example(arguments[0])
-    example.hello()
-    return example.method_return()
+    def execute(self):
+        '''Mandatory method
+        '''
+        self.hello()
+        return self.method_return()
 ```
 
 #### Search extension

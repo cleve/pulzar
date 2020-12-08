@@ -134,6 +134,7 @@ using (WebClient wc = new WebClient())
     {
         try
         {
+            string apiUrl = @"http://master:[port]/add_key/path/my_key.key"
             wc.Headers.Add("Content-Type", "application/octet-stream");
             wc.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:29.0) Gecko/20100101 Firefox/29.0");
             byte[] result = wc.UploadFile(apiUrl, "PUT", filePath);
@@ -145,6 +146,20 @@ using (WebClient wc = new WebClient())
             // Handle ex.
         }
     }
+```
+
+##### Python #####
+
+```python
+# Upload the file
+try:
+    req = requests.put(
+        url='http://master:[port]/add_key/path/my_key.key',
+        data=open('path/to/the/file.key', 'rb'),
+        headers={'Content-Type': 'application/octet-stream'}
+    )
+except Exception as err:
+    # Handle error
 ```
 
 ### Read key value

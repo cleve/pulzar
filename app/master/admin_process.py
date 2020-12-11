@@ -29,8 +29,6 @@ class AdminProcess:
                     nodes_info = []
                     nodes = self.db_volumes.get_keys_values(to_str=True)
                     current_datetime = self.utils.get_current_datetime()
-                    if len(nodes) == 0:
-                        self.messenger.set_message = 'No nodes online'
                     for node in nodes:
                         node_name = node[0]
                         raw_split_info = node[1].split(':')
@@ -45,7 +43,8 @@ class AdminProcess:
                                 'synch': True if delta_t.total_seconds() < 1200 else False
                             }
                         )
-
+                    if len(nodes_info) == 0:
+                        self.messenger.set_message = 'No nodes online'
                     self.messenger.set_response(nodes_info)
 
                 # Node status

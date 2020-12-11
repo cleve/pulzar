@@ -88,11 +88,15 @@ class DB:
             return [key for key, _ in txn.cursor()]
 
     def get_keys_values(self, to_str=False):
+        '''Using generator
+        '''
         with self.env.begin() as txn:
-            if to_str:
-                return [[key.decode(), val.decode()] for key, val in txn.cursor()]
-            return [[key, val] for key, val in txn.cursor()]
-
+            for key, val in txn.cursor():
+                if to_str:
+                    yield [key.decode(), val.decode()] 
+                else:
+                    yield [key, val]
+        
     def get_first_occ_with_value(self, value):
         with self.env.begin(write=False) as txn:
             for key, val in txn.cursor():

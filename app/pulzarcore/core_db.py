@@ -81,14 +81,22 @@ class DB:
 
     def get_values(self):
         with self.env.begin() as txn:
-            return [value for _, value in txn.cursor()]
+            return (value for _, value in txn.cursor())
 
     def get_keys(self):
         with self.env.begin() as txn:
-            return [key for key, _ in txn.cursor()]
+            return (key for key, _ in txn.cursor())
 
     def get_keys_values(self, to_str=False):
-        '''Using generator
+        '''Get pair get value
+
+        Params
+        ------
+        to_str(bool): Indicates if the key value are decoded
+
+        Return
+        ------
+        pair [key, value] (generator): List generated
         '''
         with self.env.begin() as txn:
             for key, val in txn.cursor():
@@ -105,6 +113,16 @@ class DB:
             return None
 
     def count_values(self, value, split=None):
+        '''Count the coincidences with the value
+        
+        Parameters
+        ----------
+        value (str): Value to search
+
+        Return
+        ------
+        Number (int): Number of coincidences
+        '''
         value = value.decode()
         counter = 0
         with self.env.begin() as txn:

@@ -15,6 +15,7 @@ class Synchro:
         self.utils = Utils()
         self.db_stats = DB(self.const.DB_STATS)
         self.db_backup = DB(self.const.DB_BACKUP)
+        self.key = None
         self.volume_host = None
         self.server_host = None
         self.server_port = None
@@ -32,6 +33,7 @@ class Synchro:
         self.volume_host = self.db_stats.get_value(
             self.utils.encode_str_to_byte(self.const.HOST_NAME))
         self.volume_port = server_config.get_config('volume', 'port')
+        self.key = server_config.get_config('server', 'key')
         # Master url
         self.server_host = server_config.get_config('server', 'host')
         self.server_port = server_config.get_config('server', 'port')
@@ -134,13 +136,15 @@ class Synchro:
                 '/autodiscovery'
             )
             req.make_request()
-            print('response: ', req.response)
             return
         req = CoreRequest(
             self.server_host,
             self.server_port,
             self.const.SYNC
         )
+        req.add_header({
+                self.const.PASSPORT: self.key
+            })
         req.set_type(ReqType.POST)
         req.set_payload({
             'percent': percent,

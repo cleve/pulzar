@@ -12,6 +12,25 @@ class CoreRequest:
         self.request_type = ReqType.GET
         self.payload = None
         self.response = None
+        self.headers = {'user-agent': 'pulzar/1.0.3'}
+
+    def add_header(self, header):
+        '''Add headers to the request
+        
+        Parameters
+        ----------
+        header (dict): Dictionary with the headers
+
+        Return
+        ------
+        None
+        '''
+        keys = header.keys()
+        for key in keys:
+            if key not in self.headers:
+                self.headers[key] = header[key]
+        print('HEADERS', self.headers)
+
 
     def set_type(self, type_request=ReqType.GET):
         self.request_type = type_request
@@ -40,12 +59,14 @@ class CoreRequest:
                     req = requests.post(
                         url_port,
                         json=self.payload,
+                        headers=self.headers,
                         timeout=10
                     )
                 else:
                     req = requests.post(
                         url_port,
                         data=self.payload,
+                        headers=self.headers,
                         timeout=10
                     )
 

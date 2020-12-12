@@ -3,6 +3,7 @@ from pulzarcore.core_body import Body
 from pulzarutils.constants import Constants
 from pulzarutils.utils import Utils
 from pulzarutils.messenger import Messenger
+from pulzarutils.stream import Config
 
 
 class Skynet:
@@ -16,10 +17,23 @@ class Skynet:
         self.db_volume = DB(self.const.DB_VOLUME)
         self.master_db = DB(self.const.DB_PATH)
         self.messenger = Messenger()
+        self.server_config = Config(self.const.CONF_PATH)
+        self.validated = False
         # Skynet options
         self.sync_status = self.const.SKYNET + '/sync'
         self.sync_key_added = self.const.SKYNET + '/add_record'
         self.start_backup = self.const.SKYNET + '/start_backup'
+        self.validate_node(env)
+
+    def validate_node(self, env) -> None:
+        '''Using passport to validate node request
+        Parameters
+        ----------
+        env : dict
+            Environment variables from uwsgi
+        '''
+        key = self.server_config.get_config('server', 'key')
+        self.validated = key == env[self.const.HTTP_PASSPORT]
 
     def restore_master(self):
         body = Body()
@@ -32,7 +46,18 @@ class Skynet:
             volume
         )
 
-    def save_key_and_volume(self):
+    def save_key_and_volume(self) -> bool:
+        '''Save the key and node into master
+        
+        Once the node save the info, it sent the notification
+        to the master. The info includes:
+            - node name, temporary parameter and key
+        
+        Also datetime is added for search purposes
+        '''
+        # Passport check
+        if not self.validated:
+            return False
         # Extract and save value into DB.
         body = Body()
         params = body.extract_params(self.env)
@@ -52,7 +77,15 @@ class Skynet:
             composed_value.encode()
         )
 
-    def _sync_volume(self):
+    def _sync_volume(self) -> tuple:
+        '''Synch node with master
+
+        The node transfer meta-data to the master
+        '''
+        # Checking passport
+        if not self.validated:
+            return
+
         response = self.const.SKYNET
         body = Body()
         params = body.extract_params(self.env)
@@ -95,7 +128,7 @@ class Skynet:
                     return self.messenger
                 self.messenger.code_type = self.const.SKYNET_RECORD_ALREADY_ADDED
                 self.messenger.http_code = '406 Not acceptable'
-                self.messenger.set_message = 'already added'
+                self.messenger.set_message = 'already added or passport error'
                 return self.messenger
 
             # This is a meta-data received from volume

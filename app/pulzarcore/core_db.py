@@ -32,8 +32,19 @@ class DB:
         """
         return self.env.stat()
 
-    def put_value(self, key_string, value):
+    def put_value(self, key_string, value) -> bool:
         """Store value given a key
+
+        Parameters
+        ----------
+        key_string : str
+            Key to store
+        value: str
+            value associated
+        
+        Return
+        ------
+        bool : Transaction successful or not
         """
         with self.env.begin(write=True) as txn:
             if not txn.get(key_string):

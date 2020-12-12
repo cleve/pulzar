@@ -4,6 +4,7 @@ from pulzarutils.file_utils import FileUtils
 from pulzarcore.core_request import CoreRequest
 from pulzarcore.core_db import DB
 from pulzarutils.messenger import Messenger
+from pulzarutils.stream import Config
 
 
 class PutProcess:
@@ -21,9 +22,11 @@ class PutProcess:
         base_url_path = '/get_key'
         return 'http://' + url + base_url_path + root_path + '/' + base_name
 
-    def notify_record_to_master(self, env):
+    def notify_record_to_master(self, env) -> bool:
         """Report the register creation.
         """
+        server_config = Config(self.const.CONF_PATH)
+        key = server_config.get_config('server', 'key')
         temporal = '-1'
         query_params = self.utils.extract_query_params(
             'http://fakeurl.com?'+env['QUERY_STRING'])
@@ -35,6 +38,7 @@ class PutProcess:
         req = CoreRequest(
             master_url['host'], master_url['port'], self.const.ADD_RECORD)
         req.set_type(ReqType.POST)
+        req.add_header({self.const.PASSPORT: key})
         req.set_path(self.const.ADD_RECORD)
         # We have to send the key, volume and port.
         req.set_payload({

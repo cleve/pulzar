@@ -37,6 +37,7 @@ The configuration is pretty simple:
 [server]
 host=localhost
 port=31414
+key=l415S4Nt05
 
 [volume]
 # Where to store files
@@ -45,6 +46,8 @@ port=31415
 
 [general]
 retention_policy=90
+# In MB
+maxsize=5
 
 [jobs]
 dir=jobs
@@ -372,7 +375,7 @@ You can launch jobs using the nodes. Similarly to third party, there is a direct
 used to store the scripts.
 
 The job directory can be changed into the configuration file. By default 
-the system is set to the **jobs** directory. 
+the system is set to the **jobs** directory.
 
 ```
 app/launch_job/[custom_directory]/[your_script].py

@@ -6,6 +6,7 @@ class Messenger:
     """
 
     def __init__(self):
+        self.TAG = self.__class__.__name__
         self.utils = Utils()
         self.volume = None
         self.code_type = 'default'
@@ -50,3 +51,10 @@ class Messenger:
                 'status': 'ko',
                 'msg': str(err)
             }).encode()
+
+    def __str__(self):
+        return '{}::http_code: {}, code_type: {}'.format(
+            self.TAG,
+            self.http_code,
+            self.code_type
+        )

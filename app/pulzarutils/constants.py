@@ -53,6 +53,7 @@ class Constants:
         self.SERVER_PROTOCOL = 'SERVER_PROTOCOL'
         self.CONTENT_LENGTH = 'CONTENT_LENGTH'
         self.CONTENT_TYPE = 'CONTENT_TYPE'
+        self.HTTP_PASSPORT = 'HTTP_PASSPORT'
         self.WSGI_INPUT = 'wsgi.input'
 
         self.POST = 'POST'

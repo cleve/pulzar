@@ -14,6 +14,8 @@ class Master:
         self.master_env = None
 
     def process_request(self, env, start_response):
+        '''Master method to process all the requests
+        '''
         # Get request type
         self.master_env = self.utils.extract_host_env(env)
         message = self.dispatcher.classify_request(

@@ -33,7 +33,8 @@ class ResponseClass:
         Return
             void
         """
-        self.headers.append(header)
+        if header[0] is not None and header[1] is not None:
+            self.headers.append(header)
 
     def get_response(self, start_response, request_type=Response.JSON):
         # Cors enabled

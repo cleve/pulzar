@@ -19,6 +19,7 @@ import requests
 
 # Internal
 from pulzarutils.constants import Constants
+from pulzarutils.stream import Config
 
 
 class Utils:
@@ -317,8 +318,31 @@ class Utils:
         '''Convert units
         '''
         a = {'k': 1, 'm': 2, 'g': 3, 't': 4, 'p': 5, 'e': 6}
-        r = float(bytes)
         return bytes / (bsize ** a[to])
+
+    def check_passport(self, env):
+        '''Check passport
+
+        Parameters
+        ----------
+        env : dict
+            Env variable from uwsgi
+        
+        Return
+        ------
+        bool : True if passport match or False
+        '''
+        # Checking passport
+        try:
+            config = Config(self.const.CONF_PATH)
+            key = config.get_config('server', 'key')
+            print(key == self.decode_string_base_64(env[self.const.HTTP_PASSPORT], True))
+            print(key, self.decode_string_base_64(env[self.const.HTTP_PASSPORT], True))
+            return key == self.decode_string_base_64(env[self.const.HTTP_PASSPORT], True)
+        except BaseException as err:
+            print(env)
+            print('error')
+            print(err)
 
     @staticmethod
     def download_file(url):

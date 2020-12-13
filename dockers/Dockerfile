@@ -1,7 +1,6 @@
 FROM ubuntu:20.04
 
-LABEL maintainer="mcleveland@comscore.com"
-LABEL build_date="2020-11-13"
+LABEL maintainer="mcleveland@comscore.com" version="1.0.3" build_date="2020-11-13"
 
 ENV DEBIAN_FRONTEND=nonintercative
 ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1

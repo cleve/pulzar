@@ -723,8 +723,8 @@ You can try with the public repo on dockerhub:
 docker run -it --name pulzar-ui -d --rm -p 80:80 mauriciocleveland/pulzar-ui:1.0.1
 
 # Run master
-docker run ---network host --name pulzar-master --rm -d -p 31414:31414 mauriciocleveland/pulzar-master:1.0.1
+docker run --network host --name pulzar-master --rm -d -p 31414:31414 mauriciocleveland/pulzar-master:1.0.1
 
 # Run node
-docker run ---network host --name pulzar-node --rm -d -p 31415:31415 mauriciocleveland/pulzar-node:1.0.1
+docker run --network host --name pulzar-node --rm -d -p 31415:31415 mauriciocleveland/pulzar-node:1.0.1
 ```

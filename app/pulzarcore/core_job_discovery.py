@@ -88,7 +88,7 @@ class JobDiscovery:
         """Clean catalog
         """
         sql = 'DROP TABLE [IF EXISTS] job_catalog'
-        # self.rdb.execute_sql(sql)
+        self.rdb.execute_sql(sql)
 
     def _create_or_update_catalog(self, job_path, dictionary):
         """To DB

@@ -29,8 +29,6 @@ class CoreRequest:
         for key in keys:
             if key not in self.headers:
                 self.headers[key] = header[key]
-        print('HEADERS', self.headers)
-
 
     def set_type(self, type_request=ReqType.GET):
         self.request_type = type_request

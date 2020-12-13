@@ -118,7 +118,19 @@ class Utils:
         return json.loads(json_srt)
 
     # Encode/decode section
-    def encode_base_64(self, string, to_str=False):
+    def encode_base_64(self, string, to_str=False) -> bytes or str:
+        '''Encode base64
+
+        Parameters
+        ----------
+        sting : str
+            string to be encoded
+        to_str : bool, default=False
+            If the parameter is True, the return will be str
+        Return
+        ------
+        str or binary string
+        '''
         byte_string = self.encode_str_to_byte(string)
         return base64.b64encode(byte_string) if not to_str else self.decode_byte_to_str(base64.b64encode(byte_string))
 
@@ -128,6 +140,23 @@ class Utils:
 
     def decode_base_64(self, string64, to_str=False):
         return base64.b64decode(string64) if not to_str else self.decode_byte_to_str(base64.b64decode(string64))
+
+    def decode_string_base_64(self, string, to_str=False) -> bytes or str:
+        '''Decode stringB64 to str
+
+        Paramater
+        ---------
+        string : str
+            string to be decoded
+        to_str : bool
+            if its True return string decoded string
+        
+        Return
+        ------
+        str or byte string : str or byte
+            Dependent of the to_str parameter
+        '''
+        return base64.b64decode(string.encode()) if not to_str else self.decode_byte_to_str(base64.b64decode(string.encode()))
 
     def encode_str_to_byte(self, string):
         return string.encode()

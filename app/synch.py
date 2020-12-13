@@ -143,7 +143,7 @@ class Synchro:
             self.const.SYNC
         )
         req.add_header({
-                self.const.PASSPORT: self.key
+                self.const.PASSPORT: self.utils.encode_base_64(self.key)
             })
         req.set_type(ReqType.POST)
         req.set_payload({

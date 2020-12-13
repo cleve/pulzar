@@ -33,7 +33,7 @@ class Skynet:
             Environment variables from uwsgi
         '''
         key = self.server_config.get_config('server', 'key')
-        self.validated = key == env[self.const.HTTP_PASSPORT]
+        self.validated = key == self.utils.decode_string_base_64(env[self.const.HTTP_PASSPORT], True)
 
     def restore_master(self):
         body = Body()

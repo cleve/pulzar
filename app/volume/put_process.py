@@ -38,7 +38,11 @@ class PutProcess:
         req = CoreRequest(
             master_url['host'], master_url['port'], self.const.ADD_RECORD)
         req.set_type(ReqType.POST)
-        req.add_header({self.const.PASSPORT: key})
+        req.add_header(
+            {
+                self.const.PASSPORT: self.utils.encode_base_64(key)
+            }
+        )
         req.set_path(self.const.ADD_RECORD)
         # We have to send the key, volume and port.
         req.set_payload({

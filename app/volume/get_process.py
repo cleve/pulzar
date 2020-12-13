@@ -6,12 +6,15 @@ from pulzarutils.file_utils import FileUtils
 
 class GetProcess:
     def __init__(self, constants):
+        self.TAG = self.__class__.__name__
         self.const = constants
         self.file_utils = FileUtils(self.const)
         self.utils = Utils()
         self.messenger = Messenger()
 
     def process_request(self, env, start_response, url_path):
+        '''Process request for GET method
+        '''
         # Get request type, checking for key value.
         regex_result = self.utils.get_search_regex(
             url_path, self.const.RE_GET_VALUE)
@@ -35,8 +38,8 @@ class GetProcess:
                     self.messenger.code_type = self.const.KEY_FOUND
                     self.messenger.extra = full_path
 
-            except Exception as err:
-                print('Error GetProcess', err)
+            except BaseException as err:
+                print(self.TAG, err)
                 self.messenger.code_type = self.const.PULZAR_ERROR
                 self.messenger.set_message = str(err)
                 self.messenger.mark_as_failed()

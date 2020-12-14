@@ -43,7 +43,7 @@ class CoreJobs(metaclass=ABCMeta):
         self._pulzar_get_data()
 
     @abstractmethod
-    def execute(self, params, file_path=None):
+    def execute(self):
         '''Entrance for extensios
         '''
         return

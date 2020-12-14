@@ -71,7 +71,7 @@ class Fibonacci(CoreJobs):
             self.fib_for(number)
         ))
 
-    def execute(self.arguments):
+    def execute(self):
         '''
         Description: Fibonacci number using recursion and while
         Arguments: {"number": "int"}

@@ -49,11 +49,14 @@ class JobDiscovery:
         documentation
         """
         no_extension = os.path.splitext(url_path)[0]
+        class_name = no_extension.split('/')[1].capitalize()
         relative_path = os.path.join(self.job_directory, no_extension)
         to_module_notation = relative_path.replace('/', '.')
         try:
             import_fly = importlib.import_module(to_module_notation)
-            dictionary = self._parse_doc(import_fly.execute.__doc__)
+            job_class = getattr(import_fly, class_name)
+            job_object = job_class({'job_id': '-1', '_pulzar_config': 'na'})
+            dictionary = self._parse_doc(job_object.execute.__doc__)
 
             # Storing results
             self._create_or_update_catalog(no_extension, dictionary)
@@ -87,7 +90,7 @@ class JobDiscovery:
     def _clean_repository(self):
         """Clean catalog
         """
-        sql = 'DROP TABLE [IF EXISTS] job_catalog'
+        sql = 'DELETE FROM job_catalog'
         self.rdb.execute_sql(sql)
 
     def _create_or_update_catalog(self, job_path, dictionary):

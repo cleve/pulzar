@@ -12,16 +12,22 @@ from pulzarutils.node_utils import NodeUtils
 
 class CoreJobs(metaclass=ABCMeta):
     """Base class for job implementation
+
+    To test locally, set the attribute local_exec = True
+    The method **execute** is mandatory
+    
     """
 
     def __init__(self, parameters, notification=False):
         """Constructor
 
-            To test locally, set the attribute local_exec = True
-
-            arguments:
-             - parameters (dict)
-             - notification (bool)
+        Parameters
+        ----------
+        parameters : dict
+            Dictionary with parameters to be used.
+        
+        notification : bool
+            True to send notifications
 
         """
         # Allows to execute the job locally
@@ -52,13 +58,15 @@ class CoreJobs(metaclass=ABCMeta):
         """Write output
 
         Parameters
-            - output_str: String
+        ----------
+        output_str: String
         """
         self._pulzar_job_output.append(output_str)
 
     def _pulzar_store_file(self, file_name):
         """Store some results
-            Using varidb system
+            
+        Using database system
         """
         file_utils = FileUtils(self._pulzar_const)
         server_config = Config(self._pulzar_const.CONF_PATH)
@@ -120,7 +128,7 @@ class CoreJobs(metaclass=ABCMeta):
             self.pulzar_add_log(
                 self._pulzar_utils.py_to_json(self.pulzar_parameters)
             )
-
+    
     def _pulzar_run_job(executor):
         """Decorator to handle job execution
         """
@@ -142,6 +150,8 @@ class CoreJobs(metaclass=ABCMeta):
         return not self._failed_job
 
     def _mark_as_failed(self):
+        """Mark the job as failed
+        """
         self._failed_job = True
 
     def pulzar_add_log(self, message, bulk=False):

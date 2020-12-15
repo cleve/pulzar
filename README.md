@@ -718,13 +718,26 @@ After, install **uwsgi** with pip3
 
 You can try with the public repo on dockerhub:
 
+## For linux
 ```sh
 # Run UI
 docker run -it --name pulzar-ui -d --rm -p 80:80 mauriciocleveland/pulzar-ui:1.0.1
 
 # Run master
-docker run --network host --name pulzar-master --rm -d -p 31414:31414 mauriciocleveland/pulzar-master:1.0.1
+docker run --network host --name pulzar-master --rm -d mauriciocleveland/pulzar-master:1.0.1
 
 # Run node
-docker run --network host --name pulzar-node --rm -d -p 31415:31415 mauriciocleveland/pulzar-node:1.0.1
+docker run --network host --name pulzar-node --rm -d mauriciocleveland/pulzar-node:1.0.1
+```
+
+## For Windows
+
+Same commands but make sure set the **host** option to **docker.for.win.localhost** into the **config/server.conf file**
+
+```ini
+[server]
+host=docker.for.win.localhost
+port=31414
+key=l415S4Nt05
+...
 ```

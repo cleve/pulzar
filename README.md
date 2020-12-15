@@ -80,8 +80,11 @@ uwsgi --ini config/volume.ini
 ### Add key value
 
 ```sh
-master:[port]/add_key/{key}
+# master:[port]/add_key/{key}
 curl -X PUT -L -T /path/to/file http://master:[port]/add_key/{key}
+
+# Or
+curl --request PUT --location --data-binary '@/path/to/file' 'http://master:[port]/add_key/{key}
 ```
 
 ### Add a key value during a time

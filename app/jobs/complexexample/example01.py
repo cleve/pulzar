@@ -18,7 +18,7 @@ class Example01(CoreJobs):
         query = self.database.execute_query('SELECT * FROM DB')
         self.pulzar_add_log(query)
 
-    def execute(arguments):
+    def execute(self):
         '''
         Description: Testing with arguments
         Arguments: {"arg_1": "int", "arg_2": "str"} 
@@ -26,4 +26,3 @@ class Example01(CoreJobs):
         Author: Mauricio Cleveland
         '''
         self.run_my_code()
-        return example.is_the_job_ok()

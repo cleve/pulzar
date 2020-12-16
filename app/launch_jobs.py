@@ -9,7 +9,9 @@ from pulzarcore.core_request import CoreRequest
 
 
 class LaunchJobs:
-    """Handle job scheduled
+    """Launch jobs
+        - Scheduled
+        - Single execution
     """
 
     def __init__(self):
@@ -23,11 +25,11 @@ class LaunchJobs:
         self.server_port = None
         # Where the jobs will be placed
         self.job_directory = None
-        self.get_config()
+        self._get_config()
         self.search_pending_jobs()
         self.days_of_retention = 90
 
-    def get_config(self):
+    def _get_config(self):
         """Configuration from ini file
         """
         server_config = Config(self.const.CONF_PATH)
@@ -41,7 +43,9 @@ class LaunchJobs:
         self.job_directory = server_config.get_config('jobs', 'dir')
 
     def _retention_policy(self):
-        """Delete data since the policy"""
+        """Delete data since the policy configured under:
+            config/server.conf
+        """
         # Scheduled successful jobs
         date_diff = self.utils.get_date_days_diff(
             days=-1*self.days_of_retention, to_string=True)
@@ -55,8 +59,15 @@ class LaunchJobs:
             date_diff)
         self.data_base.execute_sql(sql)
 
-    def notify_to_master(self, job_id, scheduled=False):
+    def _notify_to_master(self, job_id, scheduled=False):
         """Sending the signal to master
+
+        Parameters
+        ----------
+        job_id : int
+            JOB identifier
+        scheduled : bool, optional
+            Indicate if the job is ok scheduled type
         """
         # Recovering data of job
         table = 'job' if not scheduled else 'schedule_job'
@@ -83,6 +94,12 @@ class LaunchJobs:
             sql = 'UPDATE {} SET notification = 1 WHERE job_id = {}'.format(
                 table, job_id)
             self.data_base.execute_sql(sql)
+        # Mark attempt
+        else:
+            sql = 'UPDATE {} SET attempt = 1 WHERE job_id = {}'.format(
+                table, job_id)
+            self.data_base.execute_sql(sql)
+
 
     def process_params(self):
         """JSON to python objects
@@ -92,27 +109,50 @@ class LaunchJobs:
             if args != '':
                 job['job_args'] = self.utils.json_to_py(args)
 
-    def mark_job(self, job_id, state, scheduled):
+    def _mark_job(self, job_id, state, scheduled, log_msg=None):
         """Mark a job if is ok or failed
+
+        Parameters
+        ----------
+        job_id : int
+            Job ID
+        state: bool
+            True for successful or Flase for failed job
+        scheduled: str
+            two types: schedule_job or job
+        log_msg : str, None default
+            Force a message. ex: syntax error
+        
+        Return
+        ------
+        bool : True for rows affected
         """
+        if state is None:
+            return False
         status = 1 if state else 2
         table = 'job' if not scheduled else 'schedule_job'
-        sql = 'UPDATE {} SET state = {} WHERE job_id = {}'.format(
-            table, status, job_id)
-        return self.data_base.execute_sql(sql) > 0
+        if log_msg is None:
+            sql = 'UPDATE {} SET state = ?, attempt = ? WHERE job_id = ?'.format(
+                table)
+            return self.data_base.execute_sql_update(sql, (status, 1, job_id)) > 0
+        else:
+            sql = 'UPDATE {} SET state = ?, log = ?, attempt = ? WHERE job_id = ?'.format(
+                table)
+            return self.data_base.execute_sql_update(sql, (status, log_msg, 1, job_id)) > 0
 
     def execute_jobs(self):
         """Execute jobs selected
         """
         if self.job_directory is None:
-            print('First you need to set/create the job directory')
-            return
+            raise Exception('First you need to set/create the job directory')
+
         for job in self.jobs_to_launch:
             try:
                 # Rebuild the real path
                 complete_path = self.job_directory + job['job_path']
-                print('Launching', job['job_id'],
-                      'located in ', complete_path)
+                if self.const.DEBUG:
+                    print('Launching', job['job_id'],
+                        'located in ', complete_path)
                 custom_module = os.path.splitext(complete_path)[
                     0].replace('/', '.')
                 class_name = custom_module.split('.')[-1].capitalize()
@@ -125,11 +165,21 @@ class LaunchJobs:
                 job_class = getattr(import_fly, class_name)
                 job_object = job_class(job['job_args'])
                 status = job_object.execute()
+                # If there is not return in the execute method
+                # we look into the verification var
+                if status is None:
+                    status = job_object.is_the_job_ok()
                 # Report to master
-                if self.mark_job(job['job_id'], status, job['scheduled']):
-                    self.notify_to_master(job['job_id'], job['scheduled'])
+                if self._mark_job(job['job_id'], status, job['scheduled']):
+                    self._notify_to_master(job['job_id'], job['scheduled'])
             except Exception as err:
-                print(self.TAG + '::Error executing the job: ', err)
+                if self.const.DEBUG:
+                    print(self.TAG + '::Error executing the job: ', err)
+                # Mark as failed
+                if self._mark_job(job['job_id'], False, job['scheduled'], str(err)):
+                    self._notify_to_master(job['job_id'], job['scheduled'])
+
+                
 
     def search_jobs(self):
         """Search job scheduled
@@ -156,16 +206,27 @@ class LaunchJobs:
             })
 
     def search_pending_jobs(self):
-        """Search job scheduled
-        """
-        tables = ['job', 'schedule_job']
-        for table in tables:
+        """Search and notify pending jobs
+        """ 
+        for table in ['job', 'schedule_job']:
+            # Sending failed and successful
             sql = 'SELECT * FROM {} WHERE state <> 0 AND notification = 0'.format(
-                table)
+                table
+            )
             rows = self.data_base.execute_sql_with_results(sql)
             for row in rows:
-                self.notify_to_master(
+                self._notify_to_master(
                     row[0], True if table == 'schedule_job' else False)
+            # Sending unknows errors
+            sql = 'SELECT * FROM {} WHERE attempt > 0 AND notification = 0'.format(
+                table
+            )
+            rows = self.data_base.execute_sql_with_results(sql)
+            for row in rows:
+                self._notify_to_master(
+                    row[0],
+                    True if table == 'schedule_job' else False
+                )
 
 
 def main():

@@ -51,10 +51,11 @@ class Job:
     def schedule_job(self, const):
         """Schedule job
 
-            params:
-             - const (Constants)
+            Parameters
+            ----------
+            const : Constants
+                Constant object
         """
-        print('Sending job to node ')
         # Register in data base
         if self.register_job(const.DB_NODE_JOBS) is not None:
             return True

@@ -20,6 +20,7 @@ class JobProcess:
 
     def process_notification_request(self, url_path, query_string, env):
         """Processing job notification from node
+            state = 0: pending
             state = 1: succeful
             state = 2: error
         """

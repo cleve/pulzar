@@ -11,7 +11,16 @@ class AdminJobs:
 
     def process_request(self, url_path):
         """Entrance for AdminJobs
-        :param url_path:
+        
+        Parameters
+        ----------
+        url_path : str
+            path section of the URL
+        
+        Return
+        ------
+        message : Messenger
+            Wrap of the message 
         """
         # Get scheduled jobs.
         regex_result = self.utils.get_search_regex(

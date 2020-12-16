@@ -15,6 +15,7 @@ class JobDiscovery:
     """
 
     def __init__(self):
+        self.TAG = self.__class__.__name__
         self.utils = Utils()
         self.const = Constants()
         self.rdb = RDB(self.const.DB_JOBS)
@@ -61,7 +62,7 @@ class JobDiscovery:
             # Storing results
             self._create_or_update_catalog(no_extension, dictionary)
         except BaseException as err:
-            print('_get_entrance_point', err)
+            print('{}::{}'.format(self.TAG, err))
 
     def _parse_doc(self, raw_text):
         config = {

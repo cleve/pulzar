@@ -4,6 +4,9 @@ from pulzarutils.utils import Utils
 
 
 class CoreRequest:
+    """Manage the requests
+    """
+
     def __init__(self, host, port, url_path):
         self.utils = Utils()
         self.host = host
@@ -12,6 +15,7 @@ class CoreRequest:
         self.request_type = ReqType.GET
         self.payload = None
         self.response = None
+        self.json_response = None
         self.headers = {'user-agent': 'pulzar/1.0.3'}
 
     def add_header(self, header):
@@ -70,6 +74,8 @@ class CoreRequest:
 
             if req.status_code == 200:
                 self.response = req.text
+                if json_request:
+                    self.json_response = req.json()
                 return True
             self.response = req.text
             return False

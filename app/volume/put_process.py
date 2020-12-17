@@ -34,9 +34,18 @@ class PutProcess:
             temporal = query_params[self.const.SET_TEMPORAL][0]
         master_url = self.utils.extract_url_data(
             query_params['url'][0])
+        # Prod url
+        host_url = master_url['host']
+        # TODO: MAC support
+        if self.const.DEBUG_WIN:
+            # Forn windows machine
+            host_url = 'docker.for.win.localhost'
         # Confirming with master.
         req = CoreRequest(
-            master_url['host'], master_url['port'], self.const.ADD_RECORD)
+            host_url,
+            master_url['port'],
+            self.const.ADD_RECORD
+        )
         req.set_type(ReqType.POST)
         req.add_header(
             {

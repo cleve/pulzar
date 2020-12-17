@@ -18,6 +18,8 @@ class Constants:
     def __init__(self):
         # General
         self.DEBUG = False
+        # To try docker for windows in the same machine
+        self.DEBUG_WIN = False
         self.VERSION = '0.1'
         self.PASS = 'admin'
         self.PASSPORT = 'passport'

@@ -14,6 +14,7 @@ class JobProcess:
     """
 
     def __init__(self, constants):
+        self.TAG = self.__class__.__name__
         self.const = constants
         self.utils = Utils()
         self.db_backup = DB(self.const.DB_BACKUP)
@@ -27,7 +28,8 @@ class JobProcess:
             # Extracting data
             body = Body()
             params = body.extract_params(env)
-            print('params for job', params)
+            if self.const.DEBUG:
+                print('params for job', params)
 
             # Scheduling job
             job_id = params['job_id']
@@ -47,10 +49,10 @@ class JobProcess:
             # check if the job exists
             path_to_search = self.job_directory + job_file_path + '/' + job_file_name + '.py'
             generic_path = job_file_path + '/' + job_file_name + '.py'
-            print('path: ', path_to_search)
+            if self.const.DEBUG:
+                print('path: ', path_to_search)
             good = False
             if self.utils.file_exists(path_to_search):
-                print('Job exists, scheduling ', job_file_name)
                 job_object = Job(job_id, generic_path,
                                  job_parameters, job_scheduled)
                 good = job_object.schedule_job(self.const)
@@ -61,11 +63,11 @@ class JobProcess:
                 self.messenger.set_message = 'ok'
             else:
                 self.messenger.code_type = self.const.JOB_ERROR
-                self.messenger.set_message = 'internal error'
+                self.messenger.set_message = 'job does not exist'
                 self.messenger.mark_as_failed()
 
         except Exception as err:
-            print('Error JobProcess', err)
+            print('ERROR::{}::{}'.format(self.TAG, err))
             self.messenger.code_type = self.const.PULZAR_ERROR
             self.messenger.set_message = str(err)
             self.messenger.mark_as_failed()

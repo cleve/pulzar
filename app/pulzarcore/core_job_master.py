@@ -7,10 +7,11 @@ from pulzarutils.utils import Utils
 
 
 class Job:
-    """Send tasks to the nodes
+    """Send jobs to the nodes
     """
 
     def __init__(self, job_params):
+        self.TAG = self.__class__.__name__
         self.job_params = job_params
         self.utils = Utils()
         self.job_id = None
@@ -119,17 +120,24 @@ class Job:
     def send_job(self, const):
         """Send job to the node selected
 
-            params:
-             - const (Constants)
+        Parameters
+        ----------
+        const : Constants
+            Constant object
+        
+        Return
+        ------
+        Success : bool
+            True if the job was sent correctly, False if not
         """
         # Scheduled job
         if 'scheduled' in self.job_params['parameters']:
             return self.register_scheduled_job(const.DB_JOBS)
         node = self.select_node(const)
-        print('node', node)
         if node is None:
             return False
-        print('Sending job to node ', node)
+        if const.DEBUG:
+            print('Sending job to node ', node)
         # Register in data base
         self.register_job(const.DB_JOBS, node.decode())
         if self.job_id is None:
@@ -143,6 +151,13 @@ class Job:
         if not job_response:
             # removing job
             self.unregister_job(const.DB_JOBS)
+            self.error_msg = 'could not communicate with node'
+        elif job_response and request.json_response['status'] == 'ko':
+            if const.DEBUG:
+                print('ERROR::{}::{}'.format(self.TAG, request.json_response['msg']))
+            self.error_msg = request.json_response['msg']
+            self.unregister_job(const.DB_JOBS)
+            return False
         return job_response
 
     def send_scheduled_job(self, const, parameters):

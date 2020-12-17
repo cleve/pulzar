@@ -35,6 +35,12 @@ class Utils:
         plattform
         """
         return platform.system() == 'Linux'
+    
+    def is_windows(self):
+        """Getting True or Flase for
+        plattform
+        """
+        return platform.system() == 'Windows'
 
     def get_random_string(self, n):
         return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(n))

@@ -3,7 +3,7 @@ from pulzarutils.utils import Utils
 
 
 class Job:
-    """Send tasks to the nodes
+    """Schedule jobs
     """
 
     def __init__(self, job_id, job_path, job_params, job_scheduled):
@@ -30,6 +30,16 @@ class Job:
 
     def register_job(self, path_db_jobs):
         """Register job in master
+
+        Parameters
+        ----------
+        path_db_jobs : str
+            File path to the job database
+
+        Return
+        ------
+        ID : int
+            ID of the record created
         """
         print('registering job')
         parameters = self.utils.py_to_json(self.job_params)
@@ -51,10 +61,10 @@ class Job:
     def schedule_job(self, const):
         """Schedule job
 
-            Parameters
-            ----------
-            const : Constants
-                Constant object
+        Parameters
+        ----------
+        const : Constants
+            Constant object
         """
         # Register in data base
         if self.register_job(const.DB_NODE_JOBS) is not None:

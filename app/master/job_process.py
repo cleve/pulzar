@@ -13,6 +13,7 @@ class JobProcess:
     """
 
     def __init__(self, constants):
+        self.TAG = self.__class__.__name__
         self.const = constants
         self.utils = Utils()
         self.data_base = RDB(self.const.DB_JOBS)
@@ -135,7 +136,8 @@ class JobProcess:
                 self.messenger.mark_as_failed()
 
         except Exception as err:
-            print('Job_process_Error', err)
+            if self.const.DEBUG:
+                print('ERROR::{}::{}'.format(self.TAG, err))
             self.messenger.code_type = self.const.JOB_ERROR
             self.messenger.mark_as_failed()
             self.messenger.set_message = str(err)

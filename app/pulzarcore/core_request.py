@@ -23,7 +23,8 @@ class CoreRequest:
         
         Parameters
         ----------
-        header (dict): Dictionary with the headers
+        header : dict
+            Dictionary with the headers
 
         Return
         ------

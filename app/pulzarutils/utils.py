@@ -28,6 +28,7 @@ class Utils:
 
     def __init__(self):
         self.const = Constants()
+        self.TAG = self.__class__.__name__
 
     # System
     def is_unix(self):
@@ -326,7 +327,23 @@ class Utils:
         a = {'k': 1, 'm': 2, 'g': 3, 't': 4, 'p': 5, 'e': 6}
         return bytes / (bsize ** a[to])
 
-    def check_passport(self, env):
+    def get_passport(self):
+        '''Get the current passport
+        Return
+        ------
+        str : Passport encoded
+        '''
+        try:
+            config = Config(self.const.CONF_PATH)
+            key = config.get_config('server', 'key')
+            return self.encode_base_64(key, to_str=True)
+        
+        except BaseException as err:
+            if self.const.DEBUG:
+                print('ERROR::{}::{}'.format(self.TAG, err))
+        
+    
+    def check_passport(self, env) -> bool:
         '''Check passport
 
         Parameters
@@ -342,14 +359,10 @@ class Utils:
         try:
             config = Config(self.const.CONF_PATH)
             key = config.get_config('server', 'key')
-            print(key == self.decode_string_base_64(env[self.const.HTTP_PASSPORT], True))
-            print(key, self.decode_string_base_64(env[self.const.HTTP_PASSPORT], True))
             return key == self.decode_string_base_64(env[self.const.HTTP_PASSPORT], True)
         except BaseException as err:
-            print(env)
-            print('error')
-            print(err)
-
+            if self.const.DEBUG:
+                print('ERROR::{}::{}'.format(self.TAG, err))
     @staticmethod
     def download_file(url):
         '''Download file from http

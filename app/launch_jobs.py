@@ -9,7 +9,7 @@ from pulzarcore.core_request import CoreRequest
 
 
 class LaunchJobs:
-    """Launch jobs
+    """Launch jobs in nodes
         - Scheduled
         - Single execution
     """

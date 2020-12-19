@@ -12,6 +12,8 @@ from pulzarcore.core_job_master import Job
 
 
 class Scheduler():
+    """Schedule jobs in master
+    """
     def __init__(self):
         self.const = Constants()
         self.utils = Utils()

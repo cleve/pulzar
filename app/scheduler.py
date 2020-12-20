@@ -7,7 +7,6 @@ from pulzarutils.constants import Constants
 from pulzarutils.constants import ReqType
 from pulzarutils.node_utils import NodeUtils
 from pulzarcore.core_rdb import RDB
-from pulzarcore.core_request import CoreRequest
 from pulzarcore.core_job_master import Job
 
 
@@ -49,8 +48,17 @@ class Scheduler():
                     self.schedule_data_base.execute_sql_update(
                         sql, (self.utils.datetime_to_utc_string(job.next_run, db_format=True),))
 
-    def _schedule_job(self, parameters):
-        self._notify_to_node(parameters)
+    def _schedule_job(self, parameters) -> None:
+        """Schedule and update state
+        Parameters
+        ----------
+        parameters : (dict)
+            Dictionary with all the configuration and parameters required
+        """
+        if not self._notify_to_node(parameters):
+            if self.const.DEBUG:
+                print('_schedule_job::Could not send the job')
+            return
         sql = 'UPDATE schedule_job SET scheduled = 0 WHERE job_id = {}'.format(
             parameters['job_id']
         )
@@ -60,7 +68,6 @@ class Scheduler():
         """Resume the jobs when the app crashes,
         is updated or rebooted
         """
-        print('Resume jobs')
         sql = 'SELECT job_id, job_name, job_path, parameters, interval, time_unit, next_execution, repeat FROM schedule_job WHERE scheduled = -1 AND repeat = 1'
         pending_jobs = self.schedule_data_base.execute_sql_with_results(sql)
         for row in pending_jobs:
@@ -208,15 +215,23 @@ class Scheduler():
                 'job_repeat': row[6]
             })
 
-    def _notify_to_node(self, params):
+    def _notify_to_node(self, params) -> bool:
         """Send the job to the node
+
+        Parameters
+        ----------
+        params : (dict)
+            Parameters to be sent as payload
+        
+        Return
+        ------
+        bool : True if the request was successful
         """
         job_object = Job(params)
         if job_object.send_scheduled_job(self.const, params):
             # Update next iteration time
             self.update_next_execution_job(params['job_id'])
             return True
-
         return False
 
     def schedule_details(self, job_params, interval, time_unit):
@@ -256,7 +271,7 @@ class Scheduler():
     def _schedule_jobs(self):
         """Execute jobs selected
         """
-        for iter_job in range(len(self.jobs_to_launch)):
+        for _ in range(len(self.jobs_to_launch)):
             try:
                 job = self.jobs_to_launch.pop()
                 print('Scheduling', job['job_id'],

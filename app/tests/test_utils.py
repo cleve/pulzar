@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import MagicMock
 import math
 from pulzarutils.utils import Utils
 
@@ -36,6 +37,10 @@ class TestUtilsMethods(unittest.TestCase):
 
         self.assertEqual(self.utils.encode_byte_base_64(
             b'string_to_encode', to_str=True), 'c3RyaW5nX3RvX2VuY29kZQ==')
+    
+    def test_check_passport(self):
+        env = {'HTTP_PASSPORT': self.utils.encode_byte_base_64(b'l415S4Nt05', to_str=True)}
+        self.assertTrue(self.utils.check_passport(env))
 
 
 if __name__ == '__main__':

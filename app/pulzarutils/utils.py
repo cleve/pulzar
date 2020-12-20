@@ -363,6 +363,8 @@ class Utils:
         except BaseException as err:
             if self.const.DEBUG:
                 print('ERROR::{}::{}'.format(self.TAG, err))
+            return False
+
     @staticmethod
     def download_file(url):
         '''Download file from http

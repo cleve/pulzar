@@ -25,6 +25,12 @@ class JobProcess:
         """Receiving the order to launch a job
         """
         try:
+            # Checking the passport
+            if not self.utils.check_passport(env):
+                self.messenger.code_type = self.const.JOB_ERROR
+                self.messenger.set_message = 'invalid passport, contact to the admin'
+                self.messenger.mark_as_failed()
+                return self.messenger
             # Extracting data
             body = Body()
             params = body.extract_params(env)

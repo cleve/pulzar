@@ -23,6 +23,8 @@ class Job:
             'days': (1, 31),
             'weeks': (1, 4)
         }
+        # Passport to authorize the request in nodes
+        self.passport = self.utils.get_passport()
 
     def unregister_job(self, path_db_jobs):
         """Mark as failed job in master
@@ -100,6 +102,15 @@ class Job:
 
     def select_node(self, const):
         """Picking a node since parameters
+
+        Parameters
+        ----------
+        const : Constants
+            Instance of Constant class
+        
+        Return
+        ------
+        barray : node selected
         """
         node_utils = NodeUtils(const)
         self.volume_port = node_utils.get_port()
@@ -116,7 +127,7 @@ class Job:
             return node.encode()
         else:
             return node_utils.pick_a_volume()
-
+    
     def send_job(self, const):
         """Send job to the node selected
 
@@ -147,6 +158,7 @@ class Job:
         request = CoreRequest(node.decode(), self.volume_port, '/send_job')
         request.set_type(ReqType.POST)
         request.set_payload(self.job_params)
+        request.add_header({const.PASSPORT: self.passport})
         job_response = request.make_request(json_request=True)
         if not job_response:
             # removing job
@@ -160,12 +172,19 @@ class Job:
             return False
         return job_response
 
-    def send_scheduled_job(self, const, parameters):
-        """Send job to the node selected
+    def send_scheduled_job(self, const, parameters) -> bool:
+        """Send scheduled job to the node selected
 
-            params:
-             - const (Constants)
-             - params: dict
+        Parameters
+        ----------
+        const : Constants
+            Instance
+        paraameters: dict
+            All the required configurations
+        
+        Return
+        ------
+        bool : Successful or not
         """
         node = self.select_node(const)
         if const.DEBUG:
@@ -177,6 +196,7 @@ class Job:
         request = CoreRequest(node.decode(), self.volume_port, '/send_job')
         request.set_type(ReqType.POST)
         request.set_payload(parameters)
+        request.add_header({const.PASSPORT: self.passport})
         job_response = request.make_request(json_request=True)
         if const.DEBUG:
             print('Sending job to node ', node)

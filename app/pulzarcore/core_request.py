@@ -44,7 +44,18 @@ class CoreRequest:
     def set_payload(self, payload):
         self.payload = payload
 
-    def make_request(self, json_request=False):
+    def make_request(self, json_request=False) -> bool:
+        """Make the request with all the paramaters
+        
+        Parameters
+        ----------
+        json_request : bool, default=False
+            Add headers for JSON and retrieve the JSON response
+        
+        Return
+        ------
+        bool : Success or failed
+        """
         try:
             # Check
             req = None

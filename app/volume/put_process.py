@@ -8,8 +8,10 @@ from pulzarutils.stream import Config
 
 
 class PutProcess:
-    def __init__(self, constants):
+    def __init__(self, constants, logger):
+        self.TAG = self.__class__.__name__
         self.const = constants
+        self.logger = logger
         self.utils = Utils()
         self.db_backup = DB(self.const.DB_BACKUP)
         self.file_utils = FileUtils(self.const)
@@ -38,6 +40,7 @@ class PutProcess:
         host_url = master_url['host']
         # TODO: MAC support
         if self.const.DEBUG_WIN:
+            self.logger.debug(':{}:using docker.for.win.localhost'.format(self.TAG))
             # Forn windows machine
             host_url = 'docker.for.win.localhost'
         # Confirming with master.
@@ -73,7 +76,7 @@ class PutProcess:
                 b'1'
             )
         except BaseException as err:
-            print('notify_record_to_master', err)
+            self.logger.exeption(':{}:{}'.format(self.TAG, err))
             self.messenger.code_type = self.const.PULZAR_ERROR
             self.messenger.set_message = str(err)
             self.messenger.mark_as_failed()
@@ -110,6 +113,7 @@ class PutProcess:
                     self.messenger.set_message = 'key added'
 
             except BaseException as err:
+                self.logger.exeption(':{}:{}'.format(self.TAG, err))
                 self.messenger.code_type = self.const.USER_ERROR
                 self.messenger.set_message = str(err)
                 self.messenger.mark_as_failed()

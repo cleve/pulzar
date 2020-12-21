@@ -13,9 +13,10 @@ class JobProcess:
     """Main class to handle jobs
     """
 
-    def __init__(self, constants):
+    def __init__(self, constants, logger):
         self.TAG = self.__class__.__name__
         self.const = constants
+        self.logger = logger
         self.utils = Utils()
         self.db_backup = DB(self.const.DB_BACKUP)
         self.config = Config(self.const.CONF_PATH)
@@ -47,7 +48,7 @@ class JobProcess:
             # Get job path directory
             self.job_directory = self.config.get_config('jobs', 'dir')
             if self.job_directory is None:
-                print('First you need to set/create the job directory')
+                self.logger.debug(':{}:path -> {}'.format(self.TAG, 'First you need to set/create the job directory'))
                 self.messenger.code_type = self.const.JOB_ERROR
                 self.messenger.set_message = 'first you need to set/create the job directory'
                 self.messenger.mark_as_failed()
@@ -55,8 +56,7 @@ class JobProcess:
             # check if the job exists
             path_to_search = self.job_directory + job_file_path + '/' + job_file_name + '.py'
             generic_path = job_file_path + '/' + job_file_name + '.py'
-            if self.const.DEBUG:
-                print('path: ', path_to_search)
+            self.logger.debug(':{}:path -> {}'.format(self.TAG, path_to_search))
             good = False
             if self.utils.file_exists(path_to_search):
                 job_object = Job(job_id, generic_path,
@@ -73,7 +73,7 @@ class JobProcess:
                 self.messenger.mark_as_failed()
 
         except Exception as err:
-            print('ERROR::{}::{}'.format(self.TAG, err))
+            self.logger.exeption(':{}:{}'.format(self.TAG, err))
             self.messenger.code_type = self.const.PULZAR_ERROR
             self.messenger.set_message = str(err)
             self.messenger.mark_as_failed()

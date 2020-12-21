@@ -1,5 +1,6 @@
 from pulzarutils.constants import Constants
 from pulzarutils.messenger import Messenger
+from pulzarutils.logger import PulzarLogger
 from volume.get_process import GetProcess
 from volume.discovery_process import DiscoveryProcess
 from volume.put_process import PutProcess
@@ -18,6 +19,7 @@ class Dispatcher:
     def __init__(self, utils):
         self.utils = utils
         self.const = Constants()
+        self.logger = PulzarLogger(self.const)
 
         # reg strings
         self.re_admin = r'/admin/\w'
@@ -33,38 +35,38 @@ class Dispatcher:
 
         # Autodiscovery
         if self.utils.match_regex(url_path, self.re_autodiscovery):
-            discovery_process = DiscoveryProcess(self.const)
+            discovery_process = DiscoveryProcess(self.const, self.logger)
             return discovery_process.process_request(env)
 
         # Admin
         if self.utils.match_regex(url_path, self.re_admin):
-            admin_process = AdminProcess(self.const)
+            admin_process = AdminProcess(self.const, self.logger)
             if method == self.const.GET:
                 return admin_process.process_request(url_path)
 
         # Jobs
         if self.utils.match_regex(url_path, self.re_job):
             if method == self.const.POST:
-                job_process = JobProcess(self.const)
+                job_process = JobProcess(self.const, self.logger)
                 return job_process.process_request(url_path, env)
 
         # Regular requests
         else:
             # Delete value.
             if method == self.const.DELETE:
-                get_request = DeleteProcess(self.const)
+                get_request = DeleteProcess(self.const, self.logger)
                 return get_request.process_request(
                     env, start_response, url_path)
 
             # Get key-value.
             if method == self.const.GET:
-                get_request = GetProcess(self.const)
+                get_request = GetProcess(self.const, self.logger)
                 return get_request.process_request(
                     env, start_response, url_path)
 
             # PUT key-value.
             if method == self.const.PUT:
-                put_request = PutProcess(self.const)
+                put_request = PutProcess(self.const, self.logger)
                 return put_request.process_request(
                     env, start_response, url_path)
 

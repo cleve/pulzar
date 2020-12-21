@@ -5,8 +5,10 @@ from pulzarutils.file_utils import FileUtils
 
 
 class DeleteProcess:
-    def __init__(self, constants):
+    def __init__(self, constants, logger):
+        self.TAG = self.__class__.__name__
         self.const = constants
+        self.logger = logger
         self.file_utils = FileUtils(self.const)
         self.utils = Utils()
         self.messenger = Messenger()
@@ -39,7 +41,7 @@ class DeleteProcess:
                     self.messenger.mark_as_failed()
 
             except Exception as err:
-                print('Error DeleteProcess', err)
+                self.logger.exception(':{}:{}'.format(self.TAG, err))
                 self.messenger.code_type = self.const.PULZAR_ERROR
                 self.messenger.set_message = str(err)
                 self.messenger.mark_as_failed()

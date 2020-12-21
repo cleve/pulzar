@@ -10,9 +10,11 @@ class Skynet:
     """Internal communication
     """
 
-    def __init__(self, env):
+    def __init__(self, env, logger):
+        self.TAG = self.__class__.__name__
         self.const = Constants()
         self.utils = Utils()
+        self.logger = logger
         self.env = env
         self.db_volume = DB(self.const.DB_VOLUME)
         self.master_db = DB(self.const.DB_PATH)
@@ -96,7 +98,7 @@ class Skynet:
         # Get records registered
         records_in_master = self.master_db.count_values(
             params[b'host'][0], ':')
-        print("records_in_master", records_in_master)
+        self.logger.debug('{}:record in master are {}'.format(self.TAG, records_in_master))
         # volume_registered
         current_datetime = self.utils.get_current_datetime_str()
         volume_records = self.utils.decode_byte_to_str(params[b'total'][0])
@@ -147,7 +149,7 @@ class Skynet:
                 self.messenger.set_response({'synch': synch})
 
         except Exception as err:
-            print('Error Skynet', err)
+            self.logger.exeption('{}:{}'.format(self.TAG, err))
             self.messenger.code_type = self.const.PULZAR_ERROR
             self.messenger.mark_as_failed()
             self.messenger.set_message = str(err)

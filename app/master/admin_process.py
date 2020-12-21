@@ -5,8 +5,9 @@ from pulzarcore.core_rdb import RDB
 
 
 class AdminProcess:
-    def __init__(self, constants):
+    def __init__(self, constants, logger):
         self.const = constants
+        self.logger = logger
         self.utils = Utils()
         # DB of values already loaded
         self.db_volumes = DB(self.const.DB_VOLUME)
@@ -74,7 +75,7 @@ class AdminProcess:
                 return self.messenger
 
             except Exception as err:
-                print('Error extracting key', err)
+                self.logger.exeption('Error extracting key {}'.format(err))
                 self.messenger.code_type = self.const.PULZAR_ERROR
                 self.messenger.set_message = str(err)
                 self.messenger.mark_as_failed()

@@ -1,5 +1,6 @@
 from pulzarutils.constants import Constants
 from pulzarutils.messenger import Messenger
+from pulzarutils.logger import PulzarLogger
 from master.skynet import Skynet
 from master.get_process import GetProcess
 from master.post_process import PostProcess
@@ -22,6 +23,7 @@ class Dispatcher:
     def __init__(self, utils):
         self.utils = utils
         self.const = Constants()
+        self.logger = PulzarLogger(self.const)
 
         # reg strings
         self.re_job_admin = r'\/admin\/(scheduled_jobs|jobs|all_jobs|job_catalog){1}.*'
@@ -41,14 +43,14 @@ class Dispatcher:
             return messenger
         # Skynet
         if self.utils.match_regex(url_path, self.re_skynet):
-            skynet = Skynet(env)
+            skynet = Skynet(env, self.logger)
             return skynet.process_request(url_path, method)
 
         # Job Admin
         elif self.utils.match_regex(url_path, self.re_job_admin):
             if method == self.const.GET:
                 query_string = env['QUERY_STRING']
-                admin_process = AdminJobs(self.const)
+                admin_process = AdminJobs(self.const, self.logger)
                 if query_string.strip() != '':
                     url_path += '?' + query_string
                 return admin_process.process_request(url_path)
@@ -62,7 +64,7 @@ class Dispatcher:
         # Admin
         elif self.utils.match_regex(url_path, self.re_admin):
             if method == self.const.GET:
-                admin_process = AdminProcess(self.const)
+                admin_process = AdminProcess(self.const, self.logger)
                 return admin_process.process_request(url_path)
             else:
                 messenger = Messenger()
@@ -74,7 +76,7 @@ class Dispatcher:
         # Jobs
         elif self.utils.match_regex(url_path, self.const.RE_LAUNCH_JOB) or self.utils.match_regex(url_path, self.const.RE_CANCEL_JOB):
             if method == self.const.POST:
-                job_process = JobProcess(self.const)
+                job_process = JobProcess(self.const, self.logger)
                 query_string = env['QUERY_STRING']
                 return job_process.process_request(
                     url_path, query_string, env)
@@ -87,7 +89,7 @@ class Dispatcher:
 
         elif self.utils.match_regex(url_path, self.const.RE_NOTIFICATION_JOB):
             if method == self.const.POST:
-                job_process = JobProcess(self.const)
+                job_process = JobProcess(self.const, self.logger)
                 query_string = env['QUERY_STRING']
                 return job_process.process_notification_request(
                     url_path, query_string, env)
@@ -101,13 +103,13 @@ class Dispatcher:
         # Extensions
         elif self.utils.match_regex(url_path, self.const.RE_EXTENSION):
             if method == self.const.GET:
-                extension = ExtensionProcess(self.const)
+                extension = ExtensionProcess(self.const, self.logger)
                 query_string = env['QUERY_STRING']
                 return extension.process_request(
                     url_path, query_string)
 
             elif method == self.const.PUT:
-                extension = ExtensionProcess(self.const)
+                extension = ExtensionProcess(self.const, self.logger)
                 query_string = env['QUERY_STRING']
                 return extension.process_request(
                     url_path, query_string, env)
@@ -122,7 +124,7 @@ class Dispatcher:
         # Request storage
         elif self.utils.match_regex(url_path, self.const.RE_GET_STORAGE):
             if method == self.const.GET:
-                get_node_request = GetNodeProcess(self.const)
+                get_node_request = GetNodeProcess(self.const, self.logger)
                 return get_node_request.process_request(
                     env, start_response, url_path)
 
@@ -130,19 +132,19 @@ class Dispatcher:
         else:
             # Delete value.
             if method == self.const.DELETE:
-                delete_request = DeleteProcess(self.const)
+                delete_request = DeleteProcess(self.const, self.logger)
                 return delete_request.process_request(
                     env, start_response, url_path)
 
             # Get key-value.
             if method == self.const.GET:
-                get_request = GetProcess(self.const)
+                get_request = GetProcess(self.const, self.logger)
                 return get_request.process_request(
                     env, start_response, url_path)
 
             # Put key-value.
             if method == self.const.PUT:
-                put_request = PutProcess(self.const)
+                put_request = PutProcess(self.const, self.logger)
                 return put_request.process_request(
                     env, start_response, url_path)
 

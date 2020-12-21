@@ -4,8 +4,9 @@ from pulzarcore.core_rdb import RDB
 
 
 class AdminJobs:
-    def __init__(self, constants):
+    def __init__(self, constants, logger):
         self.const = constants
+        self.logger = logger
         self.utils = Utils()
         self.messenger = Messenger()
 

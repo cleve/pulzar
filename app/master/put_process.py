@@ -5,8 +5,10 @@ from pulzarcore.core_db import DB
 
 
 class PutProcess:
-    def __init__(self, constants):
+    def __init__(self, constants, logger):
+        self.TAG = self.__class__.__name__
         self.const = constants
+        self.logger = logger
         # 20 mins max to consider a volume online.
         self.second_range = 1200
         self.utils = Utils()
@@ -84,7 +86,7 @@ class PutProcess:
                 self.messenger.code_type = self.const.KEY_ALREADY_ADDED
 
             except Exception as err:
-                print('Error PUT process:', err)
+                self.logger.exeption('{}:{}'.format(self.TAG, err))
                 self.messenger.code_type = self.const.PULZAR_ERROR
                 self.messenger.mark_as_failed()
                 self.messenger.set_message = str(err)

@@ -4,8 +4,10 @@ from pulzarcore.core_db import DB
 
 
 class GetProcess:
-    def __init__(self, constants):
+    def __init__(self, constants, logger):
+        self.TAG = self.__class__.__name__
         self.const = constants
+        self.logger = logger
         self.utils = Utils()
         # DB of values already loaded
         self.db_values = DB(self.const.DB_PATH)
@@ -43,7 +45,7 @@ class GetProcess:
                 self.messenger.volume = volume
 
             except Exception as err:
-                print('Error Get process', err)
+                self.logger.exeption('{}:{}'.format(self.TAG, err))
                 self.messenger.code_type = self.const.PULZAR_ERROR
                 self.messenger.mark_as_failed()
                 self.messenger.set_message = str(err)

@@ -12,8 +12,9 @@ class JobProcess:
     """Main class to handle jobs
     """
 
-    def __init__(self, constants):
+    def __init__(self, constants, logger):
         self.TAG = self.__class__.__name__
+        self.logger = logger
         self.const = constants
         self.utils = Utils()
         self.data_base = RDB(self.const.DB_JOBS)
@@ -78,7 +79,7 @@ class JobProcess:
                 self.messenger.mark_as_failed()
 
         except Exception as err:
-            print('Error process_notification_request', err)
+            self.logger.exeption('{}:{}'.format(self.TAG, err))
             self.messenger.code_type = self.const.JOB_ERROR
             self.messenger.mark_as_failed()
 
@@ -136,8 +137,7 @@ class JobProcess:
                 self.messenger.mark_as_failed()
 
         except Exception as err:
-            if self.const.DEBUG:
-                print('ERROR::{}::{}'.format(self.TAG, err))
+            self.logger.exeption('{}:{}'.format(self.TAG, err))
             self.messenger.code_type = self.const.JOB_ERROR
             self.messenger.mark_as_failed()
             self.messenger.set_message = str(err)

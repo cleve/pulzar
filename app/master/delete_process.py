@@ -4,7 +4,9 @@ from pulzarcore.core_db import DB
 
 
 class DeleteProcess:
-    def __init__(self, constants):
+    def __init__(self, constants, logger):
+        self.TAG = self.__class__.__name__
+        self.logger = logger
         self.const = constants
         self.utils = Utils()
         # DB of values already loaded
@@ -39,7 +41,7 @@ class DeleteProcess:
                 return self.messenger
 
             except Exception as err:
-                print('Error DeleteProcess', err)
+                self.logger.exeption('{}:{}'.format(self.TAG, err))
                 self.messenger.code_type = self.const.PULZAR_ERROR
                 self.messenger.set_message = str(err)
                 self.messenger.mark_as_failed()

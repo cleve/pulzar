@@ -18,6 +18,9 @@ class Constants:
     def __init__(self):
         # General
         self.DEBUG = False
+        # Logger configuration
+        self.DEBUG_LEVEL = 'DEBUG'
+        self.LOG_FILE_PATH = 'storage/pulzar.log' if self.DEBUG else '/var/lib/pulzar/log/pulzar.log'
         # To try docker for windows in the same machine
         self.DEBUG_WIN = False
         self.VERSION = '0.1'

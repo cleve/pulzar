@@ -2,6 +2,7 @@ from pulzarcore.core_request import CoreRequest
 from pulzarutils.utils import Utils
 from pulzarutils.constants import Constants
 from pulzarutils.constants import ReqType
+from pulzarutils.logger import PulzarLogger
 from pulzarcore.core_db import DB
 from pulzarutils.stream import Config
 
@@ -11,7 +12,9 @@ class Synchro:
     """
 
     def __init__(self):
+        self.TAG = self.__class__.__name__
         self.const = Constants()
+        self.logger = PulzarLogger(self.const)
         self.utils = Utils()
         self.db_stats = DB(self.const.DB_STATS)
         self.db_backup = DB(self.const.DB_BACKUP)
@@ -77,13 +80,13 @@ class Synchro:
             if not self.db_backup.get_equal_value(file_item_byte, b'1'):
                 self.db_backup.update_or_insert_value(file_item_byte, b'0')
         end_time = self.utils.get_time_it()
-        print('Local verification completed in ', end_time - start_time, '(s)')
+        self.logger.info(':{}:Local verification completed in -> {}(s)'.format(self.TAG, end_time - start_time))
 
     def restore(self):
         """Start backup process
         """
         if not self.utils.dir_exists(self.volume_dir):
-            print('Dir {} does not exist'.format(self.volume_dir))
+            self.logger.error(':{}:dir does not exist -> {}'.format(self.TAG, self.volume_dir))
             return
         self.local_verificator()
         total_files = self.count_files_synchronized()
@@ -117,7 +120,7 @@ class Synchro:
                         bkey,
                         b'1'
                     )
-            print('Restauration completed')
+            self.logger.info('Restauration completed')
 
     def synchronize(self):
         """Check status and send data to master

@@ -6,6 +6,7 @@ from pulzarcore.core_rdb import RDB
 from pulzarutils.constants import Constants
 from pulzarutils.utils import Utils
 from pulzarutils.stream import Config
+from pulzarutils.logger import PulzarLogger
 
 
 class TemporalCheck:
@@ -14,7 +15,9 @@ class TemporalCheck:
     """
 
     def __init__(self):
+        self.TAG = self.__class__.__name__
         self.const = Constants()
+        self.logger = PulzarLogger(self.const)
         self.utils = Utils()
         self.temporal_files = DB(self.const.DB_NOT_PERMANENT)
         self.master_db = DB(self.const.DB_PATH)
@@ -66,10 +69,10 @@ class TemporalCheck:
             url='http://' + url + '/delete_key' + key
         )
         # Delete temporal register
-        print('deleting...', req.status_code)
+        self.logger.info(':{}:deleting... code -> {}'.format(self.TAG, req.status_code))
         if req.status_code >= 200 and req.status_code < 300:
             message = req.json()
-            print(message)
+            self.logger.info(':{}:deleting response -> {}'.format(self.TAG, req.text))
             if message['status'] == 'ok':
                 self.temporal_files.delete_value(bkey)
 
@@ -93,9 +96,13 @@ class TemporalCheck:
                 value_datetime = self.utils.get_datetime_from_string(
                     master_value.split(',')[1])
                 delta = (current_time - value_datetime).days
-                if self.const.DEBUG:
-                    print('Key {} with time alive of {} days and delta is {}'.format(
-                        self.utils.decode_base_64(bkey, to_str=True), days, delta))
+                self.logger.debug(':{}:Key {} with time alive of {} days and delta is {}'.format(
+                        self.TAG,
+                        self.utils.decode_base_64(bkey, to_str=True),
+                        days,
+                        delta
+                    )
+                )
                 # Remove data
                 if delta > days:
                     self.delete_request(bkey)

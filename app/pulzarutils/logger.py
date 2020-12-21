@@ -34,7 +34,9 @@ class PulzarLogger:
             file_path, maxBytes=100000, backupCount=5)
         self.file_handler.setFormatter(self.formatter)
         self.logger.addHandler(self.file_handler)
-        if level == 'DEBUG':
+        if level == 'INFO':
+            self.logger.setLevel(logging.INFO)
+        elif level == 'DEBUG':
             self.logger.setLevel(logging.DEBUG)
         elif level == 'WARNING':
             self.logger.setLevel(logging.WARNING)

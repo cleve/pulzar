@@ -3,6 +3,7 @@ import importlib
 from pulzarutils.utils import Utils
 from pulzarutils.constants import Constants
 from pulzarutils.constants import ReqType
+from pulzarutils.logger import PulzarLogger
 from pulzarutils.stream import Config
 from pulzarcore.core_rdb import RDB
 from pulzarcore.core_request import CoreRequest
@@ -17,6 +18,7 @@ class LaunchJobs:
     def __init__(self):
         self.TAG = self.__class__.__name__
         self.const = Constants()
+        self.logger = PulzarLogger(self.const)
         self.utils = Utils()
         self.data_base = RDB(self.const.DB_NODE_JOBS)
         self.jobs_to_launch = []
@@ -173,8 +175,7 @@ class LaunchJobs:
                 if self._mark_job(job['job_id'], status, job['scheduled']):
                     self._notify_to_master(job['job_id'], job['scheduled'])
             except Exception as err:
-                if self.const.DEBUG:
-                    print(self.TAG + '::Error executing the job: ', err)
+                self.logger.exeption(':{}:{}'.format(self.TAG, err))
                 # Mark as failed
                 if self._mark_job(job['job_id'], False, job['scheduled'], str(err)):
                     self._notify_to_master(job['job_id'], job['scheduled'])

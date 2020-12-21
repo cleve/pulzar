@@ -19,6 +19,7 @@ class Constants:
         # General
         self.DEBUG = False
         # Logger configuration
+        # INFO, DEBUG, ERROR
         self.DEBUG_LEVEL = 'DEBUG'
         self.LOG_FILE_PATH = 'storage/pulzar.log' if self.DEBUG else '/var/lib/pulzar/log/pulzar.log'
         # To try docker for windows in the same machine

@@ -1,7 +1,12 @@
 import logging
 
 class PulzarLogger:
+
     def __init__(self, const):
+        '''Logger class
+
+        Should be instantiate once
+        '''
         self.const = const
         self.logger = logging.getLogger(self.__class__.__name__)
         self.format = '%(asctime)s:%(levelname)s:%(message)s'

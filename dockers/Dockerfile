@@ -11,6 +11,7 @@ RUN mkdir /var/lib/pulzar
 RUN mkdir /var/lib/pulzar/data
 RUN mkdir /var/lib/pulzar/dbs
 RUN mkdir /var/lib/pulzar/config
+RUN mkdir /var/lib/pulzar/log
 RUN mkdir /usr/local/bin/pulzar
 COPY dockers/requirements.txt requirements.txt
 RUN pip3 install -r requirements.txt

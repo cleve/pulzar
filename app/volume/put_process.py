@@ -105,6 +105,7 @@ class PutProcess:
                 self.file_utils.set_key(key_to_binary, base64_str)
                 self.file_utils.set_path(root_path)
                 key_generated = self.file_utils.read_binary_file(env)
+                self.logger.info(':{}:key generated: {}'.format(self.TAG, key_generated))
                 # Try to reach to master.
                 if self.notify_record_to_master(env):
                     self.messenger.code_type = self.const.KEY_ADDED

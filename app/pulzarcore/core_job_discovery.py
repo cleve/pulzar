@@ -64,7 +64,7 @@ class JobDiscovery:
             # Storing results
             self._create_or_update_catalog(no_extension, dictionary)
         except BaseException as err:
-            self.logger.exeption('{}::{}'.format(self.TAG, err))
+            self.logger.exception(':{}:{}'.format(self.TAG, err))
 
     def _parse_doc(self, raw_text):
         config = {

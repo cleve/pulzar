@@ -15,6 +15,7 @@ class Scheduler():
     """Schedule jobs in master
     """
     def __init__(self):
+        self.TAG = self.__class__.__name__
         self.const = Constants()
         self.utils = Utils()
         self.logger = PulzarLogger(self.const)
@@ -58,8 +59,7 @@ class Scheduler():
             Dictionary with all the configuration and parameters required
         """
         if not self._notify_to_node(parameters):
-            if self.const.DEBUG:
-                print('_schedule_job::Could not send the job')
+            self.logger.error(':{}:Could not send the job. Parameters: {}'.format(self.TAG, parameters))
             return
         sql = 'UPDATE schedule_job SET scheduled = 0 WHERE job_id = {}'.format(
             parameters['job_id']
@@ -296,7 +296,7 @@ class Scheduler():
                 self.schedule_data_base.execute_sql_update(
                     sql, (next_execution,))
             except Exception as err:
-                print('Error executing the job: ', err)
+                self.logger.exception(':{}:{}'.format(self.TAG, err))
 
     def run_forever(self):
         while True:

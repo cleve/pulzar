@@ -79,7 +79,7 @@ class JobProcess:
                 self.messenger.mark_as_failed()
 
         except Exception as err:
-            self.logger.exeption('{}:{}'.format(self.TAG, err))
+            self.logger.exception(':{}:{}'.format(self.TAG, err))
             self.messenger.code_type = self.const.JOB_ERROR
             self.messenger.mark_as_failed()
 
@@ -137,7 +137,7 @@ class JobProcess:
                 self.messenger.mark_as_failed()
 
         except Exception as err:
-            self.logger.exception('{}:{}'.format(self.TAG, err))
+            self.logger.exception(':{}:{}'.format(self.TAG, err))
             self.messenger.code_type = self.const.JOB_ERROR
             self.messenger.mark_as_failed()
             self.messenger.set_message = str(err)

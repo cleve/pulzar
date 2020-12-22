@@ -98,6 +98,7 @@ class LaunchJobs:
             self.data_base.execute_sql(sql)
         # Mark attempt
         else:
+            self.logger.error('{}:failed to notify job for jobid: {}. Mark as attempt 1'.format(self.TAG, job_id))
             sql = 'UPDATE {} SET attempt = 1 WHERE job_id = {}'.format(
                 table, job_id)
             self.data_base.execute_sql(sql)
@@ -163,6 +164,7 @@ class LaunchJobs:
                     'scheduled': job['scheduled']
                 }
                 # Import module and method execute.
+                self.logger.info('{}:importing module -> {}'.format(self.TAG, custom_module))
                 import_fly = importlib.import_module(custom_module)
                 job_class = getattr(import_fly, class_name)
                 job_object = job_class(job['job_args'])

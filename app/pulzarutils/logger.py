@@ -31,7 +31,7 @@ class PulzarLogger:
         '''
         self.formatter = logging.Formatter(self.format)
         self.file_handler = RotatingFileHandler(
-            file_path, maxBytes=100000, backupCount=5)
+            file_path, maxBytes=1000000, backupCount=4)
         self.file_handler.setFormatter(self.formatter)
         self.logger.addHandler(self.file_handler)
         if level == 'INFO':

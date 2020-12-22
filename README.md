@@ -744,3 +744,17 @@ port=31414
 key=l415S4Nt05
 ...
 ```
+
+# Logs
+
+You can define the log level under app/pulzarutils/constants.py
+
+```sh
+# INFO, DEBUG, ERROR
+self.DEBUG_LEVEL = 'DEBUG'
+```
+
+In production, the logs can be found at ``` /var/lib/pulzar/log/ ```
+
+For errors, you can access to the docker container or use volume to mount the logs
+into the host machine

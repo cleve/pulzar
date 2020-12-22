@@ -107,7 +107,17 @@ class FileUtils():
                 temp_file.name, full_path + '/' + self.key):
             return self.key
 
-    def read_binary_file(self, env):
+    def read_binary_file(self, env) -> str:
+        '''Read the file sent by client
+        Parameters
+        ----------
+        env : dict
+            Uwsgi environment dictionary
+
+        Return
+        ------
+        str : Base64 string
+        '''
         try:
             request_body_size = int(env[self.const.CONTENT_LENGTH])
         except (ValueError):

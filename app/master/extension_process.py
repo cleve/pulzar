@@ -92,7 +92,7 @@ class ExtensionProcess:
                     self.messenger.set_message = 'Wrong query, extension not found'
 
             except Exception as err:
-                self.logger.exeption('{}:{}'.format(self.TAG, err))
+                self.logger.exception('{}:{}'.format(self.TAG, err))
                 self.messenger.code_type = self.const.PULZAR_ERROR
                 self.messenger.mark_as_failed()
                 self.messenger.set_message = str(err)

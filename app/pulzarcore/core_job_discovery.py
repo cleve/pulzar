@@ -2,6 +2,7 @@ import os
 import importlib
 from pulzarutils.utils import Utils
 from pulzarutils.constants import Constants
+from pulzarutils.logger import PulzarLogger
 from pulzarutils.stream import Config
 from pulzarcore.core_rdb import RDB
 
@@ -18,6 +19,7 @@ class JobDiscovery:
         self.TAG = self.__class__.__name__
         self.utils = Utils()
         self.const = Constants()
+        self.logger = PulzarLogger(self.const)
         self.rdb = RDB(self.const.DB_JOBS)
         server_config = Config(self.const.CONF_PATH)
         self.job_directory = server_config.get_config('jobs', 'dir')
@@ -62,7 +64,7 @@ class JobDiscovery:
             # Storing results
             self._create_or_update_catalog(no_extension, dictionary)
         except BaseException as err:
-            print('{}::{}'.format(self.TAG, err))
+            self.logger.exeption('{}::{}'.format(self.TAG, err))
 
     def _parse_doc(self, raw_text):
         config = {

@@ -99,7 +99,7 @@ class PulzarLogger:
         '''
         self.logger.error(message)
 
-    def exeption(self, message) -> None:
+    def exception(self, message) -> None:
         '''Register error with traceback logs
 
         Parameters

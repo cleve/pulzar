@@ -175,7 +175,7 @@ class LaunchJobs:
                 if self._mark_job(job['job_id'], status, job['scheduled']):
                     self._notify_to_master(job['job_id'], job['scheduled'])
             except Exception as err:
-                self.logger.exeption(':{}:{}'.format(self.TAG, err))
+                self.logger.exception(':{}:{}'.format(self.TAG, err))
                 # Mark as failed
                 if self._mark_job(job['job_id'], False, job['scheduled'], str(err)):
                     self._notify_to_master(job['job_id'], job['scheduled'])

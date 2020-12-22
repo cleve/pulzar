@@ -6,6 +6,7 @@ from pulzarutils.utils import Utils
 from pulzarutils.constants import Constants
 from pulzarutils.constants import ReqType
 from pulzarutils.node_utils import NodeUtils
+from pulzarutils.logger import PulzarLogger
 from pulzarcore.core_rdb import RDB
 from pulzarcore.core_job_master import Job
 
@@ -16,6 +17,7 @@ class Scheduler():
     def __init__(self):
         self.const = Constants()
         self.utils = Utils()
+        self.logger = PulzarLogger(self.const)
         self.schedule_data_base = RDB(self.const.DB_JOBS)
         self.max_jobs_running = 4
         self.jobs_to_launch = []

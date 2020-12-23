@@ -1,3 +1,4 @@
+import os
 import logging
 from logging.handlers import RotatingFileHandler
 
@@ -8,6 +9,7 @@ class PulzarLogger:
 
         Should be instantiate once
         '''
+        self.file_name = 'pulzar.log'
         self.logger = logging.getLogger(self.__class__.__name__)
         self.format = '%(asctime)s:%(levelname)s:%(message)s'
         self.set_up(const.DEBUG_LEVEL, const.LOG_FILE_PATH)
@@ -31,7 +33,10 @@ class PulzarLogger:
         '''
         self.formatter = logging.Formatter(self.format)
         self.file_handler = RotatingFileHandler(
-            file_path, maxBytes=1000000, backupCount=4)
+            os.path.join(file_path, self.file_name),
+            maxBytes=100000,
+            backupCount=5
+        )
         self.file_handler.setFormatter(self.formatter)
         self.logger.addHandler(self.file_handler)
         if level == 'INFO':

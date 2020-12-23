@@ -1,6 +1,5 @@
 from pulzarutils.constants import Constants
 from pulzarutils.messenger import Messenger
-from pulzarutils.logger import PulzarLogger
 from master.skynet import Skynet
 from master.get_process import GetProcess
 from master.post_process import PostProcess
@@ -20,10 +19,10 @@ class Dispatcher:
      - skynet
      """
 
-    def __init__(self, utils):
+    def __init__(self, utils, logger):
         self.utils = utils
         self.const = Constants()
-        self.logger = PulzarLogger(self.const)
+        self.logger = logger
 
         # reg strings
         self.re_job_admin = r'\/admin\/(scheduled_jobs|jobs|all_jobs|job_catalog){1}.*'

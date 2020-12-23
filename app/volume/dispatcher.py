@@ -1,6 +1,5 @@
 from pulzarutils.constants import Constants
 from pulzarutils.messenger import Messenger
-from pulzarutils.logger import PulzarLogger
 from volume.get_process import GetProcess
 from volume.discovery_process import DiscoveryProcess
 from volume.put_process import PutProcess
@@ -16,10 +15,10 @@ class Dispatcher:
      - skynet
      """
 
-    def __init__(self, utils):
+    def __init__(self, utils, logger):
         self.utils = utils
         self.const = Constants()
-        self.logger = PulzarLogger(self.const)
+        self.logger = logger
 
         # reg strings
         self.re_admin = r'/admin/\w'

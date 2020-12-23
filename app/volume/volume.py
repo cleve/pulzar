@@ -1,6 +1,7 @@
 from pulzarutils.constants import Constants
 from pulzarutils.constants import ReqType
 from pulzarutils.utils import Utils
+from pulzarutils.logger import PulzarLogger
 from pulzarutils.file_utils import FileUtils
 from pulzarcore.core_request import CoreRequest
 from volume.dispatcher import Dispatcher
@@ -14,7 +15,8 @@ class Volume:
         self.utils = Utils()
         self.file_utils = FileUtils(self.const)
         self.response = ResponseClass()
-        self.dispatcher = Dispatcher(self.utils)
+        self.logger = PulzarLogger(self.const, master=False)
+        self.dispatcher = Dispatcher(self.utils, self.logger)
         self.master_url = None
         self.master_port = None
 

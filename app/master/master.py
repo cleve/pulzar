@@ -1,6 +1,7 @@
 from pulzarutils.constants import Constants
 from pulzarutils.constants import Response
 from pulzarutils.utils import Utils
+from pulzarutils.logger import PulzarLogger
 from master.dispatcher import Dispatcher
 from pulzarcore.core_response import ResponseClass
 
@@ -9,7 +10,8 @@ class Master:
     def __init__(self):
         self.const = Constants()
         self.utils = Utils()
-        self.dispatcher = Dispatcher(self.utils)
+        self.logger = PulzarLogger(self.const, master=True)
+        self.dispatcher = Dispatcher(self.utils, self.logger)
         self.response = ResponseClass()
         self.master_env = None
 

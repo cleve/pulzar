@@ -17,14 +17,14 @@ class ReqType(Enum):
 class Constants:
     def __init__(self):
         # General
-        self.DEBUG = True
+        self.DEBUG = False
         # Logger configuration
         # INFO, DEBUG, ERROR
-        self.DEBUG_LEVEL = 'DEBUG'
+        self.DEBUG_LEVEL = 'ERROR'
         self.LOG_PATH = 'storage/log/' if self.DEBUG else '/var/lib/pulzar/log/'
         # To try docker for windows in the same machine
         self.DEBUG_WIN = False
-        self.VERSION = '0.1'
+        self.VERSION = '1.0.4'
         self.PASS = 'admin'
         self.PASSPORT = 'passport'
         self.EXTENSIONS_DIR = 'master/extensions'

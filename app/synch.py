@@ -14,7 +14,7 @@ class Synchro:
     def __init__(self):
         self.TAG = self.__class__.__name__
         self.const = Constants()
-        self.logger = PulzarLogger(self.const)
+        self.logger = PulzarLogger(self.const, master=False)
         self.utils = Utils()
         self.db_stats = DB(self.const.DB_STATS)
         self.db_backup = DB(self.const.DB_BACKUP)

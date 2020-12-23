@@ -3,12 +3,12 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 class PulzarLogger:
-
     def __init__(self, const, master=True):
         '''Logger class
 
         Should be instantiate once
         '''
+        self.debug_console = const.DEBUG
         self.file_name = 'pulzar.log'
         if const.DEBUG and master:
             self.file_name = 'pulzarmaster.log'
@@ -36,11 +36,12 @@ class PulzarLogger:
         self.formatter = logging.Formatter(self.format)
         self.file_handler = RotatingFileHandler(
             os.path.join(file_path, self.file_name),
-            maxBytes=100000,
-            backupCount=5
+            maxBytes=1000000,
+            backupCount=2
         )
         self.file_handler.setFormatter(self.formatter)
-        self.logger.addHandler(self.file_handler)
+        if not self.logger.handlers:
+            self.logger.addHandler(self.file_handler)
         if level == 'INFO':
             self.logger.setLevel(logging.INFO)
         elif level == 'DEBUG':

@@ -98,7 +98,7 @@ class Skynet:
         # Get records registered
         records_in_master = self.master_db.count_values(
             params[b'host'][0], ':')
-        self.logger.debug('{}:record in master are {}'.format(self.TAG, records_in_master))
+        self.logger.debug(':{}:record in master are {}'.format(self.TAG, records_in_master))
         # volume_registered
         current_datetime = self.utils.get_current_datetime_str()
         volume_records = self.utils.decode_byte_to_str(params[b'total'][0])

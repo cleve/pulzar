@@ -125,7 +125,7 @@ class JobProcess:
             params['job_id'] = None
             params['parameters'] = job_params
 
-            job_object = Job(params)
+            job_object = Job(params, self.logger)
             if job_object.send_job(self.const):
                 self.messenger.code_type = self.const.JOB_RESPONSE
                 self.messenger.set_message = 'Job added with id ' + \

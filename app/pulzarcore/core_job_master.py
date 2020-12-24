@@ -10,9 +10,10 @@ class Job:
     """Send jobs to the nodes
     """
 
-    def __init__(self, job_params):
+    def __init__(self, job_params, logger):
         self.TAG = self.__class__.__name__
         self.job_params = job_params
+        self.logger = logger
         self.utils = Utils()
         self.job_id = None
         self.volume_port = None
@@ -29,7 +30,7 @@ class Job:
     def unregister_job(self, path_db_jobs):
         """Mark as failed job in master
         """
-        print('uregistering job')
+        self.logger.debug(':{}:uregistering job'.format(self.TAG))
         # Master job database
         data_base = RDB(path_db_jobs)
         sql = 'UPDATE job SET state = 2 WHERE id = {}'.format(self.job_id)
@@ -40,21 +41,21 @@ class Job:
     def register_scheduled_job(self, path_db_jobs):
         """Register schedule job in master
         """
-        print('registering scheduled job')
+        self.logger.debug(':{}:registering scheduled job'.format(self.TAG))
         job_path = self.job_params['job_path']
         job_name = self.job_params['job_name']
 
         # Scheduler
         scheduler_object = self.job_params['parameters']['scheduled']
-
+        self.logger.debug(scheduler_object)
         # Checking scheduler options
-        if scheduler_object['interval'] not in self.scheduler_checker:
+        if scheduler_object['interval'].lower() not in self.scheduler_checker:
             return False
 
         # Other parameters
         interval = scheduler_object['interval']
         time_unit = int(scheduler_object['time_unit'])
-        if time_unit < self.scheduler_checker[interval][0] or time_unit > self.scheduler_checker[interval][1]:
+        if time_unit < self.scheduler_checker[interval.lower()][0] or time_unit > self.scheduler_checker[interval.lower()][1]:
             self.error_msg = 'interval not allowed for the time_unit'
             return False
 
@@ -147,8 +148,7 @@ class Job:
         node = self.select_node(const)
         if node is None:
             return False
-        if const.DEBUG:
-            print('Sending job to node ', node)
+        self.logger.debug(':{}:Sending job to node -> {}'.format(self.TAG, node))
         # Register in data base
         self.register_job(const.DB_JOBS, node.decode())
         if self.job_id is None:
@@ -163,10 +163,10 @@ class Job:
         if not job_response:
             # removing job
             self.unregister_job(const.DB_JOBS)
+            self.logger.error(':{}:could not communicate with node'.format(self.TAG))
             self.error_msg = 'could not communicate with node'
         elif job_response and request.json_response['status'] == 'ko':
-            if const.DEBUG:
-                print('ERROR::{}::{}'.format(self.TAG, request.json_response['msg']))
+            self.logger.error(':{}:{}'.format(self.TAG, request.json_response['msg']))
             self.error_msg = request.json_response['msg']
             self.unregister_job(const.DB_JOBS)
             return False

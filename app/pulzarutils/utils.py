@@ -44,6 +44,16 @@ class Utils:
         return platform.system() == 'Windows'
 
     def get_random_string(self, n):
+        """Get a string of len n
+        
+        Parameters
+        ----------
+        n : int
+
+        Return
+        ------
+        str : Random string
+        """
         return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(n))
 
     # Datetime options

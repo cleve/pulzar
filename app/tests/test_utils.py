@@ -11,6 +11,11 @@ class TestUtilsMethods(unittest.TestCase):
     def setUp(self):
         self.utils = Utils()
 
+    def test_get_random_string(self):
+        string = self.utils.get_random_string(10)
+        self.assertEqual(len(string), 10)
+        self.assertEqual(True, isinstance(string, str))
+
     def test_bytesto(self):
         self.assertAlmostEqual(
             1,

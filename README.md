@@ -682,20 +682,20 @@ For test purposes files of 1kb were used.
 
 For a set of 10000 instances
 
-* Request time: 0.24316366999999997(s)
-* Total time: 0.2599792804300023(s)
+* Request time: 0.038187040000000005(s)
+* Total time: 0.0632065145202796(s)
 
 ## Read tests
 
-### Synchronical executions
+### Executions
 
-* Request time: 0.16126144000000003(s)
-* Total time: 0.17557080925000265(s)
+* Request time: 0.0019433000000000002(s)
+* Total time: 0.0057227806300943485(s)
 
 ## Delete tests
 
-* Request time: 0.17187763999999994
-* Total time: 0.26895125860000463
+* Request time: 0.0038965599999999994
+* Total time: 0.012113715090054029
 
 ## Restore test
 

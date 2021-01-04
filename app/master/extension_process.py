@@ -40,9 +40,6 @@ class ExtensionProcess:
         except (ValueError):
             request_body_size = 0
         if request_body_size > 0:
-            destiny_path = '/tmp/' + \
-                self.utils.get_random_string(10) + '_' + \
-                self.utils.get_base_name_from_file(url_path)
             temp_file = self.utils.get_tmp_file()
             # Read binary file sent.
             f = env[self.const.WSGI_INPUT]
@@ -51,10 +48,7 @@ class ExtensionProcess:
 
             # Creating directories if does not exist.
             temp_file.close()  # Close the file to be copied.
-            self.utils.move_file(
-                temp_file.name, destiny_path
-            )
-            return destiny_path
+            return temp_file.name
         return None
 
     def process_request(self, url_path, query_string, env=None):
@@ -84,6 +78,8 @@ class ExtensionProcess:
                     extension_object = extension_class(
                         args, query_params, file_path)
                     j_byte = extension_object.execute()
+                    # Clear tmp is exists
+                    extension_object.clean_tmp()
                     self.messenger.code_type = self.const.EXTENSION_RESPONSE
                     self.messenger.set_response(j_byte)
                 else:

@@ -6,17 +6,28 @@ class DB:
     """
 
     def __init__(self, db_path):
+        self.TAG = self.__class__.__name__
         self.db_path = db_path
         self.env = None
         self.init_db()
 
     def init_db(self):
         """Init configuration
+        By default the db will be allocate 10GB
         """
         try:
-            self.env = lmdb.open(self.db_path, max_dbs=1)
+            self.env = lmdb.open(
+                self.db_path,
+                map_size=10000000000,
+                max_dbs=1
+            )
         except Exception as err:
-            raise Exception("DB Class", err)
+            raise Exception(
+                'ERROR:{}:{}'.format(
+                    self.TAG,
+                    str(err)
+                )
+            )
 
     def get_cursor_iterator(self):
         """Iterator as read only mode
@@ -53,6 +64,20 @@ class DB:
             return False
 
     def get_value(self, key_string, to_str=False):
+        '''Get value since key provided, if the key is
+        not resent, then return None
+        
+        Parameters
+        ----------
+        key_string : bstring
+            key to look at it
+
+        to_str : bool , default = False
+            cast to string if the parameter is True
+        Return
+        ------
+        value : bstring or str or None
+        '''
         with self.env.begin(write=False) as txn:
             value = txn.get(key_string)
             if value is None:

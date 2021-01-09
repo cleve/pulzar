@@ -63,18 +63,21 @@ class TemporalCheck:
     def delete_request(self, bkey):
         """Delete the key and from the temporal register
         """
-        key = self.utils.decode_base_64(bkey, True)
-        url = self.master_url + ':' + self.master_port + '/'
-        req = requests.delete(
-            url='http://' + url + '/delete_key' + key
-        )
-        # Delete temporal register
-        self.logger.info(':{}:deleting... code -> {}'.format(self.TAG, req.status_code))
-        if req.status_code >= 200 and req.status_code < 300:
-            message = req.json()
-            self.logger.info(':{}:deleting response -> {}'.format(self.TAG, req.text))
-            if message['status'] == 'ok':
-                self.temporal_files.delete_value(bkey)
+        try:
+            key = self.utils.decode_base_64(bkey, True)
+            url = self.master_url + ':' + self.master_port + '/'
+            req = requests.delete(
+                url='http://' + url + '/delete_key' + key
+            )
+            # Delete temporal register
+            self.logger.info(':{}:deleting... code -> {}'.format(self.TAG, req.status_code))
+            if req.status_code >= 200 and req.status_code < 300:
+                message = req.json()
+                self.logger.info(':{}:deleting response -> {}'.format(self.TAG, req.text))
+                if message['status'] == 'ok':
+                    self.temporal_files.delete_value(bkey)
+        except BaseException as err:
+            self.logger.exception(':{}:deleting response -> {}'.format(self.TAG, str(err)))
 
     def start_process(self):
         """Review files and delete it if match with the criteria
@@ -91,8 +94,9 @@ class TemporalCheck:
                 master_value = self.master_db.get_value(bkey, True)
                 if master_value is None:
                     # If is not present, delete it.
+                    # This can happen if the temporary file is deleted by the user.
                     self.temporal_files.delete_value(bkey)
-                    return
+                    continue
                 value_datetime = self.utils.get_datetime_from_string(
                     master_value.split(',')[1])
                 delta = (current_time - value_datetime).days

@@ -64,6 +64,20 @@ class DB:
             return False
 
     def get_value(self, key_string, to_str=False):
+        '''Get value since key provided, if the key is
+        not resent, then return None
+        
+        Parameters
+        ----------
+        key_string : bstring
+            key to look at it
+
+        to_str : bool , default = False
+            cast to string if the parameter is True
+        Return
+        ------
+        value : bstring or str or None
+        '''
         with self.env.begin(write=False) as txn:
             value = txn.get(key_string)
             if value is None:

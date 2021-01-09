@@ -4,7 +4,7 @@ import random
 import string
 from timeit import default_timer as timer
 
-TEST_CASES = 100
+TEST_CASES = 10000
 THREAD = 1
 MASTER_URL = 'http://mauricio-ksrd:31414/'
 VOLUME_URL = 'http://mauricio-ksrd:31415/'
@@ -40,13 +40,13 @@ def start_write_test():
                 tmp.seek(0)
                 start = timer()
                 req = requests.put(
-                    url=MASTER_URL + 'add_key/' + key + dict_key,
+                    url=MASTER_URL + 'add_key/mcleveland_test_data/' + key + dict_key + '?temporal=1',
                     data=tmp,
                 )
         else:
             start = timer()
             req = requests.put(
-                url=MASTER_URL + 'add_key/' + key + dict_key,
+                url=MASTER_URL + 'add_key/mcleveland_test_data/' + key + dict_key + '?temporal=1',
                 data=open(binary_data[dict_key], 'rb'),
                 headers={'Content-Type': 'application/octet-stream'}
             )
@@ -77,7 +77,7 @@ def start_read_test():
     for key in keys:
         start = timer()
         req = requests.get(
-            url=MASTER_URL + 'get_key/' + key
+            url=MASTER_URL + 'get_key/mcleveland_test_data/' + key
         )
         if req.status_code >= 200 and req.status_code < 300:
             time_register.append(timer() - start)
@@ -104,7 +104,7 @@ def start_delete_test():
     for key in keys:
         start = timer()
         req = requests.delete(
-            url=MASTER_URL + 'delete_key/' + key
+            url=MASTER_URL + 'delete_key/mcleveland_test_data/' + key
         )
         if req.status_code >= 200 and req.status_code < 300:
             time_register.append(timer() - start)

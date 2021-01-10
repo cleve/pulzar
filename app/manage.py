@@ -89,7 +89,7 @@ def main():
     if args.restore:
         restore(args.restore)
 
-    if args.reset:
+    elif args.reset:
         reset(args.reset)
 
 

@@ -15,6 +15,8 @@ class DeleteProcess:
 
     def process_request(self, env, start_response, url_path):
         """Entrance for delete method
+
+        Delete the key-value data from masterdb and redirect.
         """
         # Get request type, checking for key value.
         regex_result = self.utils.get_search_regex(

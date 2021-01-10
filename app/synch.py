@@ -32,7 +32,10 @@ class Synchro:
         """Configuration from ini file
         """
         server_config = Config(self.const.CONF_PATH)
-        self.volume_dir = server_config.get_config('volume', 'dir')
+        if self.const.DEBUG:
+            self.volume_dir = self.const.DEV_DIRECTORY
+        else:
+            self.volume_dir = server_config.get_config('volume', 'dir')
         self.volume_host = self.db_stats.get_value(
             self.utils.encode_str_to_byte(self.const.HOST_NAME))
         self.volume_port = server_config.get_config('volume', 'port')
@@ -72,7 +75,7 @@ class Synchro:
         """
         start_time = self.utils.get_time_it()
         for file_item in self.utils.get_all_files(self.volume_dir + '/**'):
-            if file_item == self.volume_dir + '/':
+            if file_item == self.volume_dir + '/' or self.utils.dir_exists(file_item):
                 continue
             file_item_byte = self.utils.encode_str_to_byte(
                 self.utils.get_base_name_from_file(file_item))
@@ -106,20 +109,23 @@ class Synchro:
                     self.server_host, self.server_port, '/' + self.const.SKYNET + '/' + self.const.START_BK)
                 req.set_type(ReqType.POST)
                 # We have to send the key, volume and port.
-
                 req.set_payload({
                     'key': bkey,
                     'volume': self.volume_host.decode() + ':' + self.volume_port,
                     'total': total_files
                 })
+                req.add_header({
+                    self.const.PASSPORT: self.utils.encode_base_64(self.key)
+                })
                 req.make_request()
                 py_object = self.utils.json_to_py(req.response)
-                if 'msg' in py_object['response'] and py_object['response']['msg'] == 'ok':
+                if 'status' in py_object and py_object['status'] == 'ok':
                     # Mark as restored
                     self.db_backup.update_or_insert_value(
                         bkey,
                         b'1'
                     )
+            self.db_backup.delete_database()
             self.logger.info('Restauration completed')
 
     def synchronize(self):

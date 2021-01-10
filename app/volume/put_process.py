@@ -70,17 +70,6 @@ class PutProcess:
             self.messenger.set_message = py_object['msg']
             self.messenger.mark_as_failed()
             return False
-        try:
-            self.db_backup.put_value(
-                self.file_utils.key.encode(),
-                b'1'
-            )
-        except BaseException as err:
-            self.logger.exception(':{}:{}'.format(self.TAG, err))
-            self.messenger.code_type = self.const.PULZAR_ERROR
-            self.messenger.set_message = str(err)
-            self.messenger.mark_as_failed()
-            return False
         return True
 
     def process_request(self, env, start_response, url_path):

@@ -97,6 +97,13 @@ class DB:
                     return key
             return None
 
+    def delete_database(self):
+        with self.env.begin(write=True) as txn:
+            db = self.env.open_db()
+            txn.drop(db)
+            return True
+        return False
+    
     def delete_value(self, key_string):
         with self.env.begin(write=True) as txn:
             if txn.get(key_string):
@@ -107,11 +114,11 @@ class DB:
     def update_value(self, key_string, value):
         with self.env.begin(write=True) as txn:
             if txn.get(key_string):
-                txn.put(key_string, value)
+                txn.replace(key_string, value)
 
     def update_or_insert_value(self, key_string, value):
         with self.env.begin(write=True) as txn:
-            txn.put(key_string, value)
+            txn.replace(key_string, value)
             return True
         return False
 

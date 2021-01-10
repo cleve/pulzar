@@ -35,6 +35,10 @@ class Skynet:
             Environment variables from uwsgi
         '''
         key = self.server_config.get_config('server', 'key')
+        if env.get(self.const.HTTP_PASSPORT, None) == None:
+            self.validated = False
+            self.logger.error(':{}:passport not present'.format(self.TAG))
+            return
         self.validated = key == self.utils.decode_string_base_64(env[self.const.HTTP_PASSPORT], True)
 
     def restore_master(self):
@@ -42,10 +46,12 @@ class Skynet:
         params = body.extract_params(self.env)
         key = params[b'key'][0]
         volume = params[b'volume'][0]
+        current_datetime = self.utils.get_current_datetime_str()
+        composed_value = volume.decode() + ',' + current_datetime
         # Saving data
         return self.master_db.put_value(
             key,
-            volume
+            composed_value.encode()
         )
 
     def save_key_and_volume(self) -> bool:
@@ -118,8 +124,12 @@ class Skynet:
 
             # Restoring data.
             if url_path.find(self.start_backup) == 1:
-                self.messenger.code_type = self.const.SKYNET_RECORD_RESTORED
-                self.messenger.set_response({'msg': 'ok'})
+                if self.restore_master():
+                    self.messenger.code_type = self.const.SKYNET_RECORD_RESTORED
+                    self.messenger.set_response({'msg': 'ok'})
+                else:
+                    self.messenger.code_type = self.const.PULZAR_ERROR
+                    self.messenger.set_response({'msg': 'error'})
                 return self.messenger
 
             # This is a confirmation from volume.

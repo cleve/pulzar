@@ -627,6 +627,7 @@ directory.
 ```sh
 python3 manage.py --restore [volume_url]
 ```
+Limitation: The datetime will be lost with this action.
 
 # Internal methods
 

@@ -65,7 +65,14 @@ psw=None
 If you are in Ubuntu, remove the default **uwsgi** package installed, and use 
 **pip** to get the proper one.
 
-Make sure to run in DEBUG mode. Under utils/constants.py
+Make sure to run in DEBUG mode. Under app/pulzarutils/constants.py
+
+This option allows you, to use the local file directory, under **app/storage**
+
+```py
+# app/pulzarutils/constants.py
+self.DEBUG = True
+```
 
 ```sh
 cd app

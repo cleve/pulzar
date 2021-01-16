@@ -103,7 +103,6 @@ class Search(Extension):
         records = 0
         for element in self.public.get_all_elements():
             # Limit the response since filed.
-            print(records, self.limit)
             if self.limit is not None and records >= self.limit:
                 return self.response
             key, val = element

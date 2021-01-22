@@ -239,7 +239,7 @@ class Utils:
 
         return result
 
-    # Temporary section
+    # Temporal section
     def get_tmp_file(self):
         """Dont forget to close the file
         """

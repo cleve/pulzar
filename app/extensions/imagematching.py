@@ -11,7 +11,7 @@ class Imagematching(Extension):
         self.percent = 0.8
 
         # Images
-        self.file_path_template = template_image
+        self.file_path = template_image
         self.filename_source = None
         # Response
         self.response = {
@@ -26,7 +26,7 @@ class Imagematching(Extension):
         '''
         percent = None
         # Check arguments
-        if self.file_path_template is None:
+        if self.file_path is None:
             raise ValueError('image file empty')
         # Check parameters
         if self.params:
@@ -63,7 +63,7 @@ class Imagematching(Extension):
         source_image_gray = cv2.cvtColor(source_image, cv2.COLOR_BGR2GRAY)
 
         # Read the template
-        template = cv2.imread(self.file_path_template, 0)
+        template = cv2.imread(self.file_path, 0)
 
         # Store width and height of template in w and h
         w, h = template.shape[::-1]

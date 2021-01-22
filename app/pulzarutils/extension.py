@@ -22,6 +22,6 @@ class Extension(metaclass=ABCMeta):
             if self.file_path is not None:
                 remove(self.file_path)
         except BaseException as err:
-            print(err)
+            raise Exception('clean_tmp: error cleaning the space::' + str(err))
 
 

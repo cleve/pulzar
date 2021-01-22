@@ -5,6 +5,7 @@ from pulzarutils.extension import Extension
 
 class Imagematching(Extension):
     def __init__(self, arguments, params, template_image=None):
+        self.utils = Utils()
         self.args = arguments
         self.params = params
         self.method = cv2.TM_CCOEFF_NORMED
@@ -86,6 +87,11 @@ class Imagematching(Extension):
             'h': trows
         }
 
+    def clean(self):
+        '''Deleting the base image downloaded from the url parameter
+        '''
+        self.utils.remove_file(self.filename_source)
+    
     def get_response(self):
         """Get the final object
         """
@@ -96,4 +102,5 @@ class Imagematching(Extension):
         """
         self.set_up()
         self.do_the_work()
+        self.clean()
         return self.get_response()

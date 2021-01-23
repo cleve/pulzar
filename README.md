@@ -20,12 +20,12 @@ Is a distributed job system with load balance.
 
 ## Dependences
 
-### Next Python modules are needed
+### Next Python modules are needed for the basic system
 
-* lmdb
-* requests
-* psutil
-* schedule
+lmdb 1.0.0
+requests 2.25.1
+psutil 5.8.0
+schedule 0.6.0
 
 ## Configuration
 
@@ -76,7 +76,10 @@ self.DEBUG = True
 
 ```sh
 cd app
+# Start the master
 uwsgi --ini config/master.ini
+
+# Start the node
 uwsgi --ini config/volume.ini
 ```
 

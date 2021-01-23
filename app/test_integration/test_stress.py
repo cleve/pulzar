@@ -6,13 +6,13 @@ from timeit import default_timer as timer
 from concurrent.futures import ThreadPoolExecutor
 
 TEST_CASES = 10000
-THREAD = 1
+THREAD = 5
 MASTER_URL = 'http://127.0.0.1:31414/'
 VOLUME_URL = 'http://127.0.0.1:31415/'
 
-thread_pool_write = ThreadPoolExecutor(max_workers=5)
-thread_pool_read = ThreadPoolExecutor(max_workers=5)
-thread_pool_delete = ThreadPoolExecutor(max_workers=5)
+thread_pool_write = ThreadPoolExecutor(max_workers=THREAD)
+thread_pool_read = ThreadPoolExecutor(max_workers=THREAD)
+thread_pool_delete = ThreadPoolExecutor(max_workers=THREAD)
 keys = []
 time_request = []
 time_register = []

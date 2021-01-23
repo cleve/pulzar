@@ -31,9 +31,16 @@ class ExtensionProcess:
 
     def read_binary_file(self, env, url_path):
         """Read binary file into env and rename it as 
-        url_path
+        
+        Parameters
+        ----------
+        url_path : str
+            Path section of the url
 
-        return: path_string
+        Returns
+        -------
+        str:
+            File name or None
         """
         try:
             request_body_size = int(env[self.const.CONTENT_LENGTH])

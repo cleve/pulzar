@@ -38,9 +38,13 @@ class Search(Extension):
         less_than = None
         great_than = None
         equals = None
+        limit = None
         # Check arguments
         if self.params:
             try:
+                # limit the search
+                if 'limit' in self.params:
+                    limit = int(self.params['limit'][0])
                 # less than
                 if 'lt' in self.params:
                     less_than = self.params['lt'][0]
@@ -72,6 +76,7 @@ class Search(Extension):
         self.less_than = less_than
         self.greater_than = great_than
         self.equal = equals
+        self.limit = limit
 
         if len(self.args) == 0:
             return json.dumps({'err': 'no args detected'})
@@ -95,7 +100,11 @@ class Search(Extension):
     def do_the_work(self):
         """Method who actually do the search
         """
+        records = 0
         for element in self.public.get_all_elements():
+            # Limit the response since filed.
+            if self.limit is not None and records >= self.limit:
+                return self.response
             key, val = element
             key_string = base64.b64decode(key).decode()
             if key_string.find(self.search) >= 0:
@@ -109,6 +118,7 @@ class Search(Extension):
                             'key': key_string,
                             'url': 'http://' + val_string + '/get_key' + key_string
                         })
+                        records += 1
 
                 elif self.less_than is not None and self.greater_than is None:
                     if datetime_object <= self.less_than:
@@ -116,23 +126,27 @@ class Search(Extension):
                             'key': key_string,
                             'url': 'http://' + val_string + '/get_key' + key_string
                         })
+                        records += 1
                 elif self.less_than is None and self.greater_than is not None:
                     if datetime_object >= self.greater_than:
                         self.response.append({
                             'key': key_string,
                             'url': 'http://' + val_string + '/get_key' + key_string
                         })
+                        records += 1
                 elif self.equal is not None:
                     if datetime_object == self.equal:
                         self.response.append({
                             'key': key_string,
                             'url': 'http://' + val_string + '/get_key' + key_string
                         })
+                        records += 1
                 else:
                     self.response.append({
                         'key': key_string,
                         'url': 'http://' + val_string + '/get_key' + key_string
                     })
+                    records += 1
 
     def get_response(self):
         """Get the final object

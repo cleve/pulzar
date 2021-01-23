@@ -109,6 +109,7 @@ class FileUtils():
 
     def read_binary_file(self, env) -> str:
         '''Read the file sent by client
+
         Parameters
         ----------
         env : dict
@@ -128,7 +129,6 @@ class FileUtils():
             if to_mb > self.max_size:
                 raise Exception(
                     'max size allowed is {}MB'.format(self.max_size))
-            destiny_path = self.volume_path + '/' + self.key
             temp_file = self.utils.get_tmp_file()
             # Read binary file sent.
             f = env[self.const.WSGI_INPUT]
@@ -138,13 +138,14 @@ class FileUtils():
             # Creating directories if does not exist.
             full_path = self.volume_path + self.base_dir
             if self.base_dir is not None and not self.utils.dir_exists(full_path):
-                print('Creating directory')
                 os.makedirs(full_path)
 
             temp_file.close()  # Close the file to be copied.
-            if destiny_path == self.utils.move_file(
-                    temp_file.name, full_path + '/' + self.key):
-                return self.key
+            self.utils.move_file(
+                temp_file.name,
+                os.path.join(full_path, self.key)
+            )
+            return self.key
 
     def read_in_chunks(self, file_object, chunk_size=1024):
         """Lazy function (generator) to read a file piece by piece.

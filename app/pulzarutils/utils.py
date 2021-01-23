@@ -239,7 +239,7 @@ class Utils:
 
         return result
 
-    # Temporary section
+    # Temporal section
     def get_tmp_file(self):
         """Dont forget to close the file
         """
@@ -247,7 +247,17 @@ class Utils:
 
     # File operations
     def move_file(self, source, dest):
-        return shutil.copy2(source, dest)
+        '''Move file
+        
+        Parameters
+        ----------
+        source : str
+            Path of the source file
+        dest : str
+            Path of the destiny file
+        '''
+        shutil.copy2(source, dest)
+        os.remove(source)
 
     # Read files from dir
     def read_file_name_from_dir(self, dir_path, file_type=None):

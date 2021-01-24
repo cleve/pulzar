@@ -5,11 +5,12 @@ from os import remove
 class Extension(metaclass=ABCMeta):
     '''Base class to implement extensions
     '''
-    # Can be used in some cases
-    file_path = None
-
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        cls.file_path = None
+    
     @abstractmethod
-    def execute(self, params, file_path=None):
+    def execute(self):
         '''Entrance for extensios
         '''
         return

@@ -22,10 +22,10 @@ Is a distributed job system with load balance.
 
 ### Next Python modules are needed for the basic system
 
-lmdb 1.0.0
-requests 2.25.1
-psutil 5.8.0
-schedule 0.6.0
+- lmdb 1.0.0
+- requests 2.25.1
+- psutil 5.8.0
+- schedule 0.6.0
 
 ## Configuration
 

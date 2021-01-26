@@ -1,3 +1,5 @@
+'''This process should be executed in the node side
+'''
 from pulzarcore.core_job_discovery import JobDiscovery
 
 

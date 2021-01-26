@@ -20,7 +20,7 @@ class JobDiscovery:
         self.utils = Utils()
         self.const = Constants()
         self.logger = PulzarLogger(self.const)
-        self.rdb = RDB(self.const.DB_JOBS)
+        self.rdb = RDB(self.const.DB_NODE_JOBS)
         server_config = Config(self.const.CONF_PATH)
         self.job_directory = server_config.get_config('jobs', 'dir')
         self._clean_repository()

@@ -4,6 +4,7 @@ from pulzarutils.constants import Constants
 from pulzarutils.constants import ReqType
 from pulzarutils.logger import PulzarLogger
 from pulzarcore.core_db import DB
+from pulzarcore.core_rdb import RDB
 from pulzarutils.stream import Config
 
 
@@ -18,6 +19,7 @@ class Synchro:
         self.utils = Utils()
         self.db_stats = DB(self.const.DB_STATS)
         self.db_backup = DB(self.const.DB_BACKUP)
+        self.rdb = RDB(self.const.DB_NODE_JOBS)
         self.key = None
         self.volume_host = None
         self.server_host = None
@@ -128,6 +130,27 @@ class Synchro:
             self.db_backup.delete_database()
             self.logger.info('Restauration completed')
 
+    def get_catalog(self) -> list:
+        '''Get catalog of node
+
+        Return
+        ------
+        dict
+            List with dictionary containing path, args, type and author
+        '''
+        response = []
+        query = 'SELECT path, description, args, author FROM job_catalog'
+        result = self.rdb.execute_sql_with_results(query)
+        for item in result:
+            response.append({
+                'path': item[0],
+                'description': item[1],
+                'args': item[2],
+                'author': item[3],
+            })
+        
+        return response
+    
     def synchronize(self):
         """Check status and send data to master
         """
@@ -146,6 +169,10 @@ class Synchro:
             )
             req.make_request()
             return
+        # Get catalog information
+        catalog = self.get_catalog()
+
+        # Preparing request
         req = CoreRequest(
             self.server_host,
             self.server_port,
@@ -160,7 +187,8 @@ class Synchro:
             'load': volume_load,
             'host': self.volume_host.decode(),
             'port': self.volume_port,
-            'total': self.count_files_synchronized()
+            'total': self.count_files_synchronized(),
+            'catalog': self.utils.py_to_json(catalog)
         })
         req.make_request()
         if req.response is None:

@@ -30,9 +30,12 @@ class RDB:
         """Insert data
             return ID (int)
         """
-        self.cursor.execute(query, param)
-        self.database.commit()
-        return self.cursor.lastrowid
+        try:
+            self.cursor.execute(query, param)
+            self.database.commit()
+            return self.cursor.lastrowid
+        except BaseException as err:
+            return -1
 
     def execute_sql_update(self, query, param):
         """Update data

@@ -19,6 +19,17 @@ class RDB:
 
     def execute_sql_with_results(self, query, param=None):
         """Execute query and return iterator
+
+        Parameters
+        ----------
+        query : str
+            SQL with the query
+        param : tuple , default = None
+
+        Return
+        ------
+        list
+            List of tuples with the results
         """
         if param is None:
             self.cursor.execute(query)

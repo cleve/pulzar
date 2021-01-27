@@ -1,4 +1,5 @@
 from pulzarcore.core_db import DB
+from pulzarcore.core_rdb import RDB
 from pulzarcore.core_body import Body
 from pulzarutils.constants import Constants
 from pulzarutils.utils import Utils
@@ -18,6 +19,7 @@ class Skynet:
         self.env = env
         self.db_volume = DB(self.const.DB_VOLUME)
         self.master_db = DB(self.const.DB_PATH)
+        self.rdb = RDB(self.const.DB_JOBS)
         self.messenger = Messenger()
         self.server_config = Config(self.const.CONF_PATH)
         self.validated = False
@@ -29,6 +31,7 @@ class Skynet:
 
     def validate_node(self, env) -> None:
         '''Using passport to validate node request
+        
         Parameters
         ----------
         env : dict
@@ -85,6 +88,17 @@ class Skynet:
             composed_value.encode()
         )
 
+    def _synch_catalog(self, catalog):
+        '''Save catalog using the node information
+        
+        Parameter
+        ---------
+        catalog : list
+            List with catalog dictionary
+        '''
+        query = ''
+        self.rdb.execute_sql(query)
+    
     def _sync_volume(self) -> tuple:
         '''Synch node with master
 
@@ -98,6 +112,7 @@ class Skynet:
         body = Body()
         params = body.extract_params(self.env)
         volume_data = self.db_volume.get_value(params[b'host'][0])
+        catalog = self.utils.json_to_py(params[b'catalog'][0].decode())
         # Check if volume exists.
         if volume_data is None:
             response = self.const.PULZAR_ERROR

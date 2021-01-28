@@ -88,7 +88,7 @@ class Skynet:
             composed_value.encode()
         )
 
-    def _synch_catalog(self, catalog):
+    def _synch_catalog(self, catalog, node):
         '''Save catalog using the node information
         
         Parameter
@@ -96,8 +96,22 @@ class Skynet:
         catalog : list
             List with catalog dictionary
         '''
-        query = ''
-        self.rdb.execute_sql(query)
+        try:
+            # Check if job exists in the current catalog
+            for job in catalog:
+                job_path = job.get('path')
+                query = f"SELECT id FROM job_catalog WHERE path = '{job_path}'"
+                result = self.rdb.execute_sql_with_results(query)
+                # Register node for the job already registered
+                if len(result) == 1:
+                    query = f"""
+                        INSERT INTO job_catalog_node_register (node, job_catalog_id)
+                        SELECT '{node}', {result[0][0]}
+                        WHERE NOT EXISTS (SELECT 1 FROM job_catalog_node_register WHERE node = '{node}' AND job_catalog_id = {result[0][0]})
+                    """
+                    self.rdb.execute_sql(query)
+        except Exception as err:
+            print(err)
     
     def _sync_volume(self) -> tuple:
         '''Synch node with master
@@ -112,7 +126,9 @@ class Skynet:
         body = Body()
         params = body.extract_params(self.env)
         volume_data = self.db_volume.get_value(params[b'host'][0])
+        node_name = self.utils.decode_byte_to_str(params[b'host'][0])
         catalog = self.utils.json_to_py(params[b'catalog'][0].decode())
+        self._synch_catalog(catalog, node_name)
         # Check if volume exists.
         if volume_data is None:
             response = self.const.PULZAR_ERROR

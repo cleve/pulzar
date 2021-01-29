@@ -39,7 +39,18 @@ class RDB:
 
     def execute_sql_insert(self, query, param):
         """Insert data
-            return ID (int)
+
+        Parameters
+        ----------
+        query : str
+            query string
+        params : tuple
+            Tuple with the values to insert
+        
+        Return
+        ------
+        int
+            Last id or -1 if failed
         """
         try:
             self.cursor.execute(query, param)

@@ -139,14 +139,15 @@ class Synchro:
             List with dictionary containing path, args, type and author
         '''
         response = []
-        query = 'SELECT path, description, args, author FROM job_catalog'
+        query = 'SELECT path, description, args, category, author FROM job_catalog'
         result = self.rdb.execute_sql_with_results(query)
         for item in result:
             response.append({
                 'path': item[0],
                 'description': item[1],
                 'args': item[2],
-                'author': item[3],
+                'category': item[3],
+                'author': item[4],
             })
         
         return response

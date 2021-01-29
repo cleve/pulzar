@@ -56,6 +56,21 @@ class Utils:
         """
         return ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(n))
 
+    def get_random_element_from_list(self, element_list):
+        '''Get random element
+
+        Parameters
+        ----------
+        element_list : list
+            List of element
+        
+        Return
+        ------
+        list
+            element selected
+        '''
+        return random.choice(element_list)
+
     # Datetime options
     def get_current_datetime_utc(self, to_string=False, db_format=True):
         """Get datetime in UTC

@@ -10,9 +10,10 @@ class Job:
     """Send jobs to the nodes
     """
 
-    def __init__(self, job_params, logger):
+    def __init__(self, job_params, url_path, logger):
         self.TAG = self.__class__.__name__
         self.job_params = job_params
+        self.url_path = url_path
         self.logger = logger
         self.utils = Utils()
         self.job_id = None
@@ -127,7 +128,7 @@ class Job:
             node = composed_data.split(',')[0].split(':')[0]
             return node.encode()
         else:
-            return node_utils.pick_a_volume()
+            return node_utils.pick_a_volume2(self.url_path)
     
     def send_job(self, const):
         """Send job to the node selected

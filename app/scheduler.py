@@ -229,7 +229,8 @@ class Scheduler():
         ------
         bool : True if the request was successful
         """
-        job_object = Job(params, self.logger)
+        job_path = params.get('job_path') + '/' +  params.get('job_name')
+        job_object = Job(params, job_path, self.logger)
         if job_object.send_scheduled_job(self.const, params):
             # Update next iteration time
             self.update_next_execution_job(params['job_id'])

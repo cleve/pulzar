@@ -11,6 +11,12 @@ class TestUtilsMethods(unittest.TestCase):
     def setUp(self):
         self.utils = Utils()
 
+    def test_get_random_element_from_list(self):
+        test_list = [3, 2, 1, 10]
+        random_select = self.utils.get_random_element_from_list(test_list)
+        self.assertIn(random_select, test_list)
+        self.assertTrue(int, isinstance(random_select, int))
+
     def test_get_random_string(self):
         string = self.utils.get_random_string(10)
         self.assertEqual(len(string), 10)

@@ -110,6 +110,26 @@ class Skynet:
                         WHERE NOT EXISTS (SELECT 1 FROM job_catalog_node_register WHERE node = '{node}' AND job_catalog_id = {result[0][0]})
                     """
                     self.rdb.execute_sql(query)
+                else:
+                    query = 'INSERT INTO job_catalog (path, description, args, category, author) VALUES (?,?,?,?,?)'
+                    last_id = self.rdb.execute_sql_insert(
+                        query,
+                        (
+                            job_path,
+                            job.get('description'),
+                            job.get('args'),
+                            job.get('category'),
+                            job.get('author')
+                        )
+                    )
+                    if last_id > 0:
+                        query = f"""
+                        INSERT INTO job_catalog_node_register (node, job_catalog_id)
+                        SELECT '{node}', {last_id}
+                        WHERE NOT EXISTS (SELECT 1 FROM job_catalog_node_register WHERE node = '{node}' AND job_catalog_id = {last_id})
+                        """
+                        self.rdb.execute_sql(query)
+
         except Exception as err:
             print(err)
     

@@ -22,4 +22,4 @@ RUN pip3 install .
 # Configuring MSSQL directory
 RUN odbcinst -i -s -f /var/lib/pulzar/config/mssql_directory.ini -l
 
-CMD [ "uwsgi", "-i", "config/volume.ini" ]
+CMD [ "sh", "start_node.sh" ]

@@ -769,3 +769,7 @@ In production, the logs can be found at ``` /var/lib/pulzar/log/ ```
 
 For errors, you can access to the docker container or use volume to mount the logs
 into the host machine
+
+# Production
+
+You can deploy the system using Docker.

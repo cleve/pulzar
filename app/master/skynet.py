@@ -134,7 +134,7 @@ class Skynet:
                         self.rdb.execute_sql(query)
 
         except Exception as err:
-            print(err)
+            self.logger.error(':{}:{}'.format(self.TAG, str(err)))
     
     def _sync_volume(self) -> tuple:
         '''Synch node with master

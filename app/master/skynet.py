@@ -95,6 +95,9 @@ class Skynet:
         ---------
         catalog : list
             List with catalog dictionary
+
+        node : str
+            unique node name
         '''
         try:
             # Check if job exists in the current catalog

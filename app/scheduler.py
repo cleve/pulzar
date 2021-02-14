@@ -2,6 +2,7 @@ import schedule
 import time
 import os
 import importlib
+from concurrent.futures import ThreadPoolExecutor
 from pulzarutils.utils import Utils
 from pulzarutils.constants import Constants
 from pulzarutils.constants import ReqType
@@ -19,6 +20,7 @@ class Scheduler():
         self.const = Constants()
         self.utils = Utils()
         self.logger = PulzarLogger(self.const)
+        self.executor = ThreadPoolExecutor(max_workers=4)
         self.schedule_data_base = RDB(self.const.DB_JOBS)
         self.max_jobs_running = 4
         self.jobs_to_launch = []
@@ -217,6 +219,19 @@ class Scheduler():
                 'job_repeat': row[6]
             })
 
+    def thread_job(self, custom_func, custom_params):
+        """Thread creation
+
+        Params
+        ------
+        custom_func : (function)
+            function to thread
+        
+        custom_params : (dict)
+            Parameters for the job
+        """
+        self.executor.submit(custom_func, custom_params)
+    
     def _notify_to_node(self, params) -> bool:
         """Send the job to the node
 
@@ -238,7 +253,22 @@ class Scheduler():
 
     def schedule_details(self, job_params, interval, time_unit):
         """Since parameter, schedule according it
-            return schedule object
+
+            Parameters
+            ----------
+
+            job_params : dict
+                Job parameters
+            
+            interval : str
+                Time unit
+            
+            time_unit : str
+                Amount of time
+            
+            Return
+            ------
+            schedule object
         """
         schedule_object = None
         if interval == 'minutes':

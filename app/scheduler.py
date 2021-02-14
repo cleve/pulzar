@@ -219,7 +219,7 @@ class Scheduler():
                 'job_repeat': row[6]
             })
 
-    def thread_job(self, custom_func, custom_params):
+    def _thread_job(self, custom_func, custom_params):
         """Thread creation
 
         Params
@@ -273,20 +273,32 @@ class Scheduler():
         schedule_object = None
         if interval == 'minutes':
             schedule_object = schedule.every(int(time_unit)).minutes.do(
-                self._notify_to_node, params=job_params)
+                self._thread_job,
+                custom_func=self._notify_to_node,
+                custom_params=job_params
+            )
 
         elif interval == 'hours':
             schedule_object = schedule.every(int(time_unit)).hours.do(
-                self._notify_to_node, params=job_params)
+                self._thread_job,
+                custom_func=self._notify_to_node,
+                custom_params=job_params
+            )
 
         elif interval == 'days':
             schedule_object = schedule.every(int(time_unit)).days.do(
-                self._notify_to_node, params=job_params)
+                self._thread_job,
+                custom_func=self._notify_to_node,
+                custom_params=job_params
+            )
 
         elif interval == 'weeks':
             schedule_object = schedule.every(int(time_unit)).weeks.do(
-                self._notify_to_node, params=job_params)
-
+                self._thread_job,
+                custom_func=self._notify_to_node,
+                custom_params=job_params
+            )
+            
         return schedule_object
 
     def update_next_execution_job(self, job_id):

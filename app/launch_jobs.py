@@ -1,5 +1,8 @@
+from concurrent import futures
 import os
 import importlib
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import as_completed
 from pulzarutils.utils import Utils
 from pulzarutils.constants import Constants
 from pulzarutils.constants import ReqType
@@ -22,6 +25,10 @@ class LaunchJobs:
         self.utils = Utils()
         self.data_base = RDB(self.const.DB_NODE_JOBS)
         self.jobs_to_launch = []
+        # For threads.
+        self.executor = ThreadPoolExecutor(max_workers=5, thread_name_prefix=f'{self.TAG}Executor')
+        self.futures = []
+        self.futures_ref = {}
         # Master configuration
         self.server_host = None
         self.server_port = None
@@ -103,7 +110,37 @@ class LaunchJobs:
                 table, job_id)
             self.data_base.execute_sql(sql)
 
+    def check_executors(self) -> None:
+        """Check status and results
+        """
+        for future in as_completed(self.futures):
+            self.logger.info(f'{self.TAG}::{future.__class__.__name__}::{id(future)}::{future.running()}')
+            self.logger.info(f'{self.TAG}::futureRef:{self.futures_ref}')
+            try:
+                future_info = self.futures_ref.get(id(future))
+                if future_info is None:
+                    continue
+                job_id, scheduled = future_info[0], future_info[1]
+                if self._mark_job(job_id, future.result(), scheduled):
+                    self._notify_to_master(job_id, scheduled)
+                    self.futures_ref.pop(id(future), None)
+            except BaseException as err:
+                self.logger.info(f'{self.TAG}::future: {id(future)}')
+                if self._mark_job(job_id, future.result(), scheduled, str(err)):
+                    self._notify_to_master(job_id, scheduled)
 
+    def _job_executor(self, obj, job_id, scheduled) -> None:
+        """Execute object into the pool
+
+        Parameters
+        ----------
+        obj : class
+            The object to be executed
+        """
+        future = self.executor.submit(obj)
+        self.futures.append(future)
+        self.futures_ref.setdefault(id(future), [job_id, scheduled])
+        
     def process_params(self):
         """JSON to python objects
         """
@@ -112,7 +149,7 @@ class LaunchJobs:
             if args != '':
                 job['job_args'] = self.utils.json_to_py(args)
 
-    def _mark_job(self, job_id, state, scheduled, log_msg=None):
+    def _mark_job(self, job_id, state, scheduled, log_msg=None) -> bool:
         """Mark a job if is ok or failed
 
         Parameters
@@ -168,22 +205,11 @@ class LaunchJobs:
                 import_fly = importlib.import_module(custom_module)
                 job_class = getattr(import_fly, class_name)
                 job_object = job_class(job['job_args'])
-                status = job_object.execute()
-                # If there is not return in the execute method
-                # we look into the verification var
-                if status is None:
-                    status = job_object.is_the_job_ok()
-                # Report to master
-                if self._mark_job(job['job_id'], status, job['scheduled']):
-                    self._notify_to_master(job['job_id'], job['scheduled'])
+                self._job_executor(job_object.execute, job.get('job_id'), job.get('scheduled'))
+                
             except Exception as err:
                 self.logger.exception(':{}:{}'.format(self.TAG, err))
-                # Mark as failed
-                if self._mark_job(job['job_id'], False, job['scheduled'], str(err)):
-                    self._notify_to_master(job['job_id'], job['scheduled'])
-
                 
-
     def search_jobs(self):
         """Search job scheduled
         """
@@ -239,6 +265,7 @@ def main():
     launcher.search_jobs()
     launcher.process_params()
     launcher.execute_jobs()
+    launcher.check_executors()
     # Retention
     launcher._retention_policy()
 

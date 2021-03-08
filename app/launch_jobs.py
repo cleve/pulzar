@@ -113,9 +113,9 @@ class LaunchJobs:
     def check_executors(self) -> None:
         """Check status and results
         """
+        self.logger.info(f'{self.TAG}::futureRef:{self.futures_ref}')
         for future in as_completed(self.futures):
             self.logger.info(f'{self.TAG}::{future.__class__.__name__}::{id(future)}::{future.running()}')
-            self.logger.info(f'{self.TAG}::futureRef:{self.futures_ref}')
             try:
                 future_info = self.futures_ref.get(id(future))
                 if future_info is None:

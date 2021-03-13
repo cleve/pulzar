@@ -3,8 +3,6 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from pulzarutils.utils import Utils
 from pulzarutils.constants import Constants
-from pulzarutils.constants import ReqType
-from pulzarutils.node_utils import NodeUtils
 from pulzarutils.logger import PulzarLogger
 from pulzarcore.core_rdb import RDB
 from pulzarcore.core_job_master import Job

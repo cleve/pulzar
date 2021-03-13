@@ -23,7 +23,7 @@ class TemporalCheck:
         self.master_db = DB(self.const.DB_PATH)
         self.schedule_data_base = RDB(self.const.DB_JOBS)
         self.days_of_retention = 90
-        self.init_config()
+        self._init_config()
 
     def retention_policy(self):
         """Delete data since the policy
@@ -53,14 +53,14 @@ class TemporalCheck:
             date_diff)
         self.schedule_data_base.execute_sql(sql)
 
-    def init_config(self):
+    def _init_config(self):
         """Getting server information
         """
         server_config = Config(self.const.CONF_PATH)
         self.master_url = server_config.get_config('server', 'host')
         self.master_port = server_config.get_config('server', 'port')
 
-    def delete_request(self, bkey):
+    def _delete_request(self, bkey):
         """Delete the key and from the temporal register
         """
         try:
@@ -109,7 +109,7 @@ class TemporalCheck:
                 )
                 # Remove data
                 if delta > days:
-                    self.delete_request(bkey)
+                    self._delete_request(bkey)
 
 
 def main():

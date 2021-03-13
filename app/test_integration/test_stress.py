@@ -88,7 +88,6 @@ def write_test(url, result_list, dict_key, key, test_type='File'):
             data=open(binary_data[dict_key], 'rb'),
             headers={'Content-Type': 'application/octet-stream'}
         )
-
     if req.status_code == 201:
         time_register.append(timer() - start)
         time_request.append(req.elapsed.total_seconds())
@@ -126,6 +125,3 @@ futures_read(results)
 evaluate_time('Read')
 futures_delete(results)
 evaluate_time('Delete')
-
-# start_read_test()
-# start_delete_test()

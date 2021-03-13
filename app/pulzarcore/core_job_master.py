@@ -3,6 +3,7 @@ from pulzarcore.core_rdb import RDB
 from pulzarcore.core_db import DB
 from pulzarutils.node_utils import NodeUtils
 from pulzarutils.constants import ReqType
+from pulzarutils.constants import Constants
 from pulzarutils.utils import Utils
 
 
@@ -101,23 +102,18 @@ class Job:
             )
         )
 
-    def select_node(self, const):
+    def select_node(self):
         """Picking a node since parameters
 
-        Parameters
-        ----------
-        const : Constants
-            Instance of Constant class
-        
         Return
         ------
         barray : node selected
         """
-        node_utils = NodeUtils(const)
+        node_utils = NodeUtils()
         self.volume_port = node_utils.get_port()
         if 'pulzar_data' in self.job_params['parameters']:
             # Send to the node where the data is
-            data_base = DB(const.DB_PATH)
+            data_base = DB(Constants.DB_PATH)
             composed_data = data_base.get_value(
                 self.utils.encode_base_64(
                     self.job_params['parameters']['pulzar_data']), to_str=True
@@ -129,14 +125,9 @@ class Job:
         else:
             return node_utils.pick_a_volume()
     
-    def send_job(self, const):
+    def send_job(self):
         """Send job to the node selected
 
-        Parameters
-        ----------
-        const : Constants
-            Constant object
-        
         Return
         ------
         Success : bool
@@ -144,13 +135,13 @@ class Job:
         """
         # Scheduled job
         if 'scheduled' in self.job_params['parameters']:
-            return self.register_scheduled_job(const.DB_JOBS)
-        node = self.select_node(const)
+            return self.register_scheduled_job(Constants.DB_JOBS)
+        node = self.select_node()
         if node is None:
             return False
         self.logger.debug(':{}:Sending job to node -> {}'.format(self.TAG, node))
         # Register in data base
-        self.register_job(const.DB_JOBS, node.decode())
+        self.register_job(Constants.DB_JOBS, node.decode())
         if self.job_id is None:
             return False
         self.job_params['job_id'] = self.job_id
@@ -158,36 +149,29 @@ class Job:
         request = CoreRequest(node.decode(), self.volume_port, '/send_job')
         request.set_type(ReqType.POST)
         request.set_payload(self.job_params)
-        request.add_header({const.PASSPORT: self.passport})
+        request.add_header({Constants.PASSPORT: self.passport})
         job_response = request.make_request(json_request=True)
         if not job_response:
             # removing job
-            self.unregister_job(const.DB_JOBS)
+            self.unregister_job(Constants.DB_JOBS)
             self.logger.error(':{}:could not communicate with node'.format(self.TAG))
             self.error_msg = 'could not communicate with node'
         elif job_response and request.json_response['status'] == 'ko':
             self.logger.error(':{}:{}'.format(self.TAG, request.json_response['msg']))
             self.error_msg = request.json_response['msg']
-            self.unregister_job(const.DB_JOBS)
+            self.unregister_job(Constants.DB_JOBS)
             return False
         return job_response
 
-    def send_scheduled_job(self, const, parameters) -> bool:
+    def send_scheduled_job(self, parameters) -> bool:
         """Send scheduled job to the node selected
 
-        Parameters
-        ----------
-        const : Constants
-            Instance
-        paraameters: dict
-            All the required configurations
-        
         Return
         ------
         bool : Successful or not
         """
-        node = self.select_node(const)
-        if const.DEBUG:
+        node = self.select_node()
+        if Constants.DEBUG:
             print('node', node)
             print('port', self.volume_port)
             print('parameters', parameters)
@@ -196,9 +180,9 @@ class Job:
         request = CoreRequest(node.decode(), self.volume_port, '/send_job')
         request.set_type(ReqType.POST)
         request.set_payload(parameters)
-        request.add_header({const.PASSPORT: self.passport})
+        request.add_header({Constants.PASSPORT: self.passport})
         job_response = request.make_request(json_request=True)
-        if const.DEBUG:
+        if Constants.DEBUG:
             print('Sending job to node ', node)
             print('response: ', request.response)
         if not job_response:

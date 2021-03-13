@@ -1,4 +1,5 @@
 from pulzarutils.utils import Utils
+from pulzarutils.utils import Constants
 from pulzarutils.messenger import Messenger
 from pulzarcore.core_db import DB
 
@@ -6,15 +7,14 @@ from pulzarcore.core_db import DB
 class PostProcess:
     """UNUSED CLASS"""
 
-    def __init__(self, constants):
-        self.const = constants
+    def __init__(self):
         # 20 mins max to consider a volume online.
         self.second_range = 1200
         self.utils = Utils()
         # DB of values already loaded.
-        self.db_values = DB(self.const.DB_PATH)
+        self.db_values = DB(Constants.DB_PATH)
         # DB of volumes/keys.
-        self.db_volumes = DB(self.const.DB_VOLUME)
+        self.db_volumes = DB(Constants.DB_VOLUME)
         self.messenger = Messenger()
         # Complex response, store the info necessary.
         self.complex_response = {
@@ -45,7 +45,7 @@ class PostProcess:
 
     def process_request(self, env, start_response, url_path):
         regex_result = self.utils.get_search_regex(
-            url_path, self.const.RE_POST_VALUE)
+            url_path, Constants.RE_PUT_VALUE)
         if regex_result:
             try:
                 key_to_add = regex_result.groups()[0]
@@ -56,13 +56,13 @@ class PostProcess:
                 if value is None:
                     volume = self.pick_a_volume()
                     # Populating dictionary with the info needed.
-                    self.complex_response['action'] = self.const.REDIRECT_POST
+                    self.complex_response['action'] = Constants.REDIRECT_POST
                     self.complex_response['parameters'] = key_to_binary
                     self.complex_response['volume'] = volume
                     return self.complex_response
                 # Since key was found, an element was already added before
                 # using the same key.
-                self.complex_response['action'] = self.const.KEY_ALREADY_ADDED
+                self.complex_response['action'] = Constants.KEY_ALREADY_ADDED
                 return self.complex_response
 
             except Exception as err:

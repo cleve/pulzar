@@ -33,7 +33,6 @@ class CoreJobs(metaclass=ABCMeta):
         # Allows to execute the job locally
         self.local_exec = False
         self._pulzar_utils = Utils()
-        self._pulzar_const = Constants()
         self.pulzar_parameters = parameters
         self._notification_enabled = notification
         self._job_id = parameters['job_id']
@@ -68,9 +67,9 @@ class CoreJobs(metaclass=ABCMeta):
             
         Using database system
         """
-        file_utils = FileUtils(self._pulzar_const)
-        server_config = Config(self._pulzar_const.CONF_PATH)
-        node_utils = NodeUtils(self._pulzar_const)
+        file_utils = FileUtils()
+        server_config = Config(Constants.CONF_PATH)
+        node_utils = NodeUtils()
         node = node_utils.discover_volume()
         # Master url
         server_host = server_config.get_config('server', 'host')
@@ -91,9 +90,9 @@ class CoreJobs(metaclass=ABCMeta):
         file_utils.set_key(key_to_binary, base64_str)
         file_utils.read_binary_local_file(file_name)
         request_object = CoreRequest(
-            server_host, server_port, self._pulzar_const.ADD_RECORD)
+            server_host, server_port, Constants.ADD_RECORD)
         request_object.set_type(ReqType.POST)
-        request_object.set_path(self._pulzar_const.ADD_RECORD)
+        request_object.set_path(Constants.ADD_RECORD)
         # We have to send the key, volume and port.
         request_object.set_payload({
             'key': file_utils.get_key(),
@@ -167,7 +166,7 @@ class CoreJobs(metaclass=ABCMeta):
         if self.local_exec:
             return
         # Only on nodes.
-        self._pulzar_database = RDB(self._pulzar_const.DB_NODE_JOBS)
+        self._pulzar_database = RDB(Constants.DB_NODE_JOBS)
         job_table = 'job'
         if self._pulzar_config['scheduled']:
             job_table = 'schedule_job'

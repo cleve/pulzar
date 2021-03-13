@@ -1,13 +1,13 @@
 from pulzarutils.utils import Utils
+from pulzarutils.utils import Constants
 from pulzarutils.stream import Config
 import os
 
 
 class FileUtils():
-    def __init__(self, const):
-        self.const = const
+    def __init__(self):
         self.utils = Utils()
-        self.config = Config(self.const.CONF_PATH)
+        self.config = Config(Constants.CONF_PATH)
         self.binary_key = b''
         self.key = ''
         self.base_dir = None
@@ -17,10 +17,10 @@ class FileUtils():
         self.init_config()
 
     def init_config(self):
-        if self.const.DEBUG:
+        if Constants.DEBUG:
             directory = os.path.join(
                 self.utils.get_absolute_path_of_dir(),
-                self.const.DEV_DIRECTORY
+                Constants.DEV_DIRECTORY
             )
         else:
             directory = self.config.get_config('volume', 'dir')
@@ -120,7 +120,7 @@ class FileUtils():
         str : Base64 string
         '''
         try:
-            request_body_size = int(env[self.const.CONTENT_LENGTH])
+            request_body_size = int(env[Constants.CONTENT_LENGTH])
         except (ValueError):
             request_body_size = 0
         if request_body_size > 0:
@@ -131,7 +131,7 @@ class FileUtils():
                     'max size allowed is {}MB'.format(self.max_size))
             temp_file = self.utils.get_tmp_file()
             # Read binary file sent.
-            f = env[self.const.WSGI_INPUT]
+            f = env[Constants.WSGI_INPUT]
             for piece in self.read_in_chunks(f):
                 temp_file.write(piece)
 

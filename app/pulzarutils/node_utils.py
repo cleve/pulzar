@@ -1,4 +1,5 @@
 from pulzarutils.utils import Utils
+from pulzarutils.utils import Constants
 from pulzarutils.stream import Config
 from pulzarcore.core_db import DB
 from pulzarcore.core_rdb import RDB
@@ -8,22 +9,21 @@ class NodeUtils:
     """Node helper
     """
 
-    def __init__(self, constants):
-        self.const = constants
+    def __init__(self):
         # 20 mins max to consider a volume online.
         self.second_range = 1200
         self.utils = Utils()
         # DB of volumes/keys.
-        self.db_volumes = DB(self.const.DB_VOLUME)
+        self.db_volumes = DB(Constants.DB_VOLUME)
         # Jobs database
-        self.job_db = RDB(self.const.DB_JOBS)
+        self.job_db = RDB(Constants.DB_JOBS)
 
     def discover_volume(self):
         """Get the volume name
 
         return: (str)
         """
-        server_config = Config(self.const.CONF_PATH)
+        server_config = Config(Constants.CONF_PATH)
         volume_port = server_config.get_config('volume', 'port')
         keys = self.db_volumes.get_keys()
         if keys is None:
@@ -33,7 +33,7 @@ class NodeUtils:
     def get_port(self):
         """Get port number
         """
-        server_config = Config(self.const.CONF_PATH)
+        server_config = Config(Constants.CONF_PATH)
         volume_port = server_config.get_config('volume', 'port')
         return volume_port
 

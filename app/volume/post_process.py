@@ -1,4 +1,5 @@
 from pulzarutils.utils import Utils
+from pulzarutils.utils import Constants
 from pulzarutils.constants import ReqType
 from pulzarutils.file_utils import FileUtils
 from pulzarcore.core_request import CoreRequest
@@ -6,11 +7,10 @@ from pulzarcore.core_db import DB
 
 
 class PostProcess:
-    def __init__(self, constants):
-        self.const = constants
+    def __init__(self):
         self.utils = Utils()
-        self.db_backup = DB(self.const.DB_BACKUP)
-        self.file_utils = FileUtils(self.const)
+        self.db_backup = DB(Constants.DB_BACKUP)
+        self.file_utils = FileUtils()
         self.complex_response = {
             'action': None,
             'parameters': None,
@@ -23,13 +23,13 @@ class PostProcess:
             env['QUERY_STRING'])
         # Confirming with master.
         req = CoreRequest(
-            master_url['host'], master_url['port'], self.const.ADD_RECORD)
+            master_url['host'], master_url['port'], Constants.ADD_RECORD)
         req.set_type(ReqType.POST)
-        req.set_path(self.const.ADD_RECORD)
+        req.set_path(Constants.ADD_RECORD)
         # We have to send the key, volume and port.
         req.set_payload({
             'key': self.file_utils.key,
-            'volume': env[self.const.HTTP_HOST]
+            'volume': env[Constants.HTTP_HOST]
         })
         if not req.make_request():
             # If an error ocurr in the server, we need to delete the file.
@@ -46,7 +46,7 @@ class PostProcess:
 
     def process_request(self, env, start_response, url_path):
         regex_result = self.utils.get_search_regex(
-            url_path, self.const.RE_POST_VALUE)
+            url_path, Constants.RE_PUT_VALUE)
         if regex_result:
             try:
                 key_to_add = regex_result.groups()[0]
@@ -57,12 +57,12 @@ class PostProcess:
                 key_generated = self.file_utils.read_binary_file(env)
                 # Try to reach to master.
                 if self.notify_record_to_master(env):
-                    self.complex_response['action'] = self.const.KEY_ADDED
+                    self.complex_response['action'] = Constants.KEY_ADDED
                 else:
-                    self.complex_response['action'] = self.const.KEY_ERROR
+                    self.complex_response['action'] = Constants.KEY_ERROR
 
             except Exception as err:
                 print('Error extracting key', err)
-                self.complex_response['action'] = self.const.KEY_ERROR
+                self.complex_response['action'] = Constants.KEY_ERROR
 
         return self.complex_response

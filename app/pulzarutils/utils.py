@@ -27,7 +27,6 @@ class Utils:
     """
 
     def __init__(self):
-        self.const = Constants()
         self.TAG = self.__class__.__name__
 
     # System
@@ -227,14 +226,14 @@ class Utils:
     def extract_host_env(self, env):
         """Return dictionary with env elements"""
         result = {
-            self.const.SERVER_NAME: env[self.const.SERVER_NAME],
-            self.const.REQUEST_METHOD: env[self.const.REQUEST_METHOD],
-            self.const.SERVER_PORT: env[self.const.SERVER_PORT],
-            self.const.PATH_INFO: env[self.const.PATH_INFO],
-            self.const.QUERY_STRING: env[self.const.QUERY_STRING],
-            self.const.HTTP_USER_AGENT: env[self.const.HTTP_USER_AGENT],
-            self.const.SERVER_PROTOCOL: env[self.const.SERVER_PROTOCOL],
-            self.const.HTTP_HOST: env[self.const.HTTP_HOST]
+            Constants.SERVER_NAME: env[Constants.SERVER_NAME],
+            Constants.REQUEST_METHOD: env[Constants.REQUEST_METHOD],
+            Constants.SERVER_PORT: env[Constants.SERVER_PORT],
+            Constants.PATH_INFO: env[Constants.PATH_INFO],
+            Constants.QUERY_STRING: env[Constants.QUERY_STRING],
+            Constants.HTTP_USER_AGENT: env[Constants.HTTP_USER_AGENT],
+            Constants.SERVER_PROTOCOL: env[Constants.SERVER_PROTOCOL],
+            Constants.HTTP_HOST: env[Constants.HTTP_HOST]
         }
 
         return result
@@ -354,12 +353,12 @@ class Utils:
         str : Passport encoded
         '''
         try:
-            config = Config(self.const.CONF_PATH)
+            config = Config(Constants.CONF_PATH)
             key = config.get_config('server', 'key')
             return self.encode_base_64(key, to_str=True)
         
         except BaseException as err:
-            if self.const.DEBUG:
+            if Constants.DEBUG:
                 print('ERROR::{}::{}'.format(self.TAG, err))
         
     
@@ -377,11 +376,11 @@ class Utils:
         '''
         # Checking passport
         try:
-            config = Config(self.const.CONF_PATH)
+            config = Config(Constants.CONF_PATH)
             key = config.get_config('server', 'key')
-            return key == self.decode_string_base_64(env[self.const.HTTP_PASSPORT], True)
+            return key == self.decode_string_base_64(env[Constants.HTTP_PASSPORT], True)
         except BaseException as err:
-            if self.const.DEBUG:
+            if Constants.DEBUG:
                 print('ERROR::{}::{}'.format(self.TAG, err))
             return False
 

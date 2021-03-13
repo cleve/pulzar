@@ -1,5 +1,6 @@
 from pulzarcore.core_rdb import RDB
 from pulzarutils.utils import Utils
+from pulzarutils.utils import Constants
 
 
 class Job:
@@ -58,15 +59,10 @@ class Job:
         )
         return register_id
 
-    def schedule_job(self, const):
+    def schedule_job(self):
         """Schedule job
-
-        Parameters
-        ----------
-        const : Constants
-            Constant object
         """
         # Register in data base
-        if self.register_job(const.DB_NODE_JOBS) is not None:
+        if self.register_job(Constants.DB_NODE_JOBS) is not None:
             return True
         return False

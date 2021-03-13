@@ -1,4 +1,5 @@
 from pulzarutils.utils import Utils
+from pulzarutils.utils import Constants
 from pulzarutils.constants import ReqType
 from pulzarutils.node_utils import NodeUtils
 from pulzarutils.messenger import Messenger
@@ -12,12 +13,11 @@ class JobProcess:
     """Main class to handle jobs
     """
 
-    def __init__(self, constants, logger):
+    def __init__(self, logger):
         self.TAG = self.__class__.__name__
         self.logger = logger
-        self.const = constants
         self.utils = Utils()
-        self.data_base = RDB(self.const.DB_JOBS)
+        self.data_base = RDB(Constants.DB_JOBS)
         self.messenger = Messenger()
 
     def process_notification_request(self, url_path, query_string, env):
@@ -45,7 +45,7 @@ class JobProcess:
                 update_rows_affected = self.data_base.execute_sql(sql)
 
             if update_rows_affected == 0:
-                self.messenger.code_type = self.const.JOB_ERROR
+                self.messenger.code_type = Constants.JOB_ERROR
                 self.messenger.mark_as_failed()
                 return self.messenger
             # Store log and time
@@ -72,15 +72,15 @@ class JobProcess:
                       )
             )
             if insert_rows_affected > 0:
-                self.messenger.code_type = self.const.JOB_RESPONSE
+                self.messenger.code_type = Constants.JOB_RESPONSE
                 self.messenger.set_message = 'ok'
             else:
-                self.messenger.code_type = self.const.JOB_ERROR
+                self.messenger.code_type = Constants.JOB_ERROR
                 self.messenger.mark_as_failed()
 
         except Exception as err:
             self.logger.exception(':{}:{}'.format(self.TAG, err))
-            self.messenger.code_type = self.const.JOB_ERROR
+            self.messenger.code_type = Constants.JOB_ERROR
             self.messenger.mark_as_failed()
 
         return self.messenger
@@ -93,7 +93,7 @@ class JobProcess:
             # cancel
             job_path = self.utils.get_search_regex(
                 url_path,
-                self.const.RE_CANCEL_JOB
+                Constants.RE_CANCEL_JOB
             )
             if job_path is not None:
                 # Canceling job
@@ -103,17 +103,17 @@ class JobProcess:
                 )
                 update_rows_affected = self.data_base.execute_sql(sql)
                 if update_rows_affected == 0:
-                    self.messenger.code_type = self.const.JOB_ERROR
+                    self.messenger.code_type = Constants.JOB_ERROR
                     self.messenger.mark_as_failed()
                     return self.messenger
-                self.messenger.code_type = self.const.JOB_RESPONSE
+                self.messenger.code_type = Constants.JOB_RESPONSE
                 self.messenger.set_message = 'Job canceled with id ' + \
                     str(job_id)
                 return self.messenger
 
             job_path = self.utils.get_search_regex(
                 url_path,
-                self.const.RE_LAUNCH_JOB
+                Constants.RE_LAUNCH_JOB
             )
             # parameters to send to a node
             params = {}
@@ -126,19 +126,19 @@ class JobProcess:
             params['parameters'] = job_params
 
             job_object = Job(params, self.logger)
-            if job_object.send_job(self.const):
-                self.messenger.code_type = self.const.JOB_RESPONSE
+            if job_object.send_job(Constants):
+                self.messenger.code_type = Constants.JOB_RESPONSE
                 self.messenger.set_message = 'Job added with id ' + \
                     str(job_object.job_id)
 
             else:
                 self.messenger.set_message = job_object.error_msg
-                self.messenger.code_type = self.const.JOB_ERROR
+                self.messenger.code_type = Constants.JOB_ERROR
                 self.messenger.mark_as_failed()
 
         except Exception as err:
             self.logger.exception(':{}:{}'.format(self.TAG, err))
-            self.messenger.code_type = self.const.JOB_ERROR
+            self.messenger.code_type = Constants.JOB_ERROR
             self.messenger.mark_as_failed()
             self.messenger.set_message = str(err)
 

@@ -20,10 +20,9 @@ class LaunchJobs:
 
     def __init__(self):
         self.TAG = self.__class__.__name__
-        self.const = Constants()
-        self.logger = PulzarLogger(self.const, master=False)
+        self.logger = PulzarLogger(master=False)
         self.utils = Utils()
-        self.data_base = RDB(self.const.DB_NODE_JOBS)
+        self.data_base = RDB(Constants.DB_NODE_JOBS)
         self.jobs_to_launch = []
         # For threads.
         self.executor = ThreadPoolExecutor(max_workers=5, thread_name_prefix=f'{self.TAG}Executor')
@@ -41,7 +40,7 @@ class LaunchJobs:
     def _get_config(self):
         """Configuration from ini file
         """
-        server_config = Config(self.const.CONF_PATH)
+        server_config = Config(Constants.CONF_PATH)
         # Retention
         self.days_of_retention = int(server_config.get_config(
             'general', 'retention_policy'))
@@ -189,14 +188,14 @@ class LaunchJobs:
         for job in self.jobs_to_launch:
             try:
                 # Rebuild the real path
-                complete_path = self.job_directory + job['job_path']
-                if self.const.DEBUG:
-                    print('Launching', job['job_id'],
+                complete_path = self.job_directory + job.get('job_path')
+                if Constants.DEBUG:
+                    print('Launching', job.get('job_id'),
                         'located in ', complete_path)
                 custom_module = os.path.splitext(complete_path)[
                     0].replace('/', '.')
                 class_name = custom_module.split('.')[-1].capitalize()
-                job['job_args']['job_id'] = job['job_id']
+                job['job_args']['job_id'] = job.get('job_id')
                 job['job_args']['_pulzar_config'] = {
                     'scheduled': job['scheduled']
                 }

@@ -1,11 +1,11 @@
 from pulzarutils.utils import Utils
+from pulzarutils.utils import Constants
 from pulzarutils.messenger import Messenger
 from pulzarcore.core_rdb import RDB
 
 
 class AdminJobs:
-    def __init__(self, constants, logger):
-        self.const = constants
+    def __init__(self, logger):
         self.logger = logger
         self.utils = Utils()
         self.messenger = Messenger()
@@ -25,10 +25,10 @@ class AdminJobs:
         """
         # Get scheduled jobs.
         regex_result = self.utils.get_search_regex(
-            url_path, self.const.RE_SCHED_JOB_INF)
+            url_path, Constants.RE_SCHED_JOB_INF)
         if regex_result:
             try:
-                self.messenger.code_type = self.const.JOB_DETAILS
+                self.messenger.code_type = Constants.JOB_DETAILS
                 # Type of request
                 request_type, _, _, job_type, _, _, request_id, _, limit, _, filter_w = regex_result.groups()
                 # Filter request
@@ -46,18 +46,18 @@ class AdminJobs:
                         self._job_catalog_response())
                 return self.messenger
             except Exception as err:
-                self.messenger.code_type = self.const.PULZAR_ERROR
+                self.messenger.code_type = Constants.PULZAR_ERROR
                 self.messenger.mark_as_failed()
                 self.messenger.set_message = str(err)
         else:
-            self.messenger.code_type = self.const.KEY_NOT_FOUND
+            self.messenger.code_type = Constants.KEY_NOT_FOUND
             self.messenger.mark_as_failed()
             self.messenger.set_message = 'bad query'
         return self.messenger
 
     def _job_catalog_response(self):
         result = []
-        data_base = RDB(self.const.DB_JOBS)
+        data_base = RDB(Constants.DB_JOBS)
         query = 'SELECT path, description, args, category, author FROM job_catalog'
         catalog = data_base.execute_sql_with_results(query)
         for job in catalog:
@@ -71,7 +71,7 @@ class AdminJobs:
         return result
 
     def _scheduled_job_type(self, job_type, limit):
-        data_base = RDB(self.const.DB_JOBS)
+        data_base = RDB(Constants.DB_JOBS)
         result = []
         if job_type == 'failed':
             sql = """\
@@ -136,7 +136,7 @@ class AdminJobs:
         """Get scheduled job information since all parameters
         """
         scheduled_job = []
-        data_base = RDB(self.const.DB_JOBS)
+        data_base = RDB(Constants.DB_JOBS)
         if job_id is None:
             # Only job list
             if job_type is not None:
@@ -167,7 +167,7 @@ class AdminJobs:
             sql += ' LIMIT ' + str(limit)
         job_row = data_base.execute_sql_with_results(sql)
         if len(job_row) == 0:
-            self.messenger.code_type = self.const.KEY_NOT_FOUND
+            self.messenger.code_type = Constants.KEY_NOT_FOUND
             self.messenger.set_message = 'job id not found'
             return None
 
@@ -180,7 +180,7 @@ class AdminJobs:
             'last_executions': [],
             'creation': job_row[0][4],
         }
-        self.messenger.code_type = self.const.JOB_DETAILS
+        self.messenger.code_type = Constants.JOB_DETAILS
         # Canceled, return
         if job_row[0][5] == -2:
             self.messenger.set_response(result)
@@ -219,7 +219,7 @@ class AdminJobs:
         return result
 
     def _all_job_response(self, request_id, limit):
-        data_base = RDB(self.const.DB_JOBS)
+        data_base = RDB(Constants.DB_JOBS)
         results = []
         sql = 'SELECT id, job_name, parameters, node, creation_time, state FROM job ORDER BY creation_time DESC'
         if limit is not None:
@@ -250,7 +250,7 @@ class AdminJobs:
         ready_jobs = []
         failed_jobs = []
         # Get pending jobs
-        data_base = RDB(self.const.DB_JOBS)
+        data_base = RDB(Constants.DB_JOBS)
         if job_id is None:
             sql = 'SELECT id, job_name, parameters, node, creation_time, state FROM job WHERE state = 0'
             rows = data_base.execute_sql_with_results(sql)
@@ -313,7 +313,7 @@ class AdminJobs:
         sql = 'SELECT state FROM job WHERE id = {}'.format(job_id)
         rows = data_base.execute_sql_with_results(sql)
         if len(rows) == 0:
-            self.messenger.code_type = self.const.KEY_NOT_FOUND
+            self.messenger.code_type = Constants.KEY_NOT_FOUND
             self.messenger.set_message = 'job id not found'
             return None
         # 0 => pending

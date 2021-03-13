@@ -16,12 +16,11 @@ class TemporalCheck:
 
     def __init__(self):
         self.TAG = self.__class__.__name__
-        self.const = Constants()
-        self.logger = PulzarLogger(self.const)
+        self.logger = PulzarLogger()
         self.utils = Utils()
-        self.temporal_files = DB(self.const.DB_NOT_PERMANENT)
-        self.master_db = DB(self.const.DB_PATH)
-        self.schedule_data_base = RDB(self.const.DB_JOBS)
+        self.temporal_files = DB(Constants.DB_NOT_PERMANENT)
+        self.master_db = DB(Constants.DB_PATH)
+        self.schedule_data_base = RDB(Constants.DB_JOBS)
         self.days_of_retention = 90
         self._init_config()
 
@@ -29,7 +28,7 @@ class TemporalCheck:
         """Delete data since the policy
         """
         # Get retention policy from configuration
-        server_config = Config(self.const.CONF_PATH)
+        server_config = Config(Constants.CONF_PATH)
         self.days_of_retention = int(server_config.get_config(
             'general', 'retention_policy'))
         # Canceled schedule jobs
@@ -56,7 +55,7 @@ class TemporalCheck:
     def _init_config(self):
         """Getting server information
         """
-        server_config = Config(self.const.CONF_PATH)
+        server_config = Config(Constants.CONF_PATH)
         self.master_url = server_config.get_config('server', 'host')
         self.master_port = server_config.get_config('server', 'port')
 

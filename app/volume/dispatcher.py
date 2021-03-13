@@ -17,7 +17,6 @@ class Dispatcher:
 
     def __init__(self, utils, logger):
         self.utils = utils
-        self.const = Constants()
         self.logger = logger
 
         # reg strings
@@ -29,48 +28,48 @@ class Dispatcher:
     def classify_request(self, env, start_response):
         """Return the type
         """
-        url_path = env[self.const.PATH_INFO]
-        method = env[self.const.REQUEST_METHOD]
+        url_path = env[Constants.PATH_INFO]
+        method = env[Constants.REQUEST_METHOD]
 
         # Autodiscovery
         if self.utils.match_regex(url_path, self.re_autodiscovery):
-            discovery_process = DiscoveryProcess(self.const, self.logger)
+            discovery_process = DiscoveryProcess(self.logger)
             return discovery_process.process_request(env)
 
         # Admin
         if self.utils.match_regex(url_path, self.re_admin):
-            admin_process = AdminProcess(self.const, self.logger)
-            if method == self.const.GET:
+            admin_process = AdminProcess(self.logger)
+            if method == Constants.GET:
                 return admin_process.process_request(url_path)
 
         # Jobs
         if self.utils.match_regex(url_path, self.re_job):
-            if method == self.const.POST:
-                job_process = JobProcess(self.const, self.logger)
+            if method == Constants.POST:
+                job_process = JobProcess(self.logger)
                 return job_process.process_request(url_path, env)
 
         # Regular requests
         else:
             # Delete value.
-            if method == self.const.DELETE:
-                get_request = DeleteProcess(self.const, self.logger)
+            if method == Constants.DELETE:
+                get_request = DeleteProcess(self.logger)
                 return get_request.process_request(
                     env, start_response, url_path)
 
             # Get key-value.
-            if method == self.const.GET:
-                get_request = GetProcess(self.const, self.logger)
+            if method == Constants.GET:
+                get_request = GetProcess(self.logger)
                 return get_request.process_request(
                     env, start_response, url_path)
 
             # PUT key-value.
-            if method == self.const.PUT:
-                put_request = PutProcess(self.const, self.logger)
+            if method == Constants.PUT:
+                put_request = PutProcess(self.logger)
                 return put_request.process_request(
                     env, start_response, url_path)
 
         # Generic response
         messenger = Messenger()
-        messenger.code_type = self.const.PULZAR_ERROR
+        messenger.code_type = Constants.PULZAR_ERROR
         messenger.set_message = 'internal error'
         return messenger

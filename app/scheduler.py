@@ -13,11 +13,10 @@ class Scheduler():
     """
     def __init__(self):
         self.TAG = self.__class__.__name__
-        self.const = Constants()
         self.utils = Utils()
-        self.logger = PulzarLogger(self.const)
+        self.logger = PulzarLogger()
         self.executor = ThreadPoolExecutor(max_workers=4)
-        self.schedule_data_base = RDB(self.const.DB_JOBS)
+        self.schedule_data_base = RDB(Constants.DB_JOBS)
         self.max_jobs_running = 4
         self.jobs_to_launch = []
         self.days_of_retention = 90
@@ -241,7 +240,7 @@ class Scheduler():
         bool : True if the request was successful
         """
         job_object = Job(params, self.logger)
-        if job_object.send_scheduled_job(self.const, params):
+        if job_object.send_scheduled_job(params):
             # Update next iteration time
             self.update_next_execution_job(params['job_id'])
             return True

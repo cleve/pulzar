@@ -1,20 +1,21 @@
+from pulzarutils.utils import Constants
 import os
 import logging
 from logging.handlers import RotatingFileHandler
 
 class PulzarLogger:
-    def __init__(self, const, master=True):
+    def __init__(self, master=True):
         '''Logger class
 
         Should be instantiate once
         '''
-        self.debug_console = const.DEBUG
+        self.debug_console = Constants.DEBUG
         self.file_name = 'pulzar.log'
-        if const.DEBUG and master:
+        if Constants.DEBUG and master:
             self.file_name = 'pulzarmaster.log'
         self.logger = logging.getLogger(self.__class__.__name__)
         self.format = '%(asctime)s:%(levelname)s:%(message)s'
-        self.set_up(const.DEBUG_LEVEL, const.LOG_PATH)
+        self.set_up(Constants.DEBUG_LEVEL, Constants.LOG_PATH)
 
     def set_up(self, level, file_path) -> None:
         '''Set logging level

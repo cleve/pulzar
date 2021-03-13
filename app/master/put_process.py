@@ -1,28 +1,28 @@
 from pulzarutils.utils import Utils
+from pulzarutils.utils import Constants
 from pulzarutils.stream import Config
 from pulzarutils.messenger import Messenger
 from pulzarcore.core_db import DB
 
 
 class PutProcess:
-    def __init__(self, constants, logger):
+    def __init__(self, logger):
         self.TAG = self.__class__.__name__
-        self.const = constants
         self.logger = logger
         # 20 mins max to consider a volume online.
         self.second_range = 1200
         self.utils = Utils()
         # DB of values already loaded.
-        self.db_values = DB(self.const.DB_PATH)
+        self.db_values = DB(Constants.DB_PATH)
         # DB of volumes/keys.
-        self.db_volumes = DB(self.const.DB_VOLUME)
+        self.db_volumes = DB(Constants.DB_VOLUME)
         self.messenger = Messenger()
 
     def pick_a_volume(self, env):
-        config = Config(self.const.CONF_PATH)
+        config = Config(Constants.CONF_PATH)
         # First checking the size allowed.
         try:
-            request_body_size = int(env[self.const.CONTENT_LENGTH])
+            request_body_size = int(env[Constants.CONTENT_LENGTH])
         except (ValueError):
             request_body_size = 0
         max_size = int(config.get_config('general', 'maxsize'))
@@ -55,7 +55,7 @@ class PutProcess:
 
     def process_request(self, env, start_response, url_path):
         regex_result = self.utils.get_search_regex(
-            url_path, self.const.RE_PUT_VALUE)
+            url_path, Constants.RE_PUT_VALUE)
 
         if regex_result:
             try:
@@ -72,27 +72,27 @@ class PutProcess:
                 if value is None:
                     volume = self.pick_a_volume(env)
                     if volume is None:
-                        self.messenger.code_type = self.const.PULZAR_ERROR
+                        self.messenger.code_type = Constants.PULZAR_ERROR
                         self.messenger.mark_as_failed()
                         self.messenger.set_message = 'Not volumes sync'
                         return self.messenger
                     # Populating dictionary with the info needed.
-                    self.messenger.code_type = self.const.REDIRECT_PUT
+                    self.messenger.code_type = Constants.REDIRECT_PUT
                     self.messenger.http_code = '307 temporary redirect'
                     self.messenger.volume = volume
                     return self.messenger
                 # Since key was found, an element was already added before
                 # using the same key.
-                self.messenger.code_type = self.const.KEY_ALREADY_ADDED
+                self.messenger.code_type = Constants.KEY_ALREADY_ADDED
 
             except Exception as err:
                 self.logger.exception('{}:{}'.format(self.TAG, err))
-                self.messenger.code_type = self.const.PULZAR_ERROR
+                self.messenger.code_type = Constants.PULZAR_ERROR
                 self.messenger.mark_as_failed()
                 self.messenger.set_message = str(err)
 
         else:
-            self.messenger.code_type = self.const.USER_ERROR
+            self.messenger.code_type = Constants.USER_ERROR
             self.messenger.mark_as_failed()
             self.messenger.set_message = 'Wrong query'
 

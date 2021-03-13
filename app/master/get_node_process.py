@@ -1,21 +1,21 @@
 from pulzarutils.utils import Utils
+from pulzarutils.utils import Constants
 from pulzarutils.stream import Config
 from pulzarutils.messenger import Messenger
 from pulzarcore.core_db import DB
 
 
 class GetNodeProcess:
-    def __init__(self, constants, logger):
+    def __init__(self, logger):
         self.TAG = self.__class__.__name__
-        self.const = constants
         self.logger = logger
         # 20 mins max to consider a volume online.
         self.second_range = 1200
         self.utils = Utils()
         # DB of values already loaded.
-        self.db_values = DB(self.const.DB_PATH)
+        self.db_values = DB(Constants.DB_PATH)
         # DB of volumes/keys.
-        self.db_volumes = DB(self.const.DB_VOLUME)
+        self.db_volumes = DB(Constants.DB_VOLUME)
         self.messenger = Messenger()
 
     def pick_a_volume(self):
@@ -23,7 +23,7 @@ class GetNodeProcess:
             return (str): nodename:port
         """
         # Selecting port
-        config = Config(self.const.CONF_PATH)
+        config = Config(Constants.CONF_PATH)
         volume_port = config.get_config('volume', 'port')
         volumes = self.db_volumes.get_keys_values()
         current_datetime = self.utils.get_current_datetime()
@@ -48,7 +48,7 @@ class GetNodeProcess:
 
     def process_request(self, env, start_response, url_path):
         regex_result = self.utils.get_search_regex(
-            url_path, self.const.RE_GET_STORAGE)
+            url_path, Constants.RE_GET_STORAGE)
 
         if regex_result:
             try:
@@ -64,15 +64,15 @@ class GetNodeProcess:
                 # If not, we will try to create the entry process.
                 if value is None:
                     master_url = '?url=' + \
-                        env[self.const.HTTP_HOST]
+                        env[Constants.HTTP_HOST]
                     volume = self.pick_a_volume()
                     if volume is None:
-                        self.messenger.code_type = self.const.PULZAR_ERROR
+                        self.messenger.code_type = Constants.PULZAR_ERROR
                         self.messenger.mark_as_failed()
                         self.messenger.set_message = 'Not volumes sync'
                         return self.messenger
                     # Populating dictionary with the info needed.
-                    self.messenger.code_type = self.const.GET_NODE
+                    self.messenger.code_type = Constants.GET_NODE
                     self.messenger.set_response(
                         {'node': 'http://' + volume + '/add_key' + key + master_url})
                     self.messenger.set_message = 'ok'
@@ -83,12 +83,12 @@ class GetNodeProcess:
 
             except Exception as err:
                 self.logger.exception('{}:{}'.format(self.TAG, err))
-                self.messenger.code_type = self.const.PULZAR_ERROR
+                self.messenger.code_type = Constants.PULZAR_ERROR
                 self.messenger.mark_as_failed()
                 self.messenger.set_message = str(err)
 
         else:
-            self.messenger.code_type = self.const.USER_ERROR
+            self.messenger.code_type = Constants.USER_ERROR
             self.messenger.mark_as_failed()
             self.messenger.set_message = 'Wrong query'
 

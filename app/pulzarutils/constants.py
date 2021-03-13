@@ -16,10 +16,10 @@ class ReqType(Enum):
 
 class Constants:
 
-    DEBUG = True
+    DEBUG = False
     # Logger configuration
     # INFO, DEBUG, ERROR
-    DEBUG_LEVEL = 'INFO'
+    DEBUG_LEVEL = 'ERROR'
     LOG_PATH = 'storage/log/' if DEBUG else '/var/lib/pulzar/log/'
     # To try docker for windows in the same machine
     DEBUG_WIN = False

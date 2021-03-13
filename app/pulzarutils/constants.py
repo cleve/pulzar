@@ -16,7 +16,7 @@ class ReqType(Enum):
 
 class Constants:
 
-    DEBUG = False
+    DEBUG = True
     # Logger configuration
     # INFO, DEBUG, ERROR
     DEBUG_LEVEL = 'INFO'

@@ -11,7 +11,7 @@ class ExtensionProcess:
     """Process extension calls
     """
 
-    def __init__(self, constants, logger):
+    def __init__(self, logger):
         self.TAG = self.__class__.__name__
         self.logger = logger
         self.utils = Utils()

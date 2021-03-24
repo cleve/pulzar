@@ -101,7 +101,7 @@ class Dispatcher:
         # Extensions
         elif self.utils.match_regex(url_path, Constants.RE_EXTENSION):
             if method == Constants.GET:
-                extension = ExtensionProcess(Constants, self.logger)
+                extension = ExtensionProcess(self.logger)
                 query_string = env['QUERY_STRING']
                 return extension.process_request(
                     url_path, query_string)

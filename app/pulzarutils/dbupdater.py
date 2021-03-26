@@ -17,8 +17,12 @@ def update_masterdb_schema():
     db_build_number = int(db_version_split[0]) + int(db_version_split[1]) + int(db_version_split[2])
 
     if current_build_number > db_build_number and sql is not None:
-        pass
+        # Run updates in the database if is needed.
+        rdb.execute_sql(sql)
 
+
+if __name__ == "__main__":
+    update_masterdb_schema()
 
 
 

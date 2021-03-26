@@ -1,10 +1,12 @@
+import sys
 from pulzarutils.constants import Constants
 from pulzarcore.core_rdb import RDB
 
-def update_masterdb_schema():
+def update_schema(schema_type):
     """Compare version and run the update
     """
-    rdb = RDB(Constants.DB_JOBS)
+    db_path = Constants.DB_JOBS if schema_type == 'master' else Constants.DB_NODE_JOBS
+    rdb = RDB(db_path)  
     current_version = Constants.VERSION
     result = rdb.execute_sql_with_results('SELECT version, sqlcmd FROM metadata ORDER BY id DESC LIMIT 1')
     if len(result) != 1:
@@ -22,7 +24,10 @@ def update_masterdb_schema():
 
 
 if __name__ == "__main__":
-    update_masterdb_schema()
+    args = sys.argv
+    if len(args) == 2 and isinstance(args[1], str):
+        update_schema(args[1])
+    raise ('Argument error')
 
 
 

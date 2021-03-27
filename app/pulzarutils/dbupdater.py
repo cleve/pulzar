@@ -6,6 +6,12 @@ from pulzarcore.core_rdb import RDB
 def update_schema(schema_type):
     """Compare version and run the update
     """
+    def check_jobcatalog(iterator):
+        for item in iterator:
+            if item[0] == 'job_catalog':
+                return True
+        return False
+
     def check_metadata(iterator):
         for item in iterator:
             if item[0] == 'metadata':
@@ -28,6 +34,10 @@ def update_schema(schema_type):
         rdb.execute_sql_insert('INSERT INTO metadata (version) VALUES(?)', (current_version,))
         # Only for master
         if schema_type == 'volume':
+            return
+        result = rdb.execute_sql_with_results('SELECT name FROM sqlite_master WHERE type="table"')
+        # Job catalog is only available in new versions
+        if check_jobcatalog(result):
             return
         sql = """
         CREATE TABLE "job_catalog" (

@@ -20,16 +20,19 @@ req_upload = requests.put(
     headers={'Content-Type': 'application/octet-stream'}
 )
 
-url = req_upload.json()['data']['url']
+if req_upload.json().get('data') is None:
+    print(req_upload.json().get('msg'))
 
-for instance_test in range(TEST_CASES):
-    req = requests.put(
-        url=MASTER_URL + UPLOAD_IMAGE_PATH + MASTER_URL + url,
-        data=open(IMG, 'rb'),
-        headers={'Content-Type': 'application/octet-stream'}
+else:
+    url = req_upload.json()['data']['url']
+    for instance_test in range(TEST_CASES):
+        req = requests.put(
+            url=MASTER_URL + UPLOAD_IMAGE_PATH + MASTER_URL + url,
+            data=open(IMG, 'rb'),
+            headers={'Content-Type': 'application/octet-stream'}
+        )
+        print(req.json()['status'], req.json().get('msg'))
+
+    req_upload = requests.delete(
+        url=MASTER_URL + 'delete_key/base_image_matching_test.png'
     )
-    print(req.json()['status'])
-
-req_upload = requests.delete(
-    url=MASTER_URL + 'delete_key/base_image_matching_test.png'
-)

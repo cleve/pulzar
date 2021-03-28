@@ -10,10 +10,9 @@ from pulzarutils.utils import Utils
 def restore(url):
     """Start restauration given an url
     """
-    const = Constants()
-    config = Config(const.CONF_PATH)
+    config = Config(Constants.CONF_PATH)
     volume_port = config.get_config('volume', 'port')
-    core_request = CoreRequest(url, volume_port, '/admin/' + const.START_BK)
+    core_request = CoreRequest(url, volume_port, '/admin/' + Constants.START_BK)
     if core_request.make_request() is not True:
         print('Error processing the task')
         return

@@ -1,16 +1,16 @@
 from pulzarutils.utils import Utils
+from pulzarutils.utils import Constants
 from pulzarutils.messenger import Messenger
 from pulzarcore.core_db import DB
 from pulzarcore.core_rdb import RDB
 
 
 class AdminProcess:
-    def __init__(self, constants, logger):
-        self.const = constants
+    def __init__(self, logger):
         self.logger = logger
         self.utils = Utils()
         # DB of values already loaded
-        self.db_volumes = DB(self.const.DB_VOLUME)
+        self.db_volumes = DB(Constants.DB_VOLUME)
         self.messenger = Messenger()
 
     def process_request(self, url_path):
@@ -19,10 +19,10 @@ class AdminProcess:
         """
         # Get request type, checking for key value.
         regex_result = self.utils.get_search_regex(
-            url_path, self.const.RE_ADMIN)
+            url_path, Constants.RE_ADMIN)
         if regex_result:
             try:
-                self.messenger.code_type = self.const.ADMIN
+                self.messenger.code_type = Constants.ADMIN
                 call_path_list = regex_result.groups()[0].split('/')
                 call_path_list = [x for x in call_path_list if x != '']
                 # All node status
@@ -67,16 +67,16 @@ class AdminProcess:
                     self.messenger.set_response(get_result)
 
                 elif len(call_path_list) == 1 and call_path_list[0] == 'status':
-                    db_master = DB(self.const.DB_PATH)
+                    db_master = DB(Constants.DB_PATH)
                     self.messenger.set_response(db_master.get_stats())
                 else:
-                    self.messenger.code_type = self.const.KEY_NOT_FOUND
+                    self.messenger.code_type = Constants.KEY_NOT_FOUND
                     self.messenger.mark_as_failed()
                 return self.messenger
 
             except Exception as err:
                 self.logger.exception('Error extracting key {}'.format(err))
-                self.messenger.code_type = self.const.PULZAR_ERROR
+                self.messenger.code_type = Constants.PULZAR_ERROR
                 self.messenger.set_message = str(err)
                 self.messenger.mark_as_failed()
                 return self.messenger

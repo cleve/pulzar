@@ -1,11 +1,8 @@
 import schedule
 import time
-import os
-import importlib
+from concurrent.futures import ThreadPoolExecutor
 from pulzarutils.utils import Utils
 from pulzarutils.constants import Constants
-from pulzarutils.constants import ReqType
-from pulzarutils.node_utils import NodeUtils
 from pulzarutils.logger import PulzarLogger
 from pulzarcore.core_rdb import RDB
 from pulzarcore.core_job_master import Job
@@ -16,10 +13,10 @@ class Scheduler():
     """
     def __init__(self):
         self.TAG = self.__class__.__name__
-        self.const = Constants()
         self.utils = Utils()
-        self.logger = PulzarLogger(self.const)
-        self.schedule_data_base = RDB(self.const.DB_JOBS)
+        self.logger = PulzarLogger()
+        self.executor = ThreadPoolExecutor(max_workers=4)
+        self.schedule_data_base = RDB(Constants.DB_JOBS)
         self.max_jobs_running = 4
         self.jobs_to_launch = []
         self.days_of_retention = 90
@@ -53,6 +50,7 @@ class Scheduler():
 
     def _schedule_job(self, parameters) -> None:
         """Schedule and update state
+        
         Parameters
         ----------
         parameters : (dict)
@@ -217,6 +215,19 @@ class Scheduler():
                 'job_repeat': row[6]
             })
 
+    def _thread_job(self, custom_func, custom_params):
+        """Thread creation
+
+        Params
+        ------
+        custom_func : (function)
+            function to thread
+        
+        custom_params : (dict)
+            Parameters for the job
+        """
+        self.executor.submit(custom_func, custom_params)
+    
     def _notify_to_node(self, params) -> bool:
         """Send the job to the node
 
@@ -231,7 +242,7 @@ class Scheduler():
         """
         job_path = params.get('job_path') + '/' +  params.get('job_name')
         job_object = Job(params, job_path, self.logger)
-        if job_object.send_scheduled_job(self.const, params):
+        if job_object.send_scheduled_job(params):
             # Update next iteration time
             self.update_next_execution_job(params['job_id'])
             return True
@@ -239,25 +250,52 @@ class Scheduler():
 
     def schedule_details(self, job_params, interval, time_unit):
         """Since parameter, schedule according it
-            return schedule object
+
+            Parameters
+            ----------
+
+            job_params : dict
+                Job parameters
+            
+            interval : str
+                Time unit
+            
+            time_unit : str
+                Amount of time
+            
+            Return
+            ------
+            schedule object
         """
         schedule_object = None
         if interval == 'minutes':
             schedule_object = schedule.every(int(time_unit)).minutes.do(
-                self._notify_to_node, params=job_params)
+                self._thread_job,
+                custom_func=self._notify_to_node,
+                custom_params=job_params
+            )
 
         elif interval == 'hours':
             schedule_object = schedule.every(int(time_unit)).hours.do(
-                self._notify_to_node, params=job_params)
+                self._thread_job,
+                custom_func=self._notify_to_node,
+                custom_params=job_params
+            )
 
         elif interval == 'days':
             schedule_object = schedule.every(int(time_unit)).days.do(
-                self._notify_to_node, params=job_params)
+                self._thread_job,
+                custom_func=self._notify_to_node,
+                custom_params=job_params
+            )
 
         elif interval == 'weeks':
             schedule_object = schedule.every(int(time_unit)).weeks.do(
-                self._notify_to_node, params=job_params)
-
+                self._thread_job,
+                custom_func=self._notify_to_node,
+                custom_params=job_params
+            )
+            
         return schedule_object
 
     def update_next_execution_job(self, job_id):

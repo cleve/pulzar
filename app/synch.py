@@ -14,12 +14,11 @@ class Synchro:
 
     def __init__(self):
         self.TAG = self.__class__.__name__
-        self.const = Constants()
-        self.logger = PulzarLogger(self.const, master=False)
+        self.logger = PulzarLogger(master=False)
         self.utils = Utils()
-        self.db_stats = DB(self.const.DB_STATS)
-        self.db_backup = DB(self.const.DB_BACKUP)
-        self.rdb = RDB(self.const.DB_NODE_JOBS)
+        self.db_stats = DB(Constants.DB_STATS)
+        self.db_backup = DB(Constants.DB_BACKUP)
+        self.rdb = RDB(Constants.DB_NODE_JOBS)
         self.key = None
         self.volume_host = None
         self.server_host = None
@@ -33,13 +32,13 @@ class Synchro:
     def get_config(self):
         """Configuration from ini file
         """
-        server_config = Config(self.const.CONF_PATH)
-        if self.const.DEBUG:
-            self.volume_dir = self.const.DEV_DIRECTORY
+        server_config = Config(Constants.CONF_PATH)
+        if Constants.DEBUG:
+            self.volume_dir = Constants.DEV_DIRECTORY
         else:
             self.volume_dir = server_config.get_config('volume', 'dir')
         self.volume_host = self.db_stats.get_value(
-            self.utils.encode_str_to_byte(self.const.HOST_NAME))
+            self.utils.encode_str_to_byte(Constants.HOST_NAME))
         self.volume_port = server_config.get_config('volume', 'port')
         self.key = server_config.get_config('server', 'key')
         # Master url
@@ -108,7 +107,7 @@ class Synchro:
                 if bval == b'1':
                     continue
                 req = CoreRequest(
-                    self.server_host, self.server_port, '/' + self.const.SKYNET + '/' + self.const.START_BK)
+                    self.server_host, self.server_port, '/' + Constants.SKYNET + '/' + Constants.START_BK)
                 req.set_type(ReqType.POST)
                 # We have to send the key, volume and port.
                 req.set_payload({
@@ -117,7 +116,7 @@ class Synchro:
                     'total': total_files
                 })
                 req.add_header({
-                    self.const.PASSPORT: self.utils.encode_base_64(self.key)
+                    Constants.PASSPORT: self.utils.encode_base_64(self.key)
                 })
                 req.make_request()
                 py_object = self.utils.json_to_py(req.response)
@@ -177,10 +176,10 @@ class Synchro:
         req = CoreRequest(
             self.server_host,
             self.server_port,
-            self.const.SYNC
+            Constants.SYNC
         )
         req.add_header({
-                self.const.PASSPORT: self.utils.encode_base_64(self.key)
+                Constants.PASSPORT: self.utils.encode_base_64(self.key)
             })
         req.set_type(ReqType.POST)
         req.set_payload({

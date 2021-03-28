@@ -11,11 +11,10 @@ from pulzarcore.core_response import ResponseClass
 
 class Volume:
     def __init__(self):
-        self.const = Constants()
         self.utils = Utils()
-        self.file_utils = FileUtils(self.const)
+        self.file_utils = FileUtils()
         self.response = ResponseClass()
-        self.logger = PulzarLogger(self.const, master=False)
+        self.logger = PulzarLogger(master=False)
         self.dispatcher = Dispatcher(self.utils, self.logger)
         self.master_url = None
         self.master_port = None
@@ -25,30 +24,30 @@ class Volume:
         message = self.dispatcher.classify_request(env, start_response)
         request_type = message.code_type
         # First the general errors
-        if request_type == self.const.PULZAR_ERROR or request_type == self.const.USER_ERROR:
+        if request_type == Constants.PULZAR_ERROR or request_type == Constants.USER_ERROR:
             self.response.set_response(message.http_code)
             self.response.set_message(message.get_bjson())
-        if request_type == self.const.BACKUP_SCHEDULED:
+        if request_type == Constants.BACKUP_SCHEDULED:
             self.response.set_response(message.http_code)
             self.response.set_message(message.get_bjson())
-        elif request_type == self.const.AUTODISCOVERY:
+        elif request_type == Constants.AUTODISCOVERY:
             self.response.set_response(message.http_code)
             self.response.set_message(message.get_bjson())
-        elif request_type == self.const.KEY_DELETED:
+        elif request_type == Constants.KEY_DELETED:
             self.response.set_response(message.http_code)
             self.response.set_message(message.get_bjson())
-        elif request_type == self.const.KEY_ADDED:
+        elif request_type == Constants.KEY_ADDED:
             self.response.set_response(message.http_code)
             self.response.set_message(message.get_bjson())
-        elif request_type == self.const.KEY_ERROR:
+        elif request_type == Constants.KEY_ERROR:
             self.response.set_response('406 Not acceptable')
             self.response.set_message(b'record already added')
-        elif request_type == self.const.KEY_NOT_FOUND:
+        elif request_type == Constants.KEY_NOT_FOUND:
             self.response.set_response(message.http_code)
             self.response.set_message(message.get_bjson())
-        elif request_type == self.const.KEY_FOUND:
+        elif request_type == Constants.KEY_FOUND:
             return self.file_utils.read_value(message.extra, start_response)
-        elif request_type == self.const.JOB_OK:
+        elif request_type == Constants.JOB_OK:
             self.response.set_response(message.http_code)
             self.response.set_message(message.get_bjson())
         else:

@@ -1,6 +1,7 @@
 import importlib
 import random
 from pulzarutils.utils import Utils
+from pulzarutils.utils import Constants
 from pulzarcore.core_body import Body
 from pulzarcore.core_db import DB
 from pulzarutils.messenger import Messenger
@@ -10,13 +11,12 @@ class ExtensionProcess:
     """Process extension calls
     """
 
-    def __init__(self, constants, logger):
+    def __init__(self, logger):
         self.TAG = self.__class__.__name__
-        self.const = constants
         self.logger = logger
         self.utils = Utils()
         # DB of values already loaded
-        self.db_values = DB(self.const.DB_PATH)
+        self.db_values = DB(Constants.DB_PATH)
         self.messenger = Messenger()
 
     def read_in_chunks(self, file_object, chunk_size=1024):
@@ -43,13 +43,13 @@ class ExtensionProcess:
             File name or None
         """
         try:
-            request_body_size = int(env[self.const.CONTENT_LENGTH])
+            request_body_size = int(env[Constants.CONTENT_LENGTH])
         except (ValueError):
             request_body_size = 0
         if request_body_size > 0:
             temp_file = self.utils.get_tmp_file()
             # Read binary file sent.
-            f = env[self.const.WSGI_INPUT]
+            f = env[Constants.WSGI_INPUT]
             for piece in self.read_in_chunks(f):
                 temp_file.write(piece)
 
@@ -68,7 +68,7 @@ class ExtensionProcess:
             'http://fakeurl.com?' + query_string)
         # Get request type, checking for key value.
         regex_result = self.utils.get_search_regex(
-            url_path, self.const.RE_EXTENSION)
+            url_path, Constants.RE_EXTENSION)
         if regex_result:
             try:
                 call_path_list = regex_result.groups()[0][1:].split('/')
@@ -87,21 +87,21 @@ class ExtensionProcess:
                     j_byte = extension_object.execute()
                     # Clear tmp is exists
                     extension_object.clean_tmp()
-                    self.messenger.code_type = self.const.EXTENSION_RESPONSE
+                    self.messenger.code_type = Constants.EXTENSION_RESPONSE
                     self.messenger.set_response(j_byte)
                 else:
-                    self.messenger.code_type = self.const.USER_ERROR
+                    self.messenger.code_type = Constants.USER_ERROR
                     self.messenger.mark_as_failed()
                     self.messenger.set_message = 'Wrong query, extension not found'
 
             except Exception as err:
                 self.logger.exception('{}:{}'.format(self.TAG, err))
-                self.messenger.code_type = self.const.PULZAR_ERROR
+                self.messenger.code_type = Constants.PULZAR_ERROR
                 self.messenger.mark_as_failed()
                 self.messenger.set_message = str(err)
 
         else:
-            self.messenger.code_type = self.const.USER_ERROR
+            self.messenger.code_type = Constants.USER_ERROR
             self.messenger.mark_as_failed()
             self.messenger.set_message = 'Wrong query'
 

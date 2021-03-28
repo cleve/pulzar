@@ -12,6 +12,19 @@ class Job:
     """
 
     def __init__(self, job_params, url_path, logger):
+        """Constructor
+
+        Parameters
+        ----------
+        job_params : dict
+            Dictionary with all the parameters
+        
+        url_path: str
+            Full path to the job
+        
+        logger : Logger
+            Logger object
+        """
         self.TAG = self.__class__.__name__
         self.job_params = job_params
         self.url_path = url_path
@@ -139,6 +152,7 @@ class Job:
             return self.register_scheduled_job(Constants.DB_JOBS)
         node = self.select_node()
         if node is None:
+            self.logger.error(':{}:empty node'.format(self.TAG))
             return False
         self.logger.debug(':{}:Sending job to node -> {}'.format(self.TAG, node))
         # Register in data base

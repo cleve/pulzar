@@ -2,8 +2,8 @@ from pulzarutils.constants import Constants
 from pulzarutils.constants import Response
 from pulzarutils.utils import Utils
 from pulzarutils.logger import PulzarLogger
-from master.dispatcher import Dispatcher
 from pulzarcore.core_response import ResponseClass
+from .dispatcher import Dispatcher
 
 
 class Master:

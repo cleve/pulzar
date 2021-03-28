@@ -6,6 +6,12 @@ from pulzarcore.core_rdb import RDB
 def update_schema(schema_type):
     """Compare version and run the update
     """
+    def check_node_catalog(iterator):
+        for item in iterator:
+            if item[0] == 'job_catalog_node_register':
+                return True
+        return False 
+
     def check_jobcatalog(iterator):
         for item in iterator:
             if item[0] == 'job_catalog':
@@ -39,6 +45,7 @@ def update_schema(schema_type):
         # Job catalog is only available in new versions
         if check_jobcatalog(result):
             return
+        
         sql = """
         CREATE TABLE "job_catalog" (
             "id"	INTEGER NOT NULL,
@@ -50,6 +57,18 @@ def update_schema(schema_type):
             PRIMARY KEY("id" AUTOINCREMENT)
         )
         """
+        rdb.execute_sql(sql)
+
+        if check_node_catalog(result):
+            return
+
+        sql = """
+        CREATE TABLE "job_catalog_node_register" (
+            "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+            "node"	TEXT NOT NULL,
+            "job_catalog_id"	INTEGER NOT NULL,
+            FOREIGN KEY("job_catalog_id") REFERENCES "job_catalog"("id")
+        )"""
         rdb.execute_sql(sql)
 
     result = rdb.execute_sql_with_results('SELECT version, sqlcmd FROM metadata ORDER BY id DESC LIMIT 1')

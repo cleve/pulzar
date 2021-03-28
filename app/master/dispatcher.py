@@ -1,15 +1,14 @@
 from pulzarutils.constants import Constants
 from pulzarutils.messenger import Messenger
-from master.skynet import Skynet
-from master.get_process import GetProcess
-from master.post_process import PostProcess
-from master.job_process import JobProcess
-from master.put_process import PutProcess
-from master.get_node_process import GetNodeProcess
-from master.delete_process import DeleteProcess
-from master.extension_process import ExtensionProcess
-from master.admin_process import AdminProcess
-from master.admin_jobs import AdminJobs
+from .skynet import Skynet
+from .get_process import GetProcess
+from .job_process import JobProcess
+from .put_process import PutProcess
+from .get_node_process import GetNodeProcess
+from .delete_process import DeleteProcess
+from .extension_process import ExtensionProcess
+from .admin_process import AdminProcess
+from .admin_jobs import AdminJobs
 
 
 class Dispatcher:

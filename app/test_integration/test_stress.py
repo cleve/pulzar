@@ -119,9 +119,13 @@ def delete_test(url):
     else:
         time_errors.append(timer() - start)
 
-results = futures_write()
-evaluate_time('Write')
-futures_read(results)
-evaluate_time('Read')
-futures_delete(results)
-evaluate_time('Delete')
+def main():
+    results = futures_write()
+    evaluate_time('Write')
+    futures_read(results)
+    evaluate_time('Read')
+    futures_delete(results)
+    evaluate_time('Delete')
+
+if __name__ == '__main__':
+    main()

@@ -1,1 +1,2 @@
-uwsgi -i config/master.ini
+uwsgi -i config/master.ini &
+python -m pulzarutils.dbupdater master

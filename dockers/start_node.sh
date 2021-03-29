@@ -1,3 +1,4 @@
 uwsgi -i config/volume.ini &
-sleep 20
+sleep 5
+python -m pulzarutils.dbupdater volume
 python3 job_discovery.py

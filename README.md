@@ -2,6 +2,10 @@
 
 Intended to be used in an internal network. In the future will be added security.
 
+## Versioning
+
+The versioning number match with the year.month.day of the release.
+
 Pulzar has two components
 
 ### VariDB
@@ -22,7 +26,7 @@ Is a distributed job system with load balance.
 
 ### Next Python modules are needed for the basic system
 
-- lmdb 1.0.0
+- lmdb 1.1.1
 - requests 2.25.1
 - psutil 5.8.0
 - schedule 0.6.0

@@ -30,6 +30,7 @@ Is a distributed job system with load balance.
 - requests 2.25.1
 - psutil 5.8.0
 - schedule 0.6.0
+- pillow 8.1.2
 
 ## Configuration
 

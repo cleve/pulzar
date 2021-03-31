@@ -1,0 +1,10 @@
+version: "3.1"
+services:
+  pulzar-master:
+    image: pulzar-master:21.3.25
+    ports:
+      - "31414:31414"
+  pulzar-node:
+    image: pulzar-node:21.3.25
+    ports:
+      - "31414:31414"

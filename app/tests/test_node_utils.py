@@ -12,8 +12,7 @@ class TestUtilsMethods(unittest.TestCase):
     """
 
     def setUp(self):
-        const = Constants()
-        self.node_utils = NodeUtils(const)
+        self.node_utils = NodeUtils()
 
     @patch('pulzarutils.utils.Utils.get_current_datetime')
     @patch('pulzarcore.core_db.DB.get_keys_values')

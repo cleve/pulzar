@@ -11,7 +11,8 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - New versioning number.
 - Refactor of constants.
-- lmdb updated to 1.1.1
+- lmdb updated to v1.1.1
+- pyllow updated to v8.1.2
 
 ### Removed
 - Catalog created in master.

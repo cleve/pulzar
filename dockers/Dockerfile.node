@@ -7,7 +7,6 @@ ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
 
 # MSSQL
 RUN apt -y install curl libffi-dev unixodbc-dev \
-    && apt update \
     && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
     && curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list > /etc/apt/sources.list.d/mssql-release.list \
     && ACCEPT_EULA=Y apt -y install msodbcsql17
@@ -17,7 +16,7 @@ COPY app/storage/dbs /var/lib/pulzar/dbs
 COPY app/config/mssql_directory.ini /var/lib/pulzar/config/mssql_directory.ini
 
 WORKDIR /usr/local/bin/pulzar
-RUN pip3 install .
+RUN pip3 install pyodbc==4.0.30 && pip3 install .
 
 # Configuring MSSQL directory
 RUN odbcinst -i -s -f /var/lib/pulzar/config/mssql_directory.ini -l

@@ -40,8 +40,8 @@ class TestUtilsMethods(unittest.TestCase):
         # Format: Disk %, Load %, info, datetime
         mock_db.return_value = [
             ('node_a', b'10:10:10:2020-01-01-00-00-00'),
-            ('node_b', b'12:10:10:2020-01-01-00-00-00'),
-            ('node_c', b'15:9:10:2020-01-01-00-00-00'),
+            ('node_b', b'12:10.1:10:2020-01-01-00-00-00'),
+            ('node_c', b'15:9.3:10:2020-01-01-00-00-00'),
         ]
         self.assertEqual(
             'node_c',

@@ -113,7 +113,7 @@ class NodeUtils:
         # Filtering by online nodes
         for elem in volumes:
             meta_raw = self.utils.decode_byte_to_str(elem[1]).split(':')
-            percent = int(meta_raw[1])
+            percent = float(meta_raw[1])
             last_update_reported = self.utils.get_datetime_from_string(
                 meta_raw[3])
             delta_time = current_datetime - last_update_reported

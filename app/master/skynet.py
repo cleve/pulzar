@@ -30,13 +30,13 @@ class Skynet:
         self.validate_node(env)
 
     def validate_node(self, env) -> None:
-        '''Using passport to validate node request
+        """Using passport to validate node request
         
         Parameters
         ----------
         env : dict
             Environment variables from uwsgi
-        '''
+        """
         key = self.server_config.get_config('server', 'key')
         if env.get(Constants.HTTP_PASSPORT, None) == None:
             self.validated = False
@@ -58,14 +58,14 @@ class Skynet:
         )
 
     def save_key_and_volume(self) -> bool:
-        '''Save the key and node into master
+        """Save the key and node into master
         
         Once the node save the info, it sent the notification
         to the master. The info includes:
             - node name, temporary parameter and key
         
         Also datetime is added for search purposes
-        '''
+        """
         # Passport check
         if not self.validated:
             return False
@@ -89,7 +89,7 @@ class Skynet:
         )
 
     def _synch_catalog(self, catalog, node):
-        '''Save catalog using the node information
+        """Save catalog using the node information
         
         Parameter
         ---------
@@ -98,7 +98,7 @@ class Skynet:
 
         node : str
             unique node name
-        '''
+        """
         try:
             # Check if job exists in the current catalog
             for job in catalog:
@@ -137,10 +137,10 @@ class Skynet:
             self.logger.error(':{}:{}'.format(self.TAG, str(err)))
     
     def _sync_volume(self) -> tuple:
-        '''Synch node with master
+        """Synch node with master
 
         The node transfer meta-data to the master
-        '''
+        """
         # Checking passport
         if not self.validated:
             return

@@ -23,7 +23,7 @@ class Constants:
     LOG_PATH = 'storage/log/' if DEBUG else '/var/lib/pulzar/log/'
     # To try docker for windows in the same machine
     DEBUG_WIN = False
-    VERSION = '21.03.25'
+    VERSION = '21.4.1'
     PASS = 'admin'
     PASSPORT = 'passport'
     EXTENSIONS_DIR = 'master/extensions'

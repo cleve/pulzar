@@ -113,7 +113,7 @@ class NodeUtils:
         # Filtering by online nodes
         for elem in volumes:
             meta_raw = self.utils.decode_byte_to_str(elem[1]).split(':')
-            percent = int(meta_raw[0])
+            percent = int(meta_raw[1])
             last_update_reported = self.utils.get_datetime_from_string(
                 meta_raw[3])
             delta_time = current_datetime - last_update_reported
@@ -127,8 +127,10 @@ class NodeUtils:
         nodes_online = sorted(nodes_online, key=lambda x : x[1])
         nodes_online = [elem[0] for elem in nodes_online]
         while len(nodes_online) > 0:
-            random_node = self.utils.get_random_element_from_list(nodes_online)
-            nodes_online.remove(random_node)
-            if random_node in node_candidates:
-                return random_node 
+            # select the node with low load
+            node_selected = nodes_online.pop(0)
+            # random_node = self.utils.get_random_element_from_list(nodes_online)
+            # nodes_online.remove(random_node)
+            if node_selected in node_candidates:
+                return node_selected 
         return None

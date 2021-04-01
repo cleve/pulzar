@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file.
 - Scheduler now is using threads.
 - Added new RDB checker.
 
+### Fixed
+- Node selection is based in workload now.
+
 ### Changed
 - New versioning number.
 - Refactor of constants.

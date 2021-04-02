@@ -116,8 +116,13 @@ class Job:
             )
         )
 
-    def select_node(self):
+    def _select_node(self):
         """Picking a node since parameters
+
+        The key provided in the pulzar_data key will be 
+        searched and the node with the data will be selected
+        to run the job. If the key pulzar_data is not present,
+        a node with less workload will be selected.
 
         Return
         ------
@@ -125,12 +130,12 @@ class Job:
         """
         node_utils = NodeUtils()
         self.volume_port = node_utils.get_port()
-        if 'pulzar_data' in self.job_params['parameters']:
+        if self.job_params.get('parameters').get('pulzar_data') is not None:
             # Send to the node where the data is
             data_base = DB(Constants.DB_PATH)
             composed_data = data_base.get_value(
                 self.utils.encode_base_64(
-                    self.job_params['parameters']['pulzar_data']), to_str=True
+                    self.job_params.get('parameters').get('pulzar_data')), to_str=True
             )
             if composed_data is None:
                 return None
@@ -150,7 +155,7 @@ class Job:
         # Scheduled job
         if 'scheduled' in self.job_params['parameters']:
             return self.register_scheduled_job(Constants.DB_JOBS)
-        node = self.select_node()
+        node = self._select_node()
         if node is None:
             self.logger.error(':{}:empty node'.format(self.TAG))
             return False
@@ -185,7 +190,7 @@ class Job:
         ------
         bool : Successful or not
         """
-        node = self.select_node()
+        node = self._select_node()
         if Constants.DEBUG:
             print('node', node)
             print('port', self.volume_port)

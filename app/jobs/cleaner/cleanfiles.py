@@ -37,7 +37,7 @@ class Cleanfiles(CoreJobs):
         """
         return not self._failed_job
 
-    def execute(arguments):
+    def execute(self):
         '''
         Description: Delete files uploaded using the API
         Arguments: No args
@@ -45,4 +45,4 @@ class Cleanfiles(CoreJobs):
         Author: Mauricio Cleveland
         '''
         self.run_my_code()
-        return cleaner.is_the_job_ok()
+        return self.is_the_job_ok()

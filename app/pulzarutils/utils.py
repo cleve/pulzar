@@ -314,7 +314,7 @@ class Utils:
         if self.file_exists(file_path):
             os.remove(file_path)
             return True
-        print('File {} does not exist'.format(file_path))
+        raise('File {} does not exist'.format(file_path))
 
     def dir_exists(self, dir_path):
         """Just a binding
@@ -337,6 +337,11 @@ class Utils:
         """Just a binding
         """
         return os.path.join(base_path, child_path)
+
+    def join_paths(self, *args):
+        """Just a binding of generic join
+        """
+        return os.path.join(*args)
 
     # Custom methods
     def extract_query_params(self, complete_url):

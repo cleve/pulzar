@@ -23,6 +23,7 @@ class Search(Extension):
 
     def __init__(self, arguments, params, file_path=None):
         self.args = arguments
+        self.search = arguments[0]
         self.params = params
         self.public = Public()
         self.response = []

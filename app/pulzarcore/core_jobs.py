@@ -109,13 +109,23 @@ class CoreJobs(metaclass=ABCMeta):
     def _pulzar_get_data(self):
         """Check file/config and assign it
         """
-        if 'pulzar_data' in self.pulzar_parameters:
-            file_path = self.pulzar_parameters['pulzar_data']
-            abs_path = '/var/lib/pulzar/data/' + self._pulzar_utils.encode_base_64(
-                file_path, to_str=True)
+        file_path = self.pulzar_parameters.get('pulzar_data')
+        if file_path is not None:
+            parent_dir = self._pulzar_utils.get_parent_name_from_file(
+                file_path
+            )
+            abs_path = self._pulzar_utils.get_absolute_path_of_dir() + '/' \
+                + Constants.DATA_DIR + '/' \
+                + parent_dir + '/' \
+                + self._pulzar_utils.encode_base_64(
+                    file_path, to_str=True)
+            
             if self._pulzar_utils.file_exists(abs_path):
                 self._pulzar_data_file_path = abs_path
-        print(self._pulzar_data_file_path)
+            else:
+                # File not found
+                self.pulzar_add_log(f'WARNING: path {abs_path} not found in the node')
+                self._pulzar_data_file_path = None
 
     def pulzar_get_filepath(self):
         """Return filepath

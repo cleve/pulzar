@@ -1,10 +1,12 @@
 version: "3.1"
 services:
   pulzar-master:
-    image: pulzar-master:21.3.25
+    image: pulzar-master:21.4.1
+    network_mode: host
     ports:
       - "31414:31414"
   pulzar-node:
-    image: pulzar-node:21.3.25
+    image: pulzar-node:21.4.1
+    network_mode: host
     ports:
-      - "31414:31414"
+      - "31415:31415"

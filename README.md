@@ -457,17 +457,16 @@ Launch a job every day
 
 If you have data in one of the nodes and the data needs to be processed, you can use
 an extra key in the parameters in order to use that node and avoiding download/transfer
-data. The key is named **pulzar_data** and should include the key of the data.
+data. The key is named **pulzar_data** and should include the complete key of the data.
 
 ```json
 {
     "arg1": 12,
     "arg2": 225798,
-    "scheduled": {"interval": "minutes", "time_unit": 5, "repeat": 1}
-    "pulzar_data": "path/my_key.key"
+    "scheduled": {"interval": "minutes", "time_unit": 5, "repeat": 1},
+    "pulzar_data": "/path/to/my_key.key"
 }
 ```
-
 
 #### Cancel jobs
 

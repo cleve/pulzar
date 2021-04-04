@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 - Node selection is based in workload now.
+- Improve of file feature in jobs.
 
 ### Changed
 - New versioning number.

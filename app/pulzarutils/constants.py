@@ -20,6 +20,8 @@ class Constants:
     # Logger configuration
     # INFO, DEBUG, ERROR
     DEBUG_LEVEL = 'ERROR'
+    BASE_DIR = 'storage/' if DEBUG else '/var/lib/pulzar/'
+    DATA_DIR = BASE_DIR + 'data/'
     LOG_PATH = 'storage/log/' if DEBUG else '/var/lib/pulzar/log/'
     # To try docker for windows in the same machine
     DEBUG_WIN = False

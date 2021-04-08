@@ -62,10 +62,25 @@ class CoreJobs(metaclass=ABCMeta):
         """
         self._pulzar_job_output.append(output_str)
 
-    def _pulzar_store_file(self, file_name):
-        """Store some results
-            
-        Using database system
+    def pulzar_store_file(self, file_name, temporary=90):
+        """Method used to create files in the system.
+        
+        The file will be stored in the same node and
+        a new record will be created in the master.
+
+        Parameters
+        ----------
+        file_name : str
+            Name of the file to create
+
+        temporary : int, default=90
+            Set a temporary value in days
+            in which the file will be stored.
+
+        Return
+        ------
+        bool
+            True if the file was created
         """
         file_utils = FileUtils()
         server_config = Config(Constants.CONF_PATH)

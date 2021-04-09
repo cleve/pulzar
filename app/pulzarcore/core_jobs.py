@@ -112,7 +112,7 @@ class CoreJobs(metaclass=ABCMeta):
         request_object.set_payload({
             'key': file_utils.get_key(),
             'volume': node,
-            'temporal': 90
+            'temporal': temporary
         })
         if not request_object.make_request():
             # If an error ocurr in the server, we need to delete the file.

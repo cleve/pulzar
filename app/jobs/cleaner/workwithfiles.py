@@ -1,5 +1,4 @@
-import base64
-import requests
+import tempfile
 from timeit import default_timer as timer
 from pulzarutils.public import Public
 from pulzarcore.core_jobs import CoreJobs
@@ -20,14 +19,20 @@ class Workwithfiles(CoreJobs):
         # Getting file path
         filepath = self.pulzar_get_filepath()
         if filepath is not None:
-            # Opening file and parsing it
+            # Opening file and parsing it.
             self.pulzar_add_log(f'filepath: {filepath}')
             with open(filepath) as f:
-                for line in f:
-                    if line is None:
-                        break
-                    sep = line.split(' ')
-                    self.pulzar_set_output(f'Key {sep[0]} with value {sep[1]}')            
+                # Creating a new file.
+                with tempfile.NamedTemporaryFile() as fp:
+                    for line in f:
+                        if line is None:
+                            break
+                        sep = line.split(' ')
+                        self.pulzar_set_output(f'Key {sep[0]} with value {sep[1]}')
+                        fp.write(f'Key {sep[0]} with value {sep[1]}')
+                    # Saving the file in the DB.
+                    self.pulzar_store_file(fp.name, 1)
+                    
         self.pulzar_set_output(f'Total time: {timer() - start}')
 
     def is_the_job_ok(self):

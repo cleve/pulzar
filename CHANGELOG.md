@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 - Node selection is based in workload now.
 - Improve of file feature in jobs.
+- File creation in Jobs.
 
 ### Changed
 - New versioning number.

@@ -160,3 +160,6 @@ class Search(Extension):
         self.set_up()
         self.do_the_work()
         return self.get_response()
+
+if __name__ == "__main__":
+    pass

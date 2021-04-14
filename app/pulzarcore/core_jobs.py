@@ -82,6 +82,9 @@ class CoreJobs(metaclass=ABCMeta):
         bool
             True if the file was created
         """
+        if self.local_exec:
+            print('Local debug is active::pulzar_store_file is not working')
+            return False
         file_utils = FileUtils()
         server_config = Config(Constants.CONF_PATH)
         node_utils = NodeUtils()

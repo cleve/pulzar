@@ -395,6 +395,15 @@ used to store the scripts.
 The job directory can be changed into the configuration file. By default 
 the system is set to the **jobs** directory.
 
+In order to test your job, you can use the directive:
+
+```python
+if __name__ == "__main__":
+    my_object = Myclss({'job_id': '-1', '_pulzar_config': 1})
+    my_object.local_exec = True
+    my_object.execute()
+```
+
 ```
 app/launch_job/[custom_directory]/[your_script].py
 ```

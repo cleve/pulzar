@@ -35,13 +35,13 @@ class CoreJobs(metaclass=ABCMeta):
         self._pulzar_utils = Utils()
         self.pulzar_parameters = parameters
         self._notification_enabled = notification
-        self._job_id = parameters['job_id']
+        self._job_id = parameters.get('job_id')
         self._start_time = self._pulzar_utils.get_current_datetime()
         self._log = []
         self._failed_job = False
         self._pulzar_job_output = []
         self._pulzar_data_file_path = None
-        self._pulzar_config = parameters['_pulzar_config']
+        self._pulzar_config = parameters.get('_pulzar_config')
 
         # log
         self._pulzar_register_parameters()
@@ -53,6 +53,30 @@ class CoreJobs(metaclass=ABCMeta):
         '''
         return
 
+    @property
+    def pulzar_output(self):
+        return self._pulzar_job_output
+
+    @pulzar_output.setter
+    def pulzar_output(self, output):
+        self._pulzar_job_output.append(output)
+
+    @property
+    def pulzar_log(self):
+        """Pretty print for logs
+
+        This method print line by line the logs
+        """
+        if self.local_exec:
+            for line in self._log:
+                print(f'-> {line}')
+        else:
+            return self._log
+
+    @pulzar_log.setter
+    def pulzar_log(self, log):
+        self._log.append(log)
+
     def pulzar_set_output(self, output_str):
         """Write output
 
@@ -62,6 +86,21 @@ class CoreJobs(metaclass=ABCMeta):
         """
         self._pulzar_job_output.append(output_str)
 
+    def pulzar_add_log(self, message, bulk=False):
+        """With bulk=True, a list of string is allowed
+        """
+        if bulk and isinstance(message, list):
+            self._log += message
+        self._log.append(message)
+
+    def pulzar_print_output(self):
+        """Pretty print for logs
+
+        This method print line by line the logs
+        """
+        for line in self._pulzar_job_output:
+            print(line)
+    
     def pulzar_store_file(self, file_name, temporary=90):
         """Method used to create files in the system.
         
@@ -151,6 +190,8 @@ class CoreJobs(metaclass=ABCMeta):
         return self._pulzar_data_file_path
 
     def _pulzar_register_parameters(self):
+        """Add parameters into the log register
+        """
         if self.pulzar_parameters:
             self.pulzar_add_log(
                 self._pulzar_utils.py_to_json(self.pulzar_parameters)
@@ -180,14 +221,7 @@ class CoreJobs(metaclass=ABCMeta):
         """Mark the job as failed
         """
         self._failed_job = True
-
-    def pulzar_add_log(self, message, bulk=False):
-        """With bulk=True, a list of string is allowed
-        """
-        if bulk and isinstance(message, list):
-            self._log += message
-        self._log.append(message)
-
+    
     def _pulzar_notification(self):
         """Notify to master
         """

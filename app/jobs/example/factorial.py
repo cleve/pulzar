@@ -52,3 +52,14 @@ class Factorial(CoreJobs):
         '''
         self.run_my_code()
         return self.is_the_job_ok()
+
+
+if __name__ == '__main__':
+    factorial = Factorial({'number': '4'})
+    factorial.local_exec = True
+    factorial.execute()
+    # Print logs
+    factorial.pulzar_log
+
+    # Print output
+    factorial.pulzar_output

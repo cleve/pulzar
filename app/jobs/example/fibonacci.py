@@ -82,11 +82,11 @@ class Fibonacci(CoreJobs):
         return self.is_the_job_ok()
 
 if __name__ == "__main__":
-    ws = Fibonacci({'job_id': '-1', '_pulzar_config': 1, 'number': '4'})
+    ws = Fibonacci({'number': '4'})
     ws.local_exec = True
     ws.execute()
     # Print logs
-    print(ws._log)
+    ws.pulzar_log
 
     # Print output
-    print(ws._pulzar_job_output)
+    ws.pulzar_output

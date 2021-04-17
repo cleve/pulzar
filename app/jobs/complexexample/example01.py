@@ -26,3 +26,13 @@ class Example01(CoreJobs):
         Author: Mauricio Cleveland
         '''
         self.run_my_code()
+
+if __name__ == '__main__':
+    example = Example01({"arg_1": "1", "arg_2": "some string"})
+    example.local_exec = True
+    example.execute()
+    # Print logs
+    example.pulzar_log
+
+    # Print output
+    example.pulzar_output

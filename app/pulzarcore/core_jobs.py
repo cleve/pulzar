@@ -55,7 +55,12 @@ class CoreJobs(metaclass=ABCMeta):
 
     @property
     def pulzar_output(self):
-        return self._pulzar_job_output
+        if self.local_exec:
+            print(f'-> Output')
+            for line in self._pulzar_job_output:
+                print(line)
+        else:
+            return self._pulzar_job_output
 
     @pulzar_output.setter
     def pulzar_output(self, output):
@@ -68,8 +73,9 @@ class CoreJobs(metaclass=ABCMeta):
         This method print line by line the logs
         """
         if self.local_exec:
+            print(f'-> Logs')
             for line in self._log:
-                print(f'-> {line}')
+                print(line)
         else:
             return self._log
 

@@ -3,6 +3,16 @@ services:
   pulzar-master:
     image: mauriciocleveland/pulzar-master:21.4.1
     network_mode: host
+    depends_on:
+      - "rabbit-mq"
   pulzar-node:
     image: mauriciocleveland/pulzar-node:21.4.1
     network_mode: host
+  rabbit-mq:
+    image: rabbit:3
+    network_mode: host
+  rabbit-mq-admin:
+    image: rabbitmq:3-management
+    network_mode: host
+    depends_on:
+      - "rabbit-mq"

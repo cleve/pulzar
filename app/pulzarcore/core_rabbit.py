@@ -1,6 +1,6 @@
 import pika
 
-class RabbitCore:
+class Rabbit:
     """Wrapper for Publisher and Receiver
     Configure Rabbit server in manifest.
     """

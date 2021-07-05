@@ -4,6 +4,7 @@ from pulzarutils.messenger import Messenger
 from pulzarcore.core_rdb import RDB
 from pulzarcore.core_job_master import Job
 from pulzarcore.core_body import Body
+from pulzarcore.core_rabbit import Rabbit
 
 
 class JobProcess:

@@ -15,7 +15,10 @@ class AdminProcess:
 
     def process_request(self, url_path):
         """Entrance for Admin
-        :param url_path:
+
+        Parameters
+        ----------
+        url_path : str
         """
         # Get request type, checking for key value.
         regex_result = self.utils.get_search_regex(

@@ -2,6 +2,7 @@ import pika
 
 class RabbitCore:
     """Wrapper for Publisher and Receiver
+    Configure Rabbit server in manifest.
     """
     def __init__(self) -> None:
         self._publish_connection = None

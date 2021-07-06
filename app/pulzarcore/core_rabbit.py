@@ -23,7 +23,8 @@ class Rabbit:
         )
 
         self._publish_channel = self._publish_connection.channel()
-        self._publish_channel.queue_declare(queue='pulzar_queue')
+        self._publish_channel.queue_declare(
+            queue='pulzar_queue', durable=True)
 
     def __start_rcv_conn(self) -> None:
         if self._rcv_connection is not None:

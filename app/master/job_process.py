@@ -17,6 +17,7 @@ class JobProcess:
         self.utils = Utils()
         self.data_base = RDB(Constants.DB_JOBS)
         self.messenger = Messenger()
+        self.rabbit = Rabbit()
 
     def process_notification_request(self, url_path, query_string, env):
         """Processing job notification from node

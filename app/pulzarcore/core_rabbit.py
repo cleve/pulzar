@@ -53,7 +53,9 @@ class Rabbit:
         self._publish_channel.basic_publish(
             exchange='',
             routing_key='pulzar_queue',
-            body=message
+            body=message,
+            properties=pika.BasicProperties(
+                delivery_mode = 2)
         )
         
     def receiver(self, my_callback):

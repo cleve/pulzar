@@ -10,12 +10,14 @@ from pulzarutils.logger import PulzarLogger
 from pulzarutils.stream import Config
 from pulzarcore.core_rdb import RDB
 from pulzarcore.core_request import CoreRequest
-
+from pulzarcore.core_rabbit import Rabbit
 
 class LaunchJobs:
     """Launch jobs in nodes
         - Scheduled
         - Single execution
+
+        Script launched in nodes
     """
 
     def __init__(self):

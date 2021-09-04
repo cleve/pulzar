@@ -125,6 +125,10 @@ class JobProcess:
             params['parameters'] = job_params
             full_path = job_path + '/' + job_name
             job_object = Job(params, full_path, self.logger)
+            
+            # Queue job
+            self.rabbit.publish('ADD_JOB')
+            
             if job_object.send_job():
                 self.messenger.code_type = Constants.JOB_RESPONSE
                 self.messenger.set_message = 'Job added with id ' + \

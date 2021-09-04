@@ -8,7 +8,7 @@ class Rabbit:
         self._publish_connection = None
         self._rcv_connection = None
 
-    def close(self):
+    def close(self) -> None:
         self._publish_connection.close()
         self._rcv_connection.close()
 
@@ -37,7 +37,8 @@ class Rabbit:
         )
 
         self._rcv_channel = self._rcv_connection.channel()
-        self._rcv_channel.queue_declare(queue='pulzar_queue')
+        self._rcv_channel.queue_declare(
+            queue='pulzar_queue', durable=True)
 
     def publish(self, message) -> None:
         """Publish a message

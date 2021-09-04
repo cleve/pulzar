@@ -38,6 +38,8 @@ class LaunchJobs:
         self._get_config()
         self.search_pending_jobs()
         self.days_of_retention = 90
+        # Rabbit
+        self.rabbit = Rabbit()
 
     def _get_config(self):
         """Configuration from ini file
@@ -211,6 +213,19 @@ class LaunchJobs:
             except Exception as err:
                 self.logger.exception(':{}:{}'.format(self.TAG, err))
                 
+    def _receiver_callback(self, ch, method, properties, body):
+        """Action
+        """
+        print('CALLBACK called', body.decode())
+        self.logger.info(':{}:callback executed'.format(self.TAG, ))
+    
+    def search_jobs2(self):
+        """Use message broker
+        """
+        # Subscribe to pulzar exchange
+        self.rabbit.receiver(self._receiver_callback)
+
+    
     def search_jobs(self):
         """Search job scheduled
         """
@@ -264,6 +279,7 @@ def main():
     """
     launcher = LaunchJobs()
     launcher.search_jobs()
+    launcher.search_jobs2()
     launcher.process_params()
     launcher.execute_jobs()
     launcher.check_executors()

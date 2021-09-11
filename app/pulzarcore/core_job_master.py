@@ -10,6 +10,10 @@ from pulzarutils.utils import Utils
 
 class Job:
     """Send jobs to the nodes
+
+    Use of rabbitmq with comma separated values:
+
+        ADD_JOB,job_id,job_path,job_name,json_parameters,scheduled[0,1]
     """
 
     def __init__(self, job_params, url_path, logger):
@@ -95,8 +99,6 @@ class Job:
                 0
             )
         )
-        # Queue job
-        self.rabbit.publish(f'ADD_JOB,{self.job_id},{job_path},{job_name},{parameters}')
         return True
 
     def register_job(self, path_db_jobs, node):
@@ -120,7 +122,7 @@ class Job:
             )
         )
         # Queue job
-        self.rabbit.publish(f'ADD_JOB,{self.job_id},{job_path},{job_name},{parameters}')
+        self.rabbit.publish(f'ADD_JOB,{self.job_id},{job_path},{job_name},{parameters},0')
 
     def _select_node(self):
         """Picking a node since parameters
@@ -214,4 +216,10 @@ class Job:
         if not job_response:
             # removing job
             print('FALSE response')
+        # Queue job
+        job_path = parameters['job_path']
+        job_name = parameters['job_name']
+        params = parameters['parameters']
+        scheduled = parameters['scheduled']
+        self.rabbit.publish(f'ADD_JOB,{self.job_id},{job_path},{job_name},{params},{scheduled}')
         return job_response

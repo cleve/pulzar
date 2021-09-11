@@ -38,8 +38,10 @@ class LaunchJobs:
         self._get_config()
         self.search_pending_jobs()
         self.days_of_retention = 90
-        # Rabbit
+        # Rabbit subcriber to jobs
         self.rabbit = Rabbit()
+        # Publisher to master for finished jobs
+        self.rabbit_notify = Rabbit()
 
     def _get_config(self):
         """Configuration from ini file
@@ -213,12 +215,33 @@ class LaunchJobs:
             except Exception as err:
                 self.logger.exception(':{}:{}'.format(self.TAG, err))
                 
-    def _receiver_callback(self, ch, method, properties, body):
-        """Action
+    def _receiver_callback(self, ch, method, properties, body) -> None:
+        """Register job in node
         """
-        print('CALLBACK called', body.decode())
+        # Unpacking
+        action, job_id, *arguments = body.decode().split(',')
+        job_path = self.utils.join_path(arguments[0], arguments[1])
+        if Constants.DEBUG:
+            print('registering job', action, job_id, arguments)
+        parameters = arguments[2]
+        scheduled = int(arguments[3])
         self.logger.info(':{}:callback executed'.format(self.TAG, ))
-    
+        # Volume job database
+        data_base = RDB(Constants.DB_NODE_JOBS)
+        table = 'job'
+        if scheduled == 1:
+            table = 'schedule_job'
+        sql = 'INSERT INTO {} (job_id, job_path, parameters, state, notification) values (?, ?, ?, ?, ?)'.format(
+            table)
+        register_id = data_base.execute_sql_insert(
+            sql,
+            (
+                job_id, job_path, parameters, 0, 0
+            )
+        )
+        if register_id == -1:
+            raise Exception('Unexpected error registering job')
+
     def search_jobs2(self):
         """Use message broker
         """

@@ -30,7 +30,7 @@ class Job:
         )
 
     def register_job(self, path_db_jobs):
-        """Register job in master
+        """Register job in node
 
         Parameters
         ----------
@@ -42,9 +42,10 @@ class Job:
         ID : int
             ID of the record created
         """
-        print('registering job')
+        if Constants.DEBUG:
+            print('registering job')
         parameters = self.utils.py_to_json(self.job_params)
-        # Master job database
+        # Volume job database
         data_base = RDB(path_db_jobs)
         table = 'job'
         if self.job_scheduled:

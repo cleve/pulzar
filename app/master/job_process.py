@@ -4,7 +4,6 @@ from pulzarutils.messenger import Messenger
 from pulzarcore.core_rdb import RDB
 from pulzarcore.core_job_master import Job
 from pulzarcore.core_body import Body
-from pulzarcore.core_rabbit import Rabbit
 
 
 class JobProcess:
@@ -17,7 +16,6 @@ class JobProcess:
         self.utils = Utils()
         self.data_base = RDB(Constants.DB_JOBS)
         self.messenger = Messenger()
-        self.rabbit = Rabbit()
 
     def process_notification_request(self, url_path, query_string, env):
         """Processing job notification from node
@@ -125,9 +123,6 @@ class JobProcess:
             params['parameters'] = job_params
             full_path = job_path + '/' + job_name
             job_object = Job(params, full_path, self.logger)
-            
-            # Queue job
-            self.rabbit.publish('ADD_JOB')
             
             if job_object.send_job():
                 self.messenger.code_type = Constants.JOB_RESPONSE

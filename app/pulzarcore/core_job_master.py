@@ -1,6 +1,7 @@
 from pulzarcore.core_request import CoreRequest
 from pulzarcore.core_rdb import RDB
 from pulzarcore.core_db import DB
+from pulzarcore.core_rabbit import Rabbit
 from pulzarutils.node_utils import NodeUtils
 from pulzarutils.constants import ReqType
 from pulzarutils.constants import Constants
@@ -41,6 +42,8 @@ class Job:
         }
         # Passport to authorize the request in nodes
         self.passport = self.utils.get_passport()
+        self.rabbit = Rabbit()
+
 
     def unregister_job(self, path_db_jobs):
         """Mark as failed job in master
@@ -92,7 +95,8 @@ class Job:
                 0
             )
         )
-
+        # Queue job
+        self.rabbit.publish(f'ADD_JOB,{self.job_id},{job_path},{job_name},{parameters}')
         return True
 
     def register_job(self, path_db_jobs, node):
@@ -115,6 +119,8 @@ class Job:
                 0
             )
         )
+        # Queue job
+        self.rabbit.publish(f'ADD_JOB,{self.job_id},{job_path},{job_name},{parameters}')
 
     def _select_node(self):
         """Picking a node since parameters

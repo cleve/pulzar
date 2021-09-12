@@ -38,8 +38,6 @@ class LaunchJobs:
         self._get_config()
         self.search_pending_jobs()
         self.days_of_retention = 90
-        # Rabbit subcriber to jobs
-        self.rabbit = Rabbit()
         # Publisher to master for finished jobs
         self.rabbit_notify = Rabbit('notify_queue')
 

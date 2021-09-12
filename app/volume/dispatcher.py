@@ -5,7 +5,6 @@ from volume.discovery_process import DiscoveryProcess
 from volume.put_process import PutProcess
 from volume.delete_process import DeleteProcess
 from volume.admin_process import AdminProcess
-from volume.job_process import JobProcess
 
 
 class Dispatcher:

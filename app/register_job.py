@@ -1,4 +1,5 @@
 from pulzarutils.utils import Utils
+from pulzarutils.stream import Config
 from pulzarutils.constants import Constants
 from pulzarutils.logger import PulzarLogger
 from pulzarcore.core_rdb import RDB
@@ -12,6 +13,7 @@ class RegisterJob:
         self.TAG = self.__class__.__name__
         self.logger = PulzarLogger(master=False)
         self.utils = Utils()
+        self.config = Config(Constants.CONF_PATH)
         self.data_base = RDB(Constants.DB_NODE_JOBS)
         self.jobs_to_launch = []
         # Master configuration
@@ -22,11 +24,28 @@ class RegisterJob:
         # Publisher to master for finished jobs
         self.rabbit_notify = Rabbit()
 
+    def checker(self, file_path, file_name):
+        # Get job path directory
+        job_directory = self.config.get_config('jobs', 'dir')
+        if job_directory is None:
+            self.logger.debug(':{}:path -> {}'.format(self.TAG, 'First you need to set/create the job directory'))
+            self.messenger.code_type = Constants.JOB_ERROR
+            self.messenger.set_message = 'first you need to set/create the job directory'
+            self.messenger.mark_as_failed()
+            return self.messenger
+        # check if the job exists
+        path_to_search = job_directory + file_path + '/' + file_name + '.py'
+        self.logger.debug(':{}:path -> {}'.format(self.TAG, path_to_search))
+        return self.utils.file_exists(path_to_search)
+            
     def _receiver_callback(self, ch, method, properties, body) -> None:
         """Register job in node
         """
         # Unpacking
         action, job_id, *arguments = body.decode().split(',')
+        if not self.checker(arguments[0], arguments[1]):
+            self.logger.error(':{}:job {} does not exist'.format(self.TAG, arguments[1]))
+            raise Exception('Job does not exist')
         job_path = self.utils.join_path(arguments[0], arguments[1])
         if Constants.DEBUG:
             print('registering job', action, job_id, arguments)

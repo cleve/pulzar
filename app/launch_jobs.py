@@ -215,40 +215,6 @@ class LaunchJobs:
             except Exception as err:
                 self.logger.exception(':{}:{}'.format(self.TAG, err))
                 
-    def _receiver_callback(self, ch, method, properties, body) -> None:
-        """Register job in node
-        """
-        # Unpacking
-        action, job_id, *arguments = body.decode().split(',')
-        job_path = self.utils.join_path(arguments[0], arguments[1])
-        if Constants.DEBUG:
-            print('registering job', action, job_id, arguments)
-        parameters = arguments[2]
-        scheduled = int(arguments[3])
-        self.logger.info(':{}:callback executed'.format(self.TAG, ))
-        # Volume job database
-        data_base = RDB(Constants.DB_NODE_JOBS)
-        table = 'job'
-        if scheduled == 1:
-            table = 'schedule_job'
-        sql = 'INSERT INTO {} (job_id, job_path, parameters, state, notification) values (?, ?, ?, ?, ?)'.format(
-            table)
-        register_id = data_base.execute_sql_insert(
-            sql,
-            (
-                job_id, job_path, parameters, 0, 0
-            )
-        )
-        if register_id == -1:
-            raise Exception('Unexpected error registering job')
-
-    def search_jobs2(self):
-        """Use message broker
-        """
-        # Subscribe to pulzar exchange
-        self.rabbit.receiver(self._receiver_callback)
-
-    
     def search_jobs(self):
         """Search job scheduled
         """
@@ -302,7 +268,6 @@ def main():
     """
     launcher = LaunchJobs()
     launcher.search_jobs()
-    launcher.search_jobs2()
     launcher.process_params()
     launcher.execute_jobs()
     launcher.check_executors()

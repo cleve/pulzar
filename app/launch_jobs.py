@@ -41,7 +41,7 @@ class LaunchJobs:
         # Rabbit subcriber to jobs
         self.rabbit = Rabbit()
         # Publisher to master for finished jobs
-        self.rabbit_notify = Rabbit()
+        self.rabbit_notify = Rabbit('notify_queue')
 
     def _get_config(self):
         """Configuration from ini file
@@ -73,6 +73,20 @@ class LaunchJobs:
             date_diff)
         self.data_base.execute_sql(sql)
 
+    def _notify_to_master2(self, job_id, scheduled=False):
+        """Using message broker to notify
+        
+        Parameters
+        ----------
+        job_id : int
+            JOB identifier
+        scheduled : bool, optional
+            Indicate if the job is of scheduled type
+        """
+        self.rabbit_notify.publish(
+            f'NOTIFY_JOB,{job_id},{1 if scheduled else 0}')
+
+    
     def _notify_to_master(self, job_id, scheduled=False):
         """Sending the signal to master
 
@@ -81,7 +95,7 @@ class LaunchJobs:
         job_id : int
             JOB identifier
         scheduled : bool, optional
-            Indicate if the job is ok scheduled type
+            Indicate if the job is of scheduled type
         """
         # Recovering data of job
         table = 'job' if not scheduled else 'schedule_job'

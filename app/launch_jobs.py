@@ -9,7 +9,7 @@ from pulzarutils.logger import PulzarLogger
 from pulzarutils.stream import Config
 from pulzarcore.core_rdb import RDB
 from pulzarcore.core_request import CoreRequest
-from pulzarcore.core_rabbit import Rabbit
+
 
 class LaunchJobs:
     """Launch jobs in nodes
@@ -37,8 +37,7 @@ class LaunchJobs:
         self._get_config()
         self.search_pending_jobs()
         self.days_of_retention = 90
-        # Publisher to master for finished jobs
-        self.rabbit_notify = Rabbit('notify_jobs_ready')
+        
 
     def _get_config(self):
         """Configuration from ini file
@@ -70,20 +69,6 @@ class LaunchJobs:
             date_diff)
         self.data_base.execute_sql(sql)
 
-    def _notify_to_master2(self, job_id, scheduled=False):
-        """Using message broker to notify
-        
-        Parameters
-        ----------
-        job_id : int
-            JOB identifier
-        scheduled : bool, optional
-            Indicate if the job is of scheduled type
-        """
-        self.rabbit_notify.publish(
-            f'NOTIFY_JOB,{job_id},{1 if scheduled else 0}')
-
-    
     def _notify_to_master(self, job_id, scheduled=False):
         """Sending the signal to master
 

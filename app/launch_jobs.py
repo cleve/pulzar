@@ -38,7 +38,7 @@ class LaunchJobs:
         self.search_pending_jobs()
         self.days_of_retention = 90
         # Publisher to master for finished jobs
-        self.rabbit_notify = Rabbit('notify_queue')
+        self.rabbit_notify = Rabbit('notify_jobs_ready')
 
     def _get_config(self):
         """Configuration from ini file

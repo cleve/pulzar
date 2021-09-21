@@ -69,67 +69,6 @@ class LaunchJobs:
             date_diff)
         self.data_base.execute_sql(sql)
 
-    def _notify_to_master(self, job_id, scheduled=False):
-        """Sending the signal to master
-
-        Parameters
-        ----------
-        job_id : int
-            JOB identifier
-        scheduled : bool, optional
-            Indicate if the job is of scheduled type
-        """
-        # Recovering data of job
-        table = 'job' if not scheduled else 'schedule_job'
-        sql = 'SELECT log, duration, state, output FROM {} WHERE job_id = {} AND notification = 0'.format(
-            table, job_id)
-        row = self.data_base.execute_sql_with_results(sql)
-        if len(row) == 0:
-            return
-        row = row[0]
-        payload = {
-            'job_id': job_id,
-            'log': row[0],
-            'time': row[1],
-            'state': row[2],
-            'output': row[3],
-            'scheduled': scheduled
-        }
-        req = CoreRequest(self.server_host, self.server_port,
-                          '/notification_job')
-        req.set_type(ReqType.POST)
-        req.set_payload(payload)
-        if req.make_request(json_request=True):
-            # Update the state
-            sql = 'UPDATE {} SET notification = 1 WHERE job_id = {}'.format(
-                table, job_id)
-            self.data_base.execute_sql(sql)
-        # Mark attempt
-        else:
-            self.logger.error(':{}:failed to notify job for jobid: {}. Mark as attempt 1'.format(self.TAG, job_id))
-            sql = 'UPDATE {} SET attempt = 1 WHERE job_id = {}'.format(
-                table, job_id)
-            self.data_base.execute_sql(sql)
-
-    def check_executors(self) -> None:
-        """Check status and results
-        """
-        self.logger.info(f'{self.TAG}::futureRef:{self.futures_ref}')
-        for future in as_completed(self.futures):
-            self.logger.info(f'{self.TAG}::{future.__class__.__name__}::{id(future)}::{future.running()}')
-            try:
-                future_info = self.futures_ref.get(id(future))
-                if future_info is None:
-                    continue
-                job_id, scheduled = future_info[0], future_info[1]
-                if self._mark_job(job_id, future.result(), scheduled):
-                    self._notify_to_master(job_id, scheduled)
-                    self.futures_ref.pop(id(future), None)
-            except BaseException as err:
-                self.logger.info(f'{self.TAG}::future: {id(future)}')
-                if self._mark_job(job_id, future.result(), scheduled, str(err)):
-                    self._notify_to_master(job_id, scheduled)
-
     def _job_executor(self, obj, job_id, scheduled) -> None:
         """Execute object into the pool
 
@@ -149,37 +88,6 @@ class LaunchJobs:
             args = job['job_args']
             if args != '':
                 job['job_args'] = self.utils.json_to_py(args)
-
-    def _mark_job(self, job_id, state, scheduled, log_msg=None) -> bool:
-        """Mark a job if is ok or failed
-
-        Parameters
-        ----------
-        job_id : int
-            Job ID
-        state: bool
-            True for successful or Flase for failed job
-        scheduled: str
-            two types: schedule_job or job
-        log_msg : str, None default
-            Force a message. ex: syntax error
-        
-        Return
-        ------
-        bool : True for rows affected
-        """
-        if state is None:
-            return False
-        status = 1 if state else 2
-        table = 'job' if not scheduled else 'schedule_job'
-        if log_msg is None:
-            sql = 'UPDATE {} SET state = ?, attempt = ? WHERE job_id = ?'.format(
-                table)
-            return self.data_base.execute_sql_update(sql, (status, 1, job_id)) > 0
-        else:
-            sql = 'UPDATE {} SET state = ?, log = ?, attempt = ? WHERE job_id = ?'.format(
-                table)
-            return self.data_base.execute_sql_update(sql, (status, log_msg, 1, job_id)) > 0
 
     def execute_jobs(self):
         """Execute jobs selected
@@ -266,7 +174,6 @@ def main():
     launcher.search_jobs()
     launcher.process_params()
     launcher.execute_jobs()
-    launcher.check_executors()
     # Retention
     launcher._retention_policy()
 

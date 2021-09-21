@@ -19,34 +19,63 @@ class MasterJobSignals:
         self.rabbit_node_notify = Rabbit('notify_jobs_ready')
         
     def _receiver_callback(self, ch, method, properties, body) -> None:
-        """Register jobs in master
+        """Register jobs in master using the string body format:
+
+            NOTIFY_JOB,job_id,log,output,time(s),
+            job_ok[True,False],notification,scheduled[0,1],
+
+            state = 0: pending
+            state = 1: succeful
+            state = 2: error
         """
         # Unpacking
-        action, job_id, *arguments = body.decode().split(',')
-        if not self.checker(arguments[0], arguments[1]):
-            self.logger.error(':{}:job {} does not exist'.format(self.TAG, arguments[1]))
-            raise Exception('Job does not exist')
-        job_path = self.utils.join_path(arguments[0], arguments[1])
+        action, job_id, *arguments, scheduled = body.decode().split(',')
         if Constants.DEBUG:
-            print('registering job', action, job_id, arguments)
-        parameters = arguments[2]
-        scheduled = int(arguments[3])
-        self.logger.info(':{}:callback executed'.format(self.TAG, ))
-        # Volume job database
-        data_base = RDB(Constants.DB_NODE_JOBS)
-        table = 'job'
-        if scheduled == 1:
-            table = 'schedule_job'
-        sql = 'INSERT INTO {} (job_id, job_path, parameters, state, notification) values (?, ?, ?, ?, ?)'.format(
+            print('updating job', action, job_id, arguments)
+
+        # Main table
+        table, id_table = ('job', 'id') if int(scheduled) == 0 else (
+            'schedule_job', 'job_id')
+        if table == 'job':
+            current_datetime_utc = self.utils.get_current_datetime_utc(
+                to_string=True, db_format=True)
+            sql = 'UPDATE {} SET state = {}, creation_time = ? WHERE {} = {}'.format(
+                table, arguments[3], id_table, job_id)
+            update_rows_affected = self.data_base.execute_sql_update(
+                sql, (current_datetime_utc,))
+        else:
+            sql = 'UPDATE {} SET state = {} WHERE {} = {}'.format(
+                table, arguments[3], id_table, job_id)
+            update_rows_affected = self.data_base.execute_sql(sql)
+
+        if update_rows_affected == 0:
+            self.messenger.code_type = Constants.JOB_ERROR
+            self.messenger.mark_as_failed()
+            return self.messenger
+        # Store log and time
+        state = int(arguments[3])
+        # Datetime in UTC
+        current_datetime_utc = self.utils.get_current_datetime_utc(
+            to_string=True, db_format=True)
+        if state == 1:
+            table = 'successful_job'
+            if int(scheduled) == 1:
+                table = 'successful_schedule_job'
+        elif state == 2:
+            table = 'failed_job'
+            if int(scheduled) == 1:
+                table = 'failed_schedule_job'
+        sql = 'INSERT INTO {} (job_id, log, time, output, date_time) VALUES (?, ?, ?, ?, ?)'.format(
             table)
-        register_id = data_base.execute_sql_insert(
-            sql,
-            (
-                job_id, job_path, parameters, 0, 0
-            )
+        insert_rows_affected = self.data_base.execute_sql_insert(
+            sql, (job_id,
+                    arguments[2],
+                    arguments[4],
+                    arguments[3],
+                    current_datetime_utc
+                    )
         )
-        if register_id == -1:
-            raise Exception('Unexpected error registering job')
+        self.logger.info(':{}:callback executed'.format(self.TAG, ))
 
     def register_job(self):
         """Use message broker

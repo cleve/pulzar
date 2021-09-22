@@ -249,6 +249,6 @@ class CoreJobs(metaclass=ABCMeta):
                 f'{delta.total_seconds()}-sep-{1 if self.is_the_job_ok() else 2}-sep-'
                 f'{self._notification_enabled}-sep-{1 if self._pulzar_config.get("scheduled", False) else 0}')
             )
-        # Notifications
-        if self._notification_enabled:
-            print('Sending notification...')
+        # TODO: Mark as ready if
+        if self.is_the_job_ok():
+            pass

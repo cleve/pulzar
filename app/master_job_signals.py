@@ -8,6 +8,7 @@ from pulzarcore.core_rabbit import Rabbit
 
 class MasterJobSignals:
     """Class used to register job finished in node
+    Run in master
     """
     def __init__(self):
         self.TAG = self.__class__.__name__

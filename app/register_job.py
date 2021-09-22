@@ -8,6 +8,7 @@ from pulzarcore.core_rabbit import Rabbit
 
 class RegisterJob:
     """Class used to register jobs using subscriptor
+    Run in node
     """
     def __init__(self):
         self.TAG = self.__class__.__name__
@@ -22,7 +23,7 @@ class RegisterJob:
         # Rabbit subcriber to jobs
         self.rabbit = Rabbit()
 
-    def checker(self, file_path, file_name):
+    def _checker(self, file_path, file_name):
         # Get job path directory
         job_directory = self.config.get_config('jobs', 'dir')
         if job_directory is None:
@@ -41,7 +42,7 @@ class RegisterJob:
         """
         # Unpacking
         action, job_id, *arguments = body.decode().split(',')
-        if not self.checker(arguments[0], arguments[1]):
+        if not self._checker(arguments[0], arguments[1]):
             self.logger.error(':{}:job {} does not exist'.format(self.TAG, arguments[1]))
             raise Exception('Job does not exist')
         job_path = self.utils.join_path(arguments[0], arguments[1])

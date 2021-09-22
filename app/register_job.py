@@ -21,8 +21,6 @@ class RegisterJob:
         self.server_port = None
         # Rabbit subcriber to jobs
         self.rabbit = Rabbit()
-        # Publisher to master for finished jobs
-        self.rabbit_notify = Rabbit()
 
     def checker(self, file_path, file_name):
         # Get job path directory

@@ -89,6 +89,52 @@ class LaunchJobs:
             if args != '':
                 job['job_args'] = self.utils.json_to_py(args)
 
+    def _mark_job(self, job_id, state, scheduled, log_msg=None) -> bool:
+        """Mark a job if is ok or failed
+        Parameters
+        ----------
+        job_id : int
+            Job ID
+        state: bool
+            True for successful or Flase for failed job
+        scheduled: str
+            two types: schedule_job or job
+        log_msg : str, None default
+            Force a message. ex: syntax error
+        
+        Return
+        ------
+        bool : True for rows affected
+        """
+        if state is None:
+            return False
+        status = 1 if state else 2
+        table = 'job' if not scheduled else 'schedule_job'
+        if log_msg is None:
+            sql = 'UPDATE {} SET state = ?, attempt = ? WHERE job_id = ?'.format(
+                table)
+            return self.data_base.execute_sql_update(sql, (status, 1, job_id)) > 0
+        else:
+            sql = 'UPDATE {} SET state = ?, log = ?, attempt = ? WHERE job_id = ?'.format(
+                table)
+            return self.data_base.execute_sql_update(sql, (status, log_msg, 1, job_id)) > 0
+    
+    def check_executors(self) -> None:
+        """Check status and results
+        """
+        self.logger.info(f'{self.TAG}::futureRef:{self.futures_ref}')
+        for future in as_completed(self.futures):
+            self.logger.info(f'{self.TAG}::{future.__class__.__name__}::{id(future)}::{future.running()}')
+            try:
+                future_info = self.futures_ref.get(id(future))
+                if future_info is None:
+                    continue
+                job_id, scheduled = future_info[0], future_info[1]
+                if self._mark_job(job_id, future.result(), scheduled):
+                    self.futures_ref.pop(id(future), None)
+            except BaseException as err:
+                self.logger.info(f'{self.TAG}::future: {id(future)}')
+    
     def execute_jobs(self):
         """Execute jobs selected
         """

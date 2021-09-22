@@ -14,7 +14,7 @@ class MasterJobSignals:
         self.logger = PulzarLogger(master=False)
         self.utils = Utils()
         self.config = Config(Constants.CONF_PATH)
-        self.data_base = RDB(Constants.DB_NODE_JOBS)
+        self.data_base = RDB(Constants.DB_JOBS)
         # Publisher to notify finished jobs
         self.rabbit_node_notify = Rabbit('notify_jobs_ready')
         
@@ -29,7 +29,8 @@ class MasterJobSignals:
             state = 2: error
         """
         # Unpacking
-        action, job_id, *arguments, scheduled = body.decode().split(',')
+        action, job_id, *arguments, scheduled = body.decode().split('-sep-')
+        print('scheduled', scheduled, type(scheduled))
         if Constants.DEBUG:
             print('updating job', action, job_id, arguments)
 
@@ -39,8 +40,10 @@ class MasterJobSignals:
         if table == 'job':
             current_datetime_utc = self.utils.get_current_datetime_utc(
                 to_string=True, db_format=True)
+            
             sql = 'UPDATE {} SET state = {}, creation_time = ? WHERE {} = {}'.format(
                 table, arguments[3], id_table, job_id)
+
             update_rows_affected = self.data_base.execute_sql_update(
                 sql, (current_datetime_utc,))
         else:
@@ -53,7 +56,12 @@ class MasterJobSignals:
             self.messenger.mark_as_failed()
             return self.messenger
         # Store log and time
-        state = int(arguments[3])
+        state = arguments[3]
+        # Backward compatibility
+        if isinstance(state, str):
+            state = 1 if state == '1' else 2
+        else:    
+            state = int(arguments[3])
         # Datetime in UTC
         current_datetime_utc = self.utils.get_current_datetime_utc(
             to_string=True, db_format=True)
@@ -69,9 +77,9 @@ class MasterJobSignals:
             table)
         insert_rows_affected = self.data_base.execute_sql_insert(
             sql, (job_id,
+                    arguments[0],
                     arguments[2],
-                    arguments[4],
-                    arguments[3],
+                    arguments[1],
                     current_datetime_utc
                     )
         )

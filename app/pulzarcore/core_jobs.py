@@ -245,9 +245,9 @@ class CoreJobs(metaclass=ABCMeta):
         # Notify to master
         self.rabbit_notify.publish(
             (
-                f'NOTIFY_JOB,{self._job_id},{final_log},{final_output},'
-                f'{delta.total_seconds()},{1 if self.is_the_job_ok() else 2},'
-                f'{self._notification_enabled},{1 if self._pulzar_config.get("scheduled", False) else 0}')
+                f'NOTIFY_JOB-sep-{self._job_id}-sep-{final_log}-sep-{final_output}-sep-'
+                f'{delta.total_seconds()}-sep-{1 if self.is_the_job_ok() else 2}-sep-'
+                f'{self._notification_enabled}-sep-{1 if self._pulzar_config.get("scheduled", False) else 0}')
             )
         # Notifications
         if self._notification_enabled:

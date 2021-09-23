@@ -18,6 +18,16 @@ class MasterJobSignals:
         self.data_base = RDB(Constants.DB_JOBS)
         # Publisher to notify finished jobs
         self.rabbit_node_notify = Rabbit('notify_jobs_ready')
+    
+    def _validate_params(self, byte_string):
+        """Validate values allowed
+        
+        Parameters
+        ----------
+        byte_string : bstring
+        """
+        # TODO: Validation
+        pass
         
     def _receiver_callback(self, ch, method, properties, body) -> None:
         """Register jobs in master using the string body format:
@@ -31,10 +41,12 @@ class MasterJobSignals:
         """
         # Unpacking
         action, job_id, *arguments, scheduled = body.decode().split('-sep-')
-        print('scheduled', scheduled, type(scheduled))
         if Constants.DEBUG:
             print('updating job', action, job_id, arguments)
 
+        if int(job_id) == -1:
+            print('Invalid job_id')
+            return
         # Main table
         table, id_table = ('job', 'id') if int(scheduled) == 0 else (
             'schedule_job', 'job_id')
@@ -53,9 +65,8 @@ class MasterJobSignals:
             update_rows_affected = self.data_base.execute_sql(sql)
 
         if update_rows_affected == 0:
-            self.messenger.code_type = Constants.JOB_ERROR
-            self.messenger.mark_as_failed()
-            return self.messenger
+            raise Exception('Error receiving job signal')
+
         # Store log and time
         state = arguments[3]
         # Backward compatibility

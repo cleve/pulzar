@@ -4,11 +4,9 @@ from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import as_completed
 from pulzarutils.utils import Utils
 from pulzarutils.constants import Constants
-from pulzarutils.constants import ReqType
 from pulzarutils.logger import PulzarLogger
 from pulzarutils.stream import Config
 from pulzarcore.core_rdb import RDB
-from pulzarcore.core_request import CoreRequest
 
 
 class LaunchJobs:
@@ -35,7 +33,6 @@ class LaunchJobs:
         # Where the jobs will be placed
         self.job_directory = None
         self._get_config()
-        self.search_pending_jobs()
         self.days_of_retention = 90
         
 
@@ -188,30 +185,6 @@ class LaunchJobs:
                 'job_creation': row[4],
                 'scheduled': True
             })
-
-    def search_pending_jobs(self):
-        """Search and notify pending jobs
-        """ 
-        for table in ['job', 'schedule_job']:
-            # Sending failed and successful
-            sql = 'SELECT * FROM {} WHERE state <> 0 AND notification = 0'.format(
-                table
-            )
-            rows = self.data_base.execute_sql_with_results(sql)
-            for row in rows:
-                self._notify_to_master(
-                    row[0], True if table == 'schedule_job' else False)
-            # Sending unknows errors
-            sql = 'SELECT * FROM {} WHERE attempt > 0 AND notification = 0'.format(
-                table
-            )
-            rows = self.data_base.execute_sql_with_results(sql)
-            for row in rows:
-                self._notify_to_master(
-                    row[0],
-                    True if table == 'schedule_job' else False
-                )
-
 
 def main():
     """Entrance

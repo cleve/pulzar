@@ -220,6 +220,7 @@ def main():
     launcher.search_jobs()
     launcher.process_params()
     launcher.execute_jobs()
+    launcher.check_executors()
     # Retention
     launcher._retention_policy()
 

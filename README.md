@@ -24,6 +24,8 @@ Is a distributed job system with load balance.
 
 ## Dependences
 
+- RabbitMQ as a broker messages (https://www.rabbitmq.com)
+
 ### Next Python modules are needed for the basic system
 
 - lmdb 1.1.1

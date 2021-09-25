@@ -192,34 +192,20 @@ class Job:
         return job_response
 
     def send_scheduled_job(self, parameters) -> bool:
-        """Send scheduled job to the node selected
+        """Send scheduled job to the node
 
         Return
         ------
         bool : Successful or not
         """
-        node = self._select_node()
         if Constants.DEBUG:
-            print('node', node)
             print('port', self.volume_port)
             print('parameters', parameters)
-        if node is None:
-            return False
-        request = CoreRequest(node.decode(), self.volume_port, '/send_job')
-        request.set_type(ReqType.POST)
-        request.set_payload(parameters)
-        request.add_header({Constants.PASSPORT: self.passport})
-        job_response = request.make_request(json_request=True)
-        if Constants.DEBUG:
-            print('Sending job to node ', node)
-            print('response: ', request.response)
-        if not job_response:
-            # removing job
-            print('FALSE response')
         # Queue job
+        job_id = parameters['job_id']
         job_path = parameters['job_path']
         job_name = parameters['job_name']
         params = parameters['parameters']
         scheduled = parameters['scheduled']
-        self.rabbit.publish(f'ADD_JOB,{self.job_id},{job_path},{job_name},{params},{scheduled}')
-        return job_response
+        self.rabbit.publish(f'ADD_SCHEDULED_JOB,{job_id},{job_path},{job_name},{params},{scheduled}')
+        return job_id

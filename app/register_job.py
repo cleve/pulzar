@@ -24,14 +24,11 @@ class RegisterJob:
         self.rabbit = Rabbit()
 
     def _checker(self, file_path, file_name):
-        # Get job path directory
+        """Check path of job"""
         job_directory = self.config.get_config('jobs', 'dir')
         if job_directory is None:
             self.logger.debug(':{}:path -> {}'.format(self.TAG, 'First you need to set/create the job directory'))
-            self.messenger.code_type = Constants.JOB_ERROR
-            self.messenger.set_message = 'first you need to set/create the job directory'
-            self.messenger.mark_as_failed()
-            return self.messenger
+
         # check if the job exists
         path_to_search = job_directory + file_path + '/' + file_name + '.py'
         self.logger.debug(':{}:path -> {}'.format(self.TAG, path_to_search))
@@ -42,9 +39,11 @@ class RegisterJob:
         """
         # Unpacking
         action, job_id, *arguments = body.decode().split(',')
+        if job_id is None:
+            print('Invalid job_id: ', job_id)
         if not self._checker(arguments[0], arguments[1]):
             self.logger.error(':{}:job {} does not exist'.format(self.TAG, arguments[1]))
-            raise Exception('Job does not exist')
+            
         job_path = self.utils.join_path(arguments[0], arguments[1])
         if Constants.DEBUG:
             print('registering job', action, job_id, arguments)

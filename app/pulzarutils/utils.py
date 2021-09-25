@@ -147,7 +147,7 @@ class Utils:
     def json_to_py(self, json_srt):
         """JSON to python object
         """
-        return json.loads(json_srt)
+        return json.loads(json_srt.replace("\'", "\""))
 
     # Encode/decode section
     def encode_base_64(self, string, to_str=False) -> bytes or str:

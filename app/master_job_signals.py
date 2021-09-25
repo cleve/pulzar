@@ -44,7 +44,7 @@ class MasterJobSignals:
         if Constants.DEBUG:
             print('updating job', action, job_id, arguments)
 
-        if int(job_id) == -1:
+        if int(job_id) == -1 or job_id is None:
             print('Invalid job_id')
             return
         # Main table

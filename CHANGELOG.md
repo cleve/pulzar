@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [21.10.1] - 2021-10-1
+### Added
+- Message broker to handle jobs
+
+### Changed
+- Pyllow updated to v8.2.1
+
 ## [21.4.1] - 2021-04-01
 ### Added
 - Docker-compose file.

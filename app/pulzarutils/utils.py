@@ -205,11 +205,11 @@ class Utils:
         return str(int((disk_usage.used / disk_usage.total) * 100))
 
     def cpu_info(self):
-        """Get list of load:
+        """Get list of load. Two decimals:
             [last 1 minute avg, last 5 minutes avg, last 15 minutes avg]
         """
         cpus = psutil.cpu_count()
-        return [x / cpus * 100 for x in psutil.getloadavg()]
+        return [round(x / cpus * 100, 2) for x in psutil.getloadavg()]
 
     # REGEX section
     def make_regex(self, string):

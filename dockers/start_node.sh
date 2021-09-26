@@ -1,5 +1,5 @@
 # Start rabbit on node
-python3 app/register_job.py -D
+python3 register_job.py -D
 status=$?
 if [ $status -ne 0 ]; then
   echo "Failed to start register_job: $status"

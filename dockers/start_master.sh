@@ -1,6 +1,6 @@
 #!/bin/bash
 # Start rabbit on master
-python3 app/master_job_signals.py -D
+python3 master_job_signals.py -D
 status=$?
 if [ $status -ne 0 ]; then
   echo "Failed to start master_job_signals: $status"

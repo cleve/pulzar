@@ -1,3 +1,4 @@
+from time import sleep
 from pulzarutils.utils import Utils
 from pulzarutils.stream import Config
 from pulzarutils.constants import Constants
@@ -75,6 +76,7 @@ class RegisterJob:
 def main():
     """Entrance
     """
+    sleep(15)
     registron = RegisterJob()
     registron.register_job()
 

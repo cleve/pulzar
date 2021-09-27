@@ -144,10 +144,14 @@ class Utils:
     def py_to_json(self, py_object, to_bin=False):
         return json.dumps(py_object) if not to_bin else self.encode_str_to_byte(json.dumps(py_object))
 
-    def json_to_py(self, json_srt):
+    def json_to_py(self, json_str):
         """JSON to python object
+        Parameters
+        ----------
+        json_str : str
+            JSON string
         """
-        return json.loads(json_srt.replace("\'", "\""))
+        return json.loads(json_str.replace("\'", "\""))
 
     # Encode/decode section
     def encode_base_64(self, string, to_str=False) -> bytes or str:

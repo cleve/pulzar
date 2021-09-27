@@ -3,6 +3,8 @@ import pika
 class Rabbit:
     """Wrapper for Publisher and Receiver
     Configure Rabbit server in manifest.
+
+    For local dev, use: localhost
     """
     def __init__(self, q_name='pulzar_worker_queue', user='admin', pwd='admin') -> None:
         self._publish_connection = None
@@ -22,6 +24,7 @@ class Rabbit:
         self._publish_connection = pika.BlockingConnection(
             pika.ConnectionParameters(
                 host='localhost',
+                port=5672,
                 credentials=pika.PlainCredentials(self._username, self._password)
             )
         )

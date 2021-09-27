@@ -22,7 +22,7 @@ class Body:
         # JSON type. Added find() because some clients add
         # 'application/json' or 'application/json;charset=UTF-8'
         if env[Constants.CONTENT_TYPE].find(Constants.JSON_REQUEST) >= 0:
-            return self.utils.json_to_py(request_body)
+            return self.utils.json_to_py(request_body.decode())
         return parse_qs(request_body)
 
     def extract_binary(self, env):

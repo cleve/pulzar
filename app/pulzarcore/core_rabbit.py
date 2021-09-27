@@ -4,10 +4,12 @@ class Rabbit:
     """Wrapper for Publisher and Receiver
     Configure Rabbit server in manifest.
     """
-    def __init__(self, q_name='pulzar_worker_queue') -> None:
+    def __init__(self, q_name='pulzar_worker_queue', user='admin', pwd='admin') -> None:
         self._publish_connection = None
         self._rcv_connection = None
         self.q_name = q_name
+        self._username = user
+        self._password = pwd
 
     def close(self) -> None:
         self._publish_connection.close()
@@ -19,7 +21,8 @@ class Rabbit:
 
         self._publish_connection = pika.BlockingConnection(
             pika.ConnectionParameters(
-                host='localhost'
+                host='localhost',
+                credentials=pika.PlainCredentials(self._username, self._password)
             )
         )
 
@@ -33,7 +36,8 @@ class Rabbit:
 
         self._rcv_connection = pika.BlockingConnection(
             pika.ConnectionParameters(
-                host='localhost'
+                host='localhost',
+                credentials=pika.PlainCredentials(self._username, self._password)
             )
         )
 

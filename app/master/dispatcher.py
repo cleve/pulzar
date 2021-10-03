@@ -12,7 +12,7 @@ from .admin_jobs import AdminJobs
 
 
 class Dispatcher:
-    """Calssify the type of request:
+    """Classify the type of request:
      - regular[GET/POST]
      - admin
      - skynet

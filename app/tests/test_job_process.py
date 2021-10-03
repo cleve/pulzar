@@ -5,8 +5,6 @@ from pulzarutils.utils import Constants
 from pulzarutils.utils import Utils
 from pulzarutils.node_utils import NodeUtils
 from unittest.mock import patch, Mock
-
-
 # Object to test
 from master.job_process import JobProcess
 

@@ -3,11 +3,12 @@ from abc import ABCMeta
 from pulzarutils.utils import Utils
 from pulzarutils.utils import Constants
 from pulzarutils.file_utils import FileUtils
+from pulzarutils.node_utils import NodeUtils
 from pulzarutils.constants import ReqType
 from pulzarutils.stream import Config
 from pulzarcore.core_rdb import RDB
 from pulzarcore.core_request import CoreRequest
-from pulzarutils.node_utils import NodeUtils
+from pulzarcore.core_rabbit import Rabbit
 
 
 class CoreJobs(metaclass=ABCMeta):
@@ -34,6 +35,7 @@ class CoreJobs(metaclass=ABCMeta):
         self.local_exec = False
         self._pulzar_utils = Utils()
         self.pulzar_parameters = parameters
+        # Emails or push
         self._notification_enabled = notification
         self._job_id = parameters.get('job_id')
         self._start_time = self._pulzar_utils.get_current_datetime()
@@ -46,6 +48,9 @@ class CoreJobs(metaclass=ABCMeta):
         # log
         self._pulzar_register_parameters()
         self._pulzar_get_data()
+
+        # Publisher to master for finished jobs
+        self.rabbit_notify = Rabbit('notify_jobs_ready')
 
     @abstractmethod
     def execute(self):
@@ -206,7 +211,6 @@ class CoreJobs(metaclass=ABCMeta):
     def _pulzar_run_job(executor):
         """Decorator to handle job execution
         """
-
         def wrapper(self):
             print('Pulzar core executing')
             try:
@@ -229,25 +233,19 @@ class CoreJobs(metaclass=ABCMeta):
         self._failed_job = True
     
     def _pulzar_notification(self):
-        """Notify to master
+        """Notify to master, use message broker
         """
         if self.local_exec:
             return
-        # Only on nodes.
-        self._pulzar_database = RDB(Constants.DB_NODE_JOBS)
-        job_table = 'job'
-        if self._pulzar_config['scheduled']:
-            job_table = 'schedule_job'
         end_time = self._pulzar_utils.get_current_datetime()
         delta = end_time - self._start_time
-        # Saving logs
+        # Formating logs
         final_log = '\n'.join(self._log)
         final_output = '\n'.join(self._pulzar_job_output)
-        sql = 'UPDATE {} SET log = ?, duration = ?, output = ? WHERE job_id = {}'.format(
-            job_table, self._job_id)
-        self._pulzar_database.execute_sql_insert(
-            sql, (final_log, delta.total_seconds(), final_output))
-
-        # Notifications
-        if self._notification_enabled:
-            print('Sending notification...')
+        # Notify to master
+        self.rabbit_notify.publish(
+            (
+                f'NOTIFY_JOB-sep-{self._job_id}-sep-{final_log}-sep-{final_output}-sep-'
+                f'{delta.total_seconds()}-sep-{1 if self.is_the_job_ok() else 2}-sep-'
+                f'{self._notification_enabled}-sep-{1 if self._pulzar_config.get("scheduled", False) else 0}')
+            )

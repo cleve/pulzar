@@ -14,23 +14,8 @@ class Job:
         self.job_scheduled = job_scheduled
         self.utils = Utils()
 
-    def unregister_job(self, path_db_jobs):
-        """Mark as failed job in master
-        """
-        print('uregistering job')
-        # Master job database
-        data_base = RDB(path_db_jobs)
-        table = 'job'
-        if self.job_scheduled:
-            table = 'schedule_job'
-        sql = 'UPDATE {} SET ready = 2 WHERE id = {}'.format(
-            self.job_id).format(table)
-        data_base.execute_sql(
-            sql
-        )
-
     def register_job(self, path_db_jobs):
-        """Register job in master
+        """Register job in node
 
         Parameters
         ----------
@@ -42,9 +27,10 @@ class Job:
         ID : int
             ID of the record created
         """
-        print('registering job')
+        if Constants.DEBUG:
+            print('registering job')
         parameters = self.utils.py_to_json(self.job_params)
-        # Master job database
+        # Volume job database
         data_base = RDB(path_db_jobs)
         table = 'job'
         if self.job_scheduled:

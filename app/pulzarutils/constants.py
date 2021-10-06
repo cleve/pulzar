@@ -16,10 +16,10 @@ class ReqType(Enum):
 
 class Constants:
 
-    DEBUG = False
+    DEBUG = True
     # Logger configuration
     # INFO, DEBUG, ERROR
-    DEBUG_LEVEL = 'ERROR'
+    DEBUG_LEVEL = 'INFO'
     BASE_DIR = 'storage/' if DEBUG else '/var/lib/pulzar/'
     DATA_DIR = BASE_DIR + 'data/'
     LOG_PATH = 'storage/log/' if DEBUG else '/var/lib/pulzar/log/'

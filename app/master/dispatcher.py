@@ -12,7 +12,7 @@ from .admin_jobs import AdminJobs
 
 
 class Dispatcher:
-    """Calssify the type of request:
+    """Classify the type of request:
      - regular[GET/POST]
      - admin
      - skynet
@@ -82,19 +82,6 @@ class Dispatcher:
                 messenger.code_type = Constants.USER_ERROR
                 messenger.mark_as_failed()
                 messenger.set_message = 'Method used does not match, try with POST'
-                return messenger
-
-        elif self.utils.match_regex(url_path, Constants.RE_NOTIFICATION_JOB):
-            if method == Constants.POST:
-                job_process = JobProcess(self.logger)
-                query_string = env['QUERY_STRING']
-                return job_process.process_notification_request(
-                    url_path, query_string, env)
-            else:
-                messenger = Messenger()
-                messenger.code_type = Constants.USER_ERROR
-                messenger.mark_as_failed()
-                messenger.set_message = 'Method used does not match'
                 return messenger
 
         # Extensions

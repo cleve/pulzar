@@ -1,21 +1,20 @@
-from concurrent import futures
 import os
 import importlib
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import as_completed
 from pulzarutils.utils import Utils
 from pulzarutils.constants import Constants
-from pulzarutils.constants import ReqType
 from pulzarutils.logger import PulzarLogger
 from pulzarutils.stream import Config
 from pulzarcore.core_rdb import RDB
-from pulzarcore.core_request import CoreRequest
 
 
 class LaunchJobs:
     """Launch jobs in nodes
         - Scheduled
         - Single execution
+
+        Script launched in nodes
     """
 
     def __init__(self):
@@ -34,8 +33,8 @@ class LaunchJobs:
         # Where the jobs will be placed
         self.job_directory = None
         self._get_config()
-        self.search_pending_jobs()
         self.days_of_retention = 90
+        
 
     def _get_config(self):
         """Configuration from ini file
@@ -67,67 +66,6 @@ class LaunchJobs:
             date_diff)
         self.data_base.execute_sql(sql)
 
-    def _notify_to_master(self, job_id, scheduled=False):
-        """Sending the signal to master
-
-        Parameters
-        ----------
-        job_id : int
-            JOB identifier
-        scheduled : bool, optional
-            Indicate if the job is ok scheduled type
-        """
-        # Recovering data of job
-        table = 'job' if not scheduled else 'schedule_job'
-        sql = 'SELECT log, duration, state, output FROM {} WHERE job_id = {} AND notification = 0'.format(
-            table, job_id)
-        row = self.data_base.execute_sql_with_results(sql)
-        if len(row) == 0:
-            return
-        row = row[0]
-        payload = {
-            'job_id': job_id,
-            'log': row[0],
-            'time': row[1],
-            'state': row[2],
-            'output': row[3],
-            'scheduled': scheduled
-        }
-        req = CoreRequest(self.server_host, self.server_port,
-                          '/notification_job')
-        req.set_type(ReqType.POST)
-        req.set_payload(payload)
-        if req.make_request(json_request=True):
-            # Update the state
-            sql = 'UPDATE {} SET notification = 1 WHERE job_id = {}'.format(
-                table, job_id)
-            self.data_base.execute_sql(sql)
-        # Mark attempt
-        else:
-            self.logger.error(':{}:failed to notify job for jobid: {}. Mark as attempt 1'.format(self.TAG, job_id))
-            sql = 'UPDATE {} SET attempt = 1 WHERE job_id = {}'.format(
-                table, job_id)
-            self.data_base.execute_sql(sql)
-
-    def check_executors(self) -> None:
-        """Check status and results
-        """
-        self.logger.info(f'{self.TAG}::futureRef:{self.futures_ref}')
-        for future in as_completed(self.futures):
-            self.logger.info(f'{self.TAG}::{future.__class__.__name__}::{id(future)}::{future.running()}')
-            try:
-                future_info = self.futures_ref.get(id(future))
-                if future_info is None:
-                    continue
-                job_id, scheduled = future_info[0], future_info[1]
-                if self._mark_job(job_id, future.result(), scheduled):
-                    self._notify_to_master(job_id, scheduled)
-                    self.futures_ref.pop(id(future), None)
-            except BaseException as err:
-                self.logger.info(f'{self.TAG}::future: {id(future)}')
-                if self._mark_job(job_id, future.result(), scheduled, str(err)):
-                    self._notify_to_master(job_id, scheduled)
-
     def _job_executor(self, obj, job_id, scheduled) -> None:
         """Execute object into the pool
 
@@ -150,7 +88,6 @@ class LaunchJobs:
 
     def _mark_job(self, job_id, state, scheduled, log_msg=None) -> bool:
         """Mark a job if is ok or failed
-
         Parameters
         ----------
         job_id : int
@@ -178,7 +115,23 @@ class LaunchJobs:
             sql = 'UPDATE {} SET state = ?, log = ?, attempt = ? WHERE job_id = ?'.format(
                 table)
             return self.data_base.execute_sql_update(sql, (status, log_msg, 1, job_id)) > 0
-
+    
+    def check_executors(self) -> None:
+        """Check status and results
+        """
+        self.logger.info(f'{self.TAG}::futureRef:{self.futures_ref}')
+        for future in as_completed(self.futures):
+            self.logger.info(f'{self.TAG}::{future.__class__.__name__}::{id(future)}::{future.running()}')
+            try:
+                future_info = self.futures_ref.get(id(future))
+                if future_info is None:
+                    continue
+                job_id, scheduled = future_info[0], future_info[1]
+                if self._mark_job(job_id, future.result(), scheduled):
+                    self.futures_ref.pop(id(future), None)
+            except BaseException as err:
+                self.logger.info(f'{self.TAG}::future: {id(future)}')
+    
     def execute_jobs(self):
         """Execute jobs selected
         """
@@ -232,30 +185,6 @@ class LaunchJobs:
                 'job_creation': row[4],
                 'scheduled': True
             })
-
-    def search_pending_jobs(self):
-        """Search and notify pending jobs
-        """ 
-        for table in ['job', 'schedule_job']:
-            # Sending failed and successful
-            sql = 'SELECT * FROM {} WHERE state <> 0 AND notification = 0'.format(
-                table
-            )
-            rows = self.data_base.execute_sql_with_results(sql)
-            for row in rows:
-                self._notify_to_master(
-                    row[0], True if table == 'schedule_job' else False)
-            # Sending unknows errors
-            sql = 'SELECT * FROM {} WHERE attempt > 0 AND notification = 0'.format(
-                table
-            )
-            rows = self.data_base.execute_sql_with_results(sql)
-            for row in rows:
-                self._notify_to_master(
-                    row[0],
-                    True if table == 'schedule_job' else False
-                )
-
 
 def main():
     """Entrance

@@ -1,8 +1,31 @@
-version: "3.1"
+version: "3.8"
 services:
+  rabbit-mq:
+        container_name: "rabbitmq"
+        image: rabbitmq:3-management-alpine
+        network_mode: host
+        environment:
+            - RABBITMQ_DEFAULT_USER=admin
+            - RABBITMQ_DEFAULT_PASS=admin
+        #ports:
+            # AMQP protocol port
+            #- '5672:5672'
+            # HTTP management UI
+            #- '15672:15672'
   pulzar-master:
-    image: mauriciocleveland/pulzar-master:21.4.1
+    image: pulzar-master:21.9.25
     network_mode: host
+    depends_on:
+      rabbit-mq:
+        condition: service_started
   pulzar-node:
-    image: mauriciocleveland/pulzar-node:21.4.1
+    image: pulzar-node:21.9.25
+    network_mode: host
+    depends_on:
+      rabbit-mq:
+        condition: service_started
+  pulzar-ui:
+    image: mauriciocleveland/pulzar-ui:1.0.3
+    #ports:
+    #  - 80:80
     network_mode: host

@@ -5,7 +5,6 @@ from volume.discovery_process import DiscoveryProcess
 from volume.put_process import PutProcess
 from volume.delete_process import DeleteProcess
 from volume.admin_process import AdminProcess
-from volume.job_process import JobProcess
 
 
 class Dispatcher:
@@ -41,12 +40,6 @@ class Dispatcher:
             admin_process = AdminProcess(self.logger)
             if method == Constants.GET:
                 return admin_process.process_request(url_path)
-
-        # Jobs
-        if self.utils.match_regex(url_path, self.re_job):
-            if method == Constants.POST:
-                job_process = JobProcess(self.logger)
-                return job_process.process_request(url_path, env)
 
         # Regular requests
         else:

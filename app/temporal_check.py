@@ -51,6 +51,7 @@ class TemporalCheck:
         sql = "DELETE FROM job WHERE creation_time < '{}'".format(
             date_diff)
         self.schedule_data_base.execute_sql(sql)
+        self.schedule_data_base.close()
 
     def _init_config(self):
         """Getting server information

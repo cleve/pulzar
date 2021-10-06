@@ -24,13 +24,16 @@ Is a distributed job system with load balance.
 
 ## Dependences
 
+- RabbitMQ as a broker messages (https://www.rabbitmq.com)
+
 ### Next Python modules are needed for the basic system
 
-- lmdb 1.1.1
-- requests 2.25.1
+- lmdb 1.2.1
+- requests 2.26.0
 - psutil 5.8.0
 - schedule 0.6.0
-- pillow 8.1.2
+- pillow 8.2.1
+- pika 1.2.0
 
 ## Configuration
 
@@ -66,6 +69,8 @@ psw=None
 ```
 
 ### Start system DEV
+
+Start a RabbitMQ instance.
 
 If you are in Ubuntu, remove the default **uwsgi** package installed, and use 
 **pip** to get the proper one.

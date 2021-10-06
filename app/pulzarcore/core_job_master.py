@@ -1,6 +1,7 @@
 from pulzarcore.core_request import CoreRequest
 from pulzarcore.core_rdb import RDB
 from pulzarcore.core_db import DB
+from pulzarcore.core_rabbit import Rabbit
 from pulzarutils.node_utils import NodeUtils
 from pulzarutils.constants import ReqType
 from pulzarutils.constants import Constants
@@ -9,6 +10,10 @@ from pulzarutils.utils import Utils
 
 class Job:
     """Send jobs to the nodes
+
+    Use of rabbitmq with comma separated values:
+
+        ADD_JOB,job_id,job_path,job_name,json_parameters,scheduled[0,1]
     """
 
     def __init__(self, job_params, url_path, logger):
@@ -41,6 +46,8 @@ class Job:
         }
         # Passport to authorize the request in nodes
         self.passport = self.utils.get_passport()
+        self.rabbit = Rabbit()
+
 
     def unregister_job(self, path_db_jobs):
         """Mark as failed job in master
@@ -92,7 +99,6 @@ class Job:
                 0
             )
         )
-
         return True
 
     def register_job(self, path_db_jobs, node):
@@ -115,6 +121,8 @@ class Job:
                 0
             )
         )
+        # Queue job
+        self.rabbit.publish(f'ADD_JOB,{self.job_id},{job_path},{job_name},{parameters},0')
 
     def _select_node(self):
         """Picking a node since parameters
@@ -184,28 +192,20 @@ class Job:
         return job_response
 
     def send_scheduled_job(self, parameters) -> bool:
-        """Send scheduled job to the node selected
+        """Send scheduled job to the node
 
         Return
         ------
         bool : Successful or not
         """
-        node = self._select_node()
         if Constants.DEBUG:
-            print('node', node)
             print('port', self.volume_port)
             print('parameters', parameters)
-        if node is None:
-            return False
-        request = CoreRequest(node.decode(), self.volume_port, '/send_job')
-        request.set_type(ReqType.POST)
-        request.set_payload(parameters)
-        request.add_header({Constants.PASSPORT: self.passport})
-        job_response = request.make_request(json_request=True)
-        if Constants.DEBUG:
-            print('Sending job to node ', node)
-            print('response: ', request.response)
-        if not job_response:
-            # removing job
-            print('FALSE response')
-        return job_response
+        # Queue job
+        job_id = parameters['job_id']
+        job_path = parameters['job_path']
+        job_name = parameters['job_name']
+        params = parameters['parameters']
+        scheduled = parameters['scheduled']
+        self.rabbit.publish(f'ADD_SCHEDULED_JOB,{job_id},{job_path},{job_name},{params},{scheduled}')
+        return job_id

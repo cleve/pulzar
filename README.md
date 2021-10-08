@@ -72,6 +72,13 @@ psw=None
 
 Start a RabbitMQ instance.
 
+You can use dockers:
+
+```sh
+# Set an user admin:admin
+docker run --rm -d --hostname my-rabbit -p 5672:5672 -p 15672:15672 --name rabbit-env rabbitmq:3-management-alpine
+```
+
 If you are in Ubuntu, remove the default **uwsgi** package installed, and use 
 **pip** to get the proper one.
 

@@ -277,6 +277,10 @@ class Utils:
         shutil.copy2(source, dest)
         os.remove(source)
 
+    def create_dir(self, full_path):
+        """Just a binding"""
+        os.makedirs(full_path)
+
     # Read files from dir
     def read_file_name_from_dir(self, dir_path, file_type=None):
         file_list = []

@@ -1,7 +1,6 @@
 from pulzarutils.utils import Utils
 from pulzarutils.utils import Constants
 from pulzarutils.stream import Config
-import os
 
 
 class FileUtils():
@@ -18,7 +17,7 @@ class FileUtils():
 
     def init_config(self):
         if Constants.DEBUG:
-            directory = os.path.join(
+            directory = self.utils.join_path(
                 self.utils.get_absolute_path_of_dir(),
                 Constants.DEV_DIRECTORY
             )
@@ -50,15 +49,15 @@ class FileUtils():
         return self.file_exists(value_path)
 
     def file_exists(self, file_path):
-        return os.path.isfile(file_path)
+        return self.utils.file_exists(file_path)
 
     def dir_exists(self, dir_path):
-        return os.path.isdir(dir_path)
+        return self.utils.dir_exists(dir_path)
 
     def remove_file_with_path(self, full_path):
         file_path = self.utils.join_path(self.volume_path, full_path)
         if self.file_exists(file_path):
-            os.remove(file_path)
+            self.utils.remove_file(file_path)
             return True
         return False
 
@@ -67,7 +66,7 @@ class FileUtils():
         """
         file_path = self.utils.join_path(self.volume_path, self.key)
         if self.file_exists(file_path):
-            os.remove(file_path)
+            self.utils.remove_file(file_path)
             return True
         return False
 
@@ -101,7 +100,7 @@ class FileUtils():
         # Creating directories if does not exist.
         full_path = self.volume_path + self.base_dir
         if self.base_dir is not None and not self.utils.dir_exists(full_path):
-            os.makedirs(full_path)
+            self.utils.create_dir(full_path)
 
         temp_file.close()  # Close the file to be copied.
         if destiny_path == self.utils.move_file(
@@ -139,7 +138,7 @@ class FileUtils():
             # Creating directories if does not exist.
             full_path = self.volume_path + self.base_dir
             if self.base_dir is not None and not self.utils.dir_exists(full_path):
-                os.makedirs(full_path)
+                self.utils.create_dir(full_path)
 
             temp_file.close()  # Close the file to be copied.
             self.utils.move_file(

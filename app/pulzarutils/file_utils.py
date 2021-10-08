@@ -56,7 +56,7 @@ class FileUtils():
         return os.path.isdir(dir_path)
 
     def remove_file_with_path(self, full_path):
-        file_path = os.path.join(self.volume_path, full_path)
+        file_path = self.utils.join_path(self.volume_path, full_path)
         if self.file_exists(file_path):
             os.remove(file_path)
             return True
@@ -65,14 +65,16 @@ class FileUtils():
     def remove_file(self):
         """If error delete file
         """
-        file_path = os.path.join(self.volume_path, self.key)
+        file_path = self.utils.join_path(self.volume_path, self.key)
         if self.file_exists(file_path):
             os.remove(file_path)
             return True
         return False
 
     def read_value(self, key_name, start_response):
-        value_path = os.path.join(self.volume_path, key_name)
+        value_path = self.utils.join_path(self.volume_path, key_name)
+        if not self.utils.file_exists(value_path):
+            raise Exception(f'{self.__class__.__name__}::file {value_path} does not exists')
         fh = open(value_path, 'rb')
         start_response(
             '200 OK', [('Content-Type', 'application/octet-stream')])
@@ -89,7 +91,7 @@ class FileUtils():
     def read_binary_local_file(self, file_path):
         """Storing file created locally
         """
-        destiny_path = os.path.join(self.volume_path, self.key)
+        destiny_path = self.utils.join_path(self.volume_path, self.key)
         temp_file = self.utils.get_tmp_file()
         # Read binary file
         with open(file_path, 'rb') as f:
@@ -103,7 +105,7 @@ class FileUtils():
 
         temp_file.close()  # Close the file to be copied.
         if destiny_path == self.utils.move_file(
-                temp_file.name, os.path.join(full_path, self.key)):
+                temp_file.name, self.utils.join_path(full_path, self.key)):
             return self.key
 
     def read_binary_file(self, env) -> str:
@@ -142,7 +144,7 @@ class FileUtils():
             temp_file.close()  # Close the file to be copied.
             self.utils.move_file(
                 temp_file.name,
-                os.path.join(full_path, self.key)
+                self.utils.join_path(full_path, self.key)
             )
             return self.key
 

@@ -339,8 +339,10 @@ class Utils:
 
     def join_path(self, base_path, child_path):
         """Just a binding
+        This method removes the first slash of the child
+        in order to prevent bad formation
         """
-        return os.path.join(base_path, child_path)
+        return os.path.join(base_path, child_path.lstrip('/'))
 
     def join_paths(self, *args):
         """Just a binding of generic join

@@ -107,9 +107,11 @@ class MasterJobSignals:
 def main():
     """Entrance
     """
-    print('[MASTER SIGNALS] Starting...')
+    if Constants.DEBUG:
+        print('[MASTER SIGNALS] Starting...')
     sleep(15)
-    print('[MASTER SIGNALS] READY')
+    if Constants.DEBUG:
+        print('[MASTER SIGNALS] READY')
     registron = MasterJobSignals()
     registron.register_job()
 

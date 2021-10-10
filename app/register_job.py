@@ -76,9 +76,11 @@ class RegisterJob:
 def main():
     """Entrance
     """
-    print('[REGISTER JOBS] Starting...')
+    if Constants.DEBUG:
+        print('[REGISTER JOBS] Starting...')
     sleep(15)
-    print('[REGISTER JOBS] READY')
+    if Constants.DEBUG:
+        print('[REGISTER JOBS] READY')
     registron = RegisterJob()
     registron.register_job()
 

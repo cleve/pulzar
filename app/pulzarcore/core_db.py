@@ -5,19 +5,22 @@ class DB:
     """Main class to handle LMDB files
     """
 
-    def __init__(self, db_path):
+    def __init__(self, db_path, read_only=False):
         self.TAG = self.__class__.__name__
         self.db_path = db_path
         self.env = None
+        self.read_only = read_only
         self.init_db()
 
     def init_db(self):
         """Init configuration
         By default the db will be allocate 10GB
         """
+        if self.db_path is None:
+            raise Exception('path can not be None')
         try:
             self.env = lmdb.open(
-                self.db_path,
+                path=self.db_path,
                 map_size=10000000000,
                 max_dbs=1
             )

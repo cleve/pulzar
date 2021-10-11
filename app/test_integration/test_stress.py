@@ -55,7 +55,7 @@ def futures_write():
         else:
             thread_pool_write.submit(write_test, url, results, dict_key, key, 'Regular')
 
-    thread_pool_write.shutdown(wait=True)    
+    thread_pool_write.shutdown(wait=True)
     return results
 
 def futures_delete(results):
@@ -80,13 +80,15 @@ def write_test(url, result_list, dict_key, key, test_type='File'):
             req = requests.put(
                 url=url,
                 data=tmp,
+                timeout=2
             )
     else:
         start = timer()
         req = requests.put(
             url=url,
             data=open(binary_data[dict_key], 'rb'),
-            headers={'Content-Type': 'application/octet-stream'}
+            headers={'Content-Type': 'application/octet-stream'},
+            timeout=2
         )
     if req.status_code == 201:
         time_register.append(timer() - start)
@@ -100,7 +102,7 @@ def read_test(url):
     time_register = []
     time_errors = []
     start = timer()
-    req = requests.get(url=url)
+    req = requests.get(url=url, timeout=2)
     if req.status_code >= 200 and req.status_code < 300:
         time_register.append(timer() - start)
         time_request.append(req.elapsed.total_seconds())
@@ -112,7 +114,7 @@ def delete_test(url):
     time_register = []
     time_errors = []
     start = timer()
-    req = requests.delete(url=url)
+    req = requests.delete(url=url, timeout=2)
     if req.status_code >= 200 and req.status_code < 300:
         time_register.append(timer() - start)
         time_request.append(req.elapsed.total_seconds())

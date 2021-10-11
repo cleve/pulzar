@@ -1,4 +1,4 @@
-FROM mauriciocleveland/pulzar:21.4.1
+FROM mauriciocleveland/pulzar:21.12.21
 
 LABEL Mauricio Cleveland "mauricio.cleveland@gmail.com"
 EXPOSE 31414

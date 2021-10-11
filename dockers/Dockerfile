@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-LABEL maintainer="mauricio.cleveland@gmail.com" version="21.4.1" build_date="2021-04-01"
+LABEL maintainer="mauricio.cleveland@gmail.com" version="21.12.21" build_date="2021-12-21"
 
 ENV DEBIAN_FRONTEND=nonintercative
 ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1

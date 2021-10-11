@@ -1,4 +1,5 @@
 import lmdb
+from time import sleep
 
 
 class DB:
@@ -10,8 +11,27 @@ class DB:
         self.db_path = db_path
         self.env = None
         self.read_only = read_only
+        # Avoid thread errors
+        self.max_retry = 10
+        self.retry = 0
         self.init_db()
 
+    def validate_cursor(self):
+        """Retry to get a cursor
+        """
+        while self.retry < self.max_retry:
+            sleep(0.2)
+            try:
+                self.env = lmdb.open(
+                    path=self.db_path,
+                    map_size=10000000000,
+                    max_dbs=1
+                )
+                break
+            except:
+                if self.env is None:
+                    self.max_retry += 1
+    
     def init_db(self):
         """Init configuration
         By default the db will be allocate 10GB
@@ -24,6 +44,12 @@ class DB:
                 map_size=10000000000,
                 max_dbs=1
             )
+        
+        except lmdb.InvalidParameterError:
+            if self.retry > self.max_retry:
+                raise Exception('max retry reached in lmdb')
+            self.validate_cursor()
+        
         except Exception as err:
             raise Exception(
                 'ERROR:{}:{}'.format(
@@ -36,6 +62,7 @@ class DB:
         """Iterator as read only mode
         """
         try:
+
             return self.env.begin(write=False)
         except lmdb.Error as err:
             print("get_cursor_iterator", err)

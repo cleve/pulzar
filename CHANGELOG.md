@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [21.10.1] - 2021-10-1
+## [21.12.21] - 2021-12-21
 ### Added
 - Message broker to handle jobs
 - Docker compose included

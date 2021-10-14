@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pulzar-node
+spec:
+  selector:
+    matchLabels:
+      app: pulzar-node
+  template:
+    metadata:
+      labels:
+        app: pulzar-node
+    spec:
+      containers:
+      - name: pulzar-node
+        image: pulzar-master:21.12.21
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 31415
+        
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: pulzar-node-service
+spec:
+  selector:
+    app: pulzar-node
+  ports:
+    - protocol: TCP
+      port: 31415
+      targetPort: 31415

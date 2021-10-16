@@ -10,6 +10,7 @@ spec:
     metadata:
       labels:
         app: pulzar-node
+        project: pulzar
     spec:
       volumes:
         - name: configpvc

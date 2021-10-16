@@ -10,6 +10,7 @@ spec:
     metadata:
       labels:
         app: rabbit
+        project: pulzar
     spec:
       containers:
       - name: rabbitmq

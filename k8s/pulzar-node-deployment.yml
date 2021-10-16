@@ -11,9 +11,16 @@ spec:
       labels:
         app: pulzar-node
     spec:
+      volumes:
+        - name: configpvc
+          persistentVolumeClaim:
+            claimName: node-volume-claim
       containers:
       - name: pulzar-node
-        image: pulzar-master:21.12.21
+        image: mauriciocleveland/pulzar-node:1.0.1
+        volumeMounts:
+          - mountPath: "/var/lib/pulzar/"
+            name: configpvc
         resources:
           limits:
             memory: "128Mi"
@@ -32,5 +39,6 @@ spec:
     app: pulzar-node
   ports:
     - protocol: TCP
+      name: service
       port: 31415
       targetPort: 31415

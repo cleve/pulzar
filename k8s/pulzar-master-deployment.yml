@@ -11,9 +11,16 @@ spec:
       labels:
         app: pulzar-master
     spec:
+      volumes:
+      - name: configpvc
+        persistentVolumeClaim:
+          claimName: master-volume-claim
       containers:
       - name: pulzar-master
-        image: pulzar-master:21.12.21
+        image: mauriciocleveland/pulzar-master:1.0.1
+        volumeMounts:
+          - mountPath: "/var/lib/pulzar/"
+            name: configpvc
         resources:
           limits:
             memory: "128Mi"
@@ -32,5 +39,8 @@ spec:
     app: pulzar-master
   ports:
     - protocol: TCP
+      name: service
       port: 31414
       targetPort: 31414
+
+---

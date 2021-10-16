@@ -44,5 +44,10 @@ spec:
     app: rabbit
   ports:
     - protocol: TCP
+      name: service
       port: 5672
       targetPort: 5672
+    - protocol: TCP
+      name: managment
+      port: 15672
+      targetPort: 15672

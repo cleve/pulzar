@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: master-volume-claim
+spec:
+  storageClassName: local-path
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 128Mi
+
+  #selector:
+  #  matchLabels:
+  #    pv: pv-local-1
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: node-volume-claim
+spec:
+  storageClassName: local-path
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 128Mi
+  #selector:
+  #  matchLabels:
+  #    pv: pv-local-2

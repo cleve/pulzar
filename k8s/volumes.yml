@@ -1,0 +1,25 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv-local-1
+spec:
+  capacity:
+    storage: 500Mi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/k3d_volume/data01"
+
+---
+
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: pv-local-2
+spec:
+  capacity:
+    storage: 500Mi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/k3d_volume/data02"
